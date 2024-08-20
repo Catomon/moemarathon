@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.github.catomon.polly.Const.IS_MOBILE
 import com.github.catomon.polly.map.loadNoteMap
 import kotlin.math.cos
 import kotlin.math.min
@@ -26,7 +27,7 @@ class PlayScreen : ScreenAdapter() {
 
     val playHud = PlayHud()
 
-    val noteMap = loadNoteMap("cYsmix feat. Emmy - Tear Rain (jonathanlfj) [Insane].osu")
+    val noteMap = loadNoteMap("Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu")
 
     var mapOffset = -1.5f
 
@@ -45,13 +46,13 @@ class PlayScreen : ScreenAdapter() {
             noteRadius = (noteSize * (mapSize / 2))
         }
 
-    var time = 0f
+    var time = -3f
 
     var pointerX: Float = 0f
     var pointerY: Float = 0f
     val pointerSize = 0.05f
 
-    val noteSpawnTime = 3.5f
+    val noteSpawnTime = 1f //3.5f
     val noteClickTimeWindow = 0.200f
     val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
     val earlyClickRad get() = circleRadius + circleRadius * 2 * (noteClickTimeWindow / noteSpawnTime)
@@ -64,26 +65,41 @@ class PlayScreen : ScreenAdapter() {
 
     private var paused = false
 
-    private val noteSprite = Sprite(Texture("textures/note2.png"))
+    private val noteSprite = Sprite(Texture("textures/note3.png"))
     private val clickZoneSprite = Sprite(Texture("textures/click_zone.png"))
+    private val centerSprite = Sprite(Texture("textures/center.png"))
+    //private val centerSprite = Sprite(Texture("textures/center.png"))
 
     companion object {
         var screenWidth = -1
-        private set
+            private set
         var screenHeight = -1
-        private set
+            private set
     }
 
     init {
         Gdx.input.inputProcessor = PlayScreenIP(this)
+        AudioManager
+    }
 
+    var action: (() -> Unit)? = {
         AudioManager.music.play()
+        time = AudioManager.music.position
     }
 
     fun update(delta: Float) {
         if (paused) return
 
-        time += delta
+        if (action != null) {
+            time += delta
+        } else {
+            time = AudioManager.music.position
+        }
+
+        if (action != null && time >= 0) {
+            action?.invoke()
+            action = null
+        }
 
         updateNotes()
 
@@ -126,6 +142,10 @@ class PlayScreen : ScreenAdapter() {
         clickZoneSprite.setAlpha(0.5f)
         clickZoneSprite.draw(batch)
 
+        //todo only on resize
+        centerSprite.setPosition(cameraX - centerSprite.width / 2, cameraY - centerSprite.height / 2)
+        centerSprite.draw(batch)
+
         drawNotes()
 
         batch.end()
@@ -140,7 +160,8 @@ class PlayScreen : ScreenAdapter() {
 
         var notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
         if (notes != null) {
-            notes = ((noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes?.toList() ?: emptyList()) + notes).toMutableList()
+            notes = ((noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes?.toList()
+                ?: emptyList()) + notes).toMutableList()
             notes.remove(firstNote)
             val notePos = Vector2()
             for (note in notes) {
@@ -183,6 +204,10 @@ class PlayScreen : ScreenAdapter() {
 
         shapes.projectionMatrix = camera.combined
         shapes.begin()
+
+        shapes.color = Color.LIGHT_GRAY
+        shapes.line(pointerX, 0f, pointerX, screenHeight.toFloat())
+        shapes.line(0f, pointerY, screenWidth.toFloat(), pointerY)
 
         shapes.color = Color.LIGHT_GRAY
         shapes.rect(cameraX - mapSize / 2, cameraY - mapSize / 2, mapSize, mapSize)
@@ -228,7 +253,6 @@ class PlayScreen : ScreenAdapter() {
         shapes.end()
     }
 
-    // (3 - 2 - 0.1f) / 2f
     fun Note.calcPosition(vector2: Vector2): Vector2 {
         val timeLeft = (timing - time) / noteSpawnTime
         val cameraX = camera.position.x
@@ -328,12 +352,22 @@ class PlayScreenIP(val playScreen: PlayScreen) : InputAdapter() {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        tmpVec.x = screenX.toFloat()
+        tmpVec.y = screenY.toFloat()
+        playScreen.camera.unproject(tmpVec)
+        playScreen.pointerX = tmpVec.x
+        playScreen.pointerY = tmpVec.y
         playScreen.clickNote()
 
         return super.touchDown(screenX, screenY, pointer, button)
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        tmpVec.x = screenX.toFloat()
+        tmpVec.y = screenY.toFloat()
+        playScreen.camera.unproject(tmpVec)
+        playScreen.pointerX = tmpVec.x
+        playScreen.pointerY = tmpVec.y
         if (playScreen.isTracing) {
             playScreen.clickNote()
         }

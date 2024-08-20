@@ -1,5 +1,6 @@
 package com.github.catomon.polly
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -11,7 +12,8 @@ open class GameMain : Game() {
     override fun create() {
         VisUI.load()
 
-        setMouseCursor()
+        if (Const.IS_DESKTOP)
+            setMouseCursor()
 
         setScreen(PlayScreen())
     }
