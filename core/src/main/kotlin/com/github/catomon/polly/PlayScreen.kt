@@ -12,11 +12,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.Queue
+import com.github.catomon.polly.map.loadNoteMap
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
-import kotlin.random.Random
 
 class PlayScreen : ScreenAdapter() {
 
@@ -27,29 +26,7 @@ class PlayScreen : ScreenAdapter() {
 
     val playHud = PlayHud()
 
-    val colors = listOf(Color.GREEN, Color.SKY, Color.TAN, Color.BLUE, Color.GOLD)
-
-    val map = Map(Queue<Map.Chunk>(10).apply {
-        var second = 2f
-        repeat(10) {
-            addFirst(Map.Chunk().apply {
-                repeat(10) {
-                    second += 1 * Random.nextFloat() + 0.25f
-                    val tracingStart = it == 3
-                    val tracingEnd = it == 4
-                    notes.addFirst(
-                        Note(
-                            timing = second,
-                            initialPosition = Random.nextFloat(),
-                            tracingNext = tracingStart,
-                            tracingPrev = tracingEnd,
-                            color = Random.nextInt(0, colors.size)
-                        )
-                    )
-                }
-            })
-        }
-    })
+    val noteMap = loadNoteMap("cYsmix feat. Emmy - Tear Rain (jonathanlfj) [Insane].osu")
 
     var mapOffset = -1.5f
 
@@ -75,7 +52,7 @@ class PlayScreen : ScreenAdapter() {
     val pointerSize = 0.05f
 
     val noteSpawnTime = 3
-    val noteClickTimeWindow = 0.1f
+    val noteClickTimeWindow = 0.150f
     val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
     val earlyClickRad get() = circleRadius + circleRadius * 2 * (noteClickTimeWindow / noteSpawnTime)
     //circleRadius - circleRadius * ((noteClickTimeWindow / noteSpawnTime) * 2)
@@ -87,7 +64,8 @@ class PlayScreen : ScreenAdapter() {
 
     private var paused = false
 
-    private var noteSprite = Sprite(Texture("textures/note.png"))
+    private val noteSprite = Sprite(Texture("textures/note.png"))
+    private val clickZoneSprite = Sprite(Texture("textures/click_zone.png"))
 
     companion object {
         var width = 100
@@ -96,6 +74,8 @@ class PlayScreen : ScreenAdapter() {
 
     init {
         Gdx.input.inputProcessor = PlayScreenIP(this)
+
+        AudioManager.music.play()
     }
 
     fun update(delta: Float) {
@@ -109,7 +89,7 @@ class PlayScreen : ScreenAdapter() {
     }
 
     private fun updateNotes() {
-        val chunk = map.chunks.lastOrNull()
+        val chunk = noteMap.chunks.lastOrNull()
         if (chunk != null) {
             val notes = chunk.notes
             val note = notes.lastOrNull()
@@ -125,31 +105,36 @@ class PlayScreen : ScreenAdapter() {
             }
 
             if (notes.isEmpty) {
-                map.chunks.removeLast()
+                noteMap.chunks.removeLast()
             }
         }
     }
 
-    fun draw(delta: Float) {
-        drawShapeRenderer()
+    fun draw() {
+        val cameraX = camera.position.x
+        val cameraY = camera.position.y
+
+        //drawShapeRenderer()
+
+        batch.projectionMatrix = camera.combined
+        batch.begin()
+
+        clickZoneSprite.setSize(circleRadius * 2 + noteRadius * 2, circleRadius * 2 + noteRadius * 2)
+        clickZoneSprite.setPosition(cameraX - clickZoneSprite.width / 2, cameraY - clickZoneSprite.height / 2)
+        clickZoneSprite.setAlpha(0.5f)
+        clickZoneSprite.draw(batch)
 
         drawNotes()
+
+        batch.end()
 
         playHud.draw()
     }
 
     private fun drawNotes() {
-        val cameraX = camera.position.x
-        val cameraY = camera.position.y
-
-        batch.projectionMatrix = camera.combined
-        batch.begin()
-
-        val clickerPos = calcClickerPos(Vector2())
-
-        val notes = map.chunks.lastOrNull()?.notes?.toMutableList()
+        val notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
         if (notes != null) {
-            notes.addAll(map.chunks.elementAtOrNull(map.chunks.size - 2)?.notes ?: emptyList())
+            notes.addAll(noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes ?: emptyList())
             val notePos = Vector2()
             for (note in notes) {
                 val timeLeft = note.timing - time - noteClickTimeWindow
@@ -158,6 +143,10 @@ class PlayScreen : ScreenAdapter() {
 
                     noteSprite.setSize(noteRadius * 2, noteRadius * 2)
                     noteSprite.setPosition(notePos.x - noteSprite.width / 2, notePos.y - noteSprite.height / 2)
+                    noteSprite.setAlpha(0f)
+                    var a = (noteSpawnTime - timeLeft) / (noteSpawnTime * 0.1f)
+                    if (a > 1) a = 1f
+                    noteSprite.setAlpha(a)
                     noteSprite.draw(batch)
 
                     if (note.tracingNext) {
@@ -170,8 +159,6 @@ class PlayScreen : ScreenAdapter() {
                 }
             }
         }
-
-        batch.end()
     }
 
     private fun drawShapeRenderer() {
@@ -195,9 +182,9 @@ class PlayScreen : ScreenAdapter() {
         shapes.circle(clickerPos.x, clickerPos.y, pointerSize * (mapSize / 2))
         //        shapes.circle(pointerX, pointerY, pointerSize * (mapSize / 2))
 
-        val notes = map.chunks.lastOrNull()?.notes?.toMutableList()
+        val notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
         if (notes != null) {
-            notes.addAll(map.chunks.elementAtOrNull(map.chunks.size - 2)?.notes ?: emptyList())
+            notes.addAll(noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes ?: emptyList())
             val notePos = Vector2()
             for (note in notes) {
                 val timeLeft = note.timing - time - noteClickTimeWindow
@@ -241,7 +228,7 @@ class PlayScreen : ScreenAdapter() {
 
     override fun render(delta: Float) {
         update(delta)
-        draw(delta)
+        draw()
     }
 
     fun calcClickerPos(vector2: Vector2): Vector2 {
@@ -255,7 +242,7 @@ class PlayScreen : ScreenAdapter() {
     }
 
     fun clickNote() {
-        val note = map.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
+        val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
         val clickerPos = calcClickerPos(Vector2())
@@ -263,7 +250,7 @@ class PlayScreen : ScreenAdapter() {
         val curPointerRad = pointerSize * (mapSize / 2)
         val isPointerNear = clickerToNoteDst <= curPointerRad * 2
         if (isInTiming && isPointerNear) {
-            map.chunks.last().notes.removeLast()
+            noteMap.chunks.last().notes.removeLast()
 
             if (note.tracingNext)
                 isTracing = true
@@ -276,14 +263,14 @@ class PlayScreen : ScreenAdapter() {
             if (isTracing) {
                 isTracing = false
 
-                map.chunks.last().notes.removeLast()
+                noteMap.chunks.last().notes.removeLast()
                 playHud.onNoteEvent(0, notePos)
             } else {
                 if (note.timing - time > noteSpawnTime / 4f) {
                     playHud.onNoteEvent(4, notePos)
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
-                        map.chunks.last().notes.removeLast()
+                        noteMap.chunks.last().notes.removeLast()
                         playHud.onNoteEvent(0, notePos)
                     } else {
                         playHud.onNoteEvent(5, notePos)

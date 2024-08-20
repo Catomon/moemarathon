@@ -17,10 +17,23 @@ class PlayHud : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(fal
     }
 
     fun onNoteEvent(id: Int, notePos: Vector2) {
-        println(notePos)
+        when (id) {
+            0 -> "Miss!"
+            1 -> {
+                AudioManager.hitSound.play()
+            }
+            2 -> {
+                AudioManager.hitSound.play()
+            }
+            3 -> {
+                AudioManager.hitSound.play()
+            }
+            4 -> "Too early!"
+            5 -> "Too far!"
+            else -> "Unknown"
+        }
+
         val noteToStagePos = notePos
-        println(noteToStagePos)
-        println()
         addActor(
             VisLabel(
                 when (id) {
