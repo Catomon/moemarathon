@@ -24,17 +24,33 @@ class HitObjectParser(private val textSize: String) {
             .drop(1) // skip the first line "[HitObjects]"
             .forEach { line ->
                 val parts = line.split(",")
-                if (parts.size >= 2) {
-                    val hitObject = HitObject(
-                        x = parts[0].toInt(),
-                        y = parts[1].toInt(),
-                        time = parts[2].toInt(),
-                        type = parts.getOrNull(3)?.toInt() ?: 0,
+                when {
+//                    parts.size > 10 -> {
+//                        //todo
+//                        val hitObject = HitObject(
+//                            x = parts[0].toInt(),
+//                            y = parts[1].toInt(),
+//                            time = parts[2].toInt(),
+//                            type = parts.getOrNull(3)?.toInt() ?: 0,
+////                        hitSound = parts.getOrNull(4)?.toInt() ?: 0,
+////                        objectParams = parts.getOrNull(5) ?: "",
+////                        hitSample = parts.getOrNull(6) ?: "",
+//                        )
+//                        hitObjects.add(hitObject)
+//                    }
+
+                    parts.size > 1 -> {
+                        val hitObject = HitObject(
+                            x = parts[0].toInt(),
+                            y = parts[1].toInt(),
+                            time = parts[2].toInt(),
+                            type = parts.getOrNull(3)?.toInt() ?: 0,
 //                        hitSound = parts.getOrNull(4)?.toInt() ?: 0,
 //                        objectParams = parts.getOrNull(5) ?: "",
 //                        hitSample = parts.getOrNull(6) ?: "",
-                    )
-                    hitObjects.add(hitObject)
+                        )
+                        hitObjects.add(hitObject)
+                    }
                 }
             }
         return hitObjects

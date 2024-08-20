@@ -51,8 +51,8 @@ class PlayScreen : ScreenAdapter() {
     var pointerY: Float = 0f
     val pointerSize = 0.05f
 
-    val noteSpawnTime = 3
-    val noteClickTimeWindow = 0.150f
+    val noteSpawnTime = 3.5f
+    val noteClickTimeWindow = 0.200f
     val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
     val earlyClickRad get() = circleRadius + circleRadius * 2 * (noteClickTimeWindow / noteSpawnTime)
     //circleRadius - circleRadius * ((noteClickTimeWindow / noteSpawnTime) * 2)
@@ -64,12 +64,14 @@ class PlayScreen : ScreenAdapter() {
 
     private var paused = false
 
-    private val noteSprite = Sprite(Texture("textures/note.png"))
+    private val noteSprite = Sprite(Texture("textures/note2.png"))
     private val clickZoneSprite = Sprite(Texture("textures/click_zone.png"))
 
     companion object {
-        var width = 100
-        var height = 100
+        var screenWidth = -1
+        private set
+        var screenHeight = -1
+        private set
     }
 
     init {
@@ -131,23 +133,22 @@ class PlayScreen : ScreenAdapter() {
         playHud.draw()
     }
 
+    private fun Note.calcTimeLeft(): Float = timing - time - noteClickTimeWindow
+
     private fun drawNotes() {
-        val notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
+        val firstNote = noteMap.chunks.lastOrNull()?.notes?.lastOrNull()
+
+        var notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
         if (notes != null) {
-            notes.addAll(noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes ?: emptyList())
+            notes = ((noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes?.toList() ?: emptyList()) + notes).toMutableList()
+            notes.remove(firstNote)
             val notePos = Vector2()
             for (note in notes) {
-                val timeLeft = note.timing - time - noteClickTimeWindow
+                val timeLeft = note.calcTimeLeft()
                 if (timeLeft <= noteSpawnTime) {
                     note.calcPosition(notePos)
 
-                    noteSprite.setSize(noteRadius * 2, noteRadius * 2)
-                    noteSprite.setPosition(notePos.x - noteSprite.width / 2, notePos.y - noteSprite.height / 2)
-                    noteSprite.setAlpha(0f)
-                    var a = (noteSpawnTime - timeLeft) / (noteSpawnTime * 0.1f)
-                    if (a > 1) a = 1f
-                    noteSprite.setAlpha(a)
-                    noteSprite.draw(batch)
+                    drawNote(notePos, timeLeft)
 
                     if (note.tracingNext) {
 
@@ -159,6 +160,21 @@ class PlayScreen : ScreenAdapter() {
                 }
             }
         }
+
+        if (firstNote != null) {
+            drawNote(firstNote.calcPosition(Vector2()), firstNote.calcTimeLeft(), Color.YELLOW)
+        }
+    }
+
+    private fun drawNote(notePos: Vector2, timeLeft: Float, color: Color? = null) {
+        noteSprite.setSize(noteRadius * 2, noteRadius * 2)
+        noteSprite.setPosition(notePos.x - noteSprite.width / 2, notePos.y - noteSprite.height / 2)
+        noteSprite.setAlpha(0f)
+        var a = (noteSpawnTime - timeLeft) / (noteSpawnTime * 0.1f)
+        if (a > 1) a = 1f
+        noteSprite.color = color ?: Color.WHITE
+        noteSprite.setAlpha(a)
+        noteSprite.draw(batch)
     }
 
     private fun drawShapeRenderer() {
@@ -281,16 +297,16 @@ class PlayScreen : ScreenAdapter() {
     }
 
     override fun resize(newWidth: Int, newHeight: Int) {
-        width = newWidth
-        height = newHeight
+        screenWidth = newWidth
+        screenHeight = newHeight
 
-        camera.viewportWidth = width.toFloat()
-        camera.viewportHeight = height.toFloat()
+        camera.viewportWidth = screenWidth.toFloat()
+        camera.viewportHeight = screenHeight.toFloat()
         camera.position.set(newWidth / 2f, newHeight / 2f, 0f)
         camera.update()
 
 //        mapSize = min(width , height).toFloat()
-        mapSize = min(width - width * mapOffset, height - height * mapOffset)
+        mapSize = min(screenWidth - screenWidth * mapOffset, screenHeight - screenHeight * mapOffset)
 
         playHud.viewport.update(newWidth, newHeight, true)
     }

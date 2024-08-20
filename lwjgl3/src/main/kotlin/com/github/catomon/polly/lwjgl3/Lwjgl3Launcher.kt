@@ -7,6 +7,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.github.catomon.polly.Const.APP_NAME
 import com.github.catomon.polly.Const.APP_VER
+import com.github.catomon.polly.Const.WINDOW_HEIGHT
+import com.github.catomon.polly.Const.WINDOW_WIDTH
 import com.github.catomon.polly.GameMain
 
 /** Launches the desktop (LWJGL3) application. */
@@ -16,7 +18,7 @@ fun main() {
       return
     Lwjgl3Application(GameMain(), Lwjgl3ApplicationConfiguration().apply {
         setTitle("$APP_NAME $APP_VER")
-        setWindowedMode(640, 480)
+        setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
 
         setPreferencesConfig("Documents/Polly", Files.FileType.Absolute)
