@@ -7,8 +7,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
+import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
+import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.gameplay.Stats
 import com.github.catomon.polly.map.loadNoteMap
 import com.github.catomon.polly.playstage.PlayStage
@@ -58,14 +61,17 @@ class PlayScreen : ScreenAdapter() {
 
     val stats = Stats()
 
-    val playHud = PlayHud(this)
-    val playStage = PlayStage(this)
-
     private val shapes = ShapeRenderer().apply { setAutoShapeType(true) }
     private val debugRenderer = DebugRenderer(this, shapes)
 
     private var paused = false
     private var autoPlay = false
+
+    val noteListeners = Array<NoteListener>()
+
+    val playStage = PlayStage(this)
+    val playHud = PlayHud(this)
+
 
     init {
         Gdx.input.inputProcessor = PlayInputProcessor(this)
@@ -73,6 +79,9 @@ class PlayScreen : ScreenAdapter() {
 
 //        val osuMap = OsuParser.parse(Gdx.files.internal("maps/3L - Endless night (sjoy) [Eternal].osu").readString())
 //        println(osuMap)
+
+        noteListeners.add(playStage)
+        noteListeners.add(playHud)
     }
 
     var action: (() -> Unit)? = {
@@ -80,7 +89,7 @@ class PlayScreen : ScreenAdapter() {
         time = AudioManager.testMusic.position
     }
 
-    fun update(delta: Float) {
+    private fun update(delta: Float) {
         if (paused) return
 
         if (action != null) {
@@ -129,7 +138,7 @@ class PlayScreen : ScreenAdapter() {
         }
     }
 
-    fun draw() {
+    private fun draw() {
         playStage.draw()
 
         playHud.draw()
@@ -172,14 +181,16 @@ class PlayScreen : ScreenAdapter() {
         return vector2.set(clickerX, clickerY)
     }
 
-    fun onNoteEvent(id: Int, notePos: Vector2) {
+    private fun onNoteEvent(id: Int, notePos: Vector2) {
         when (id) {
             0 -> stats.combo = 0
-            1, 2, 3 ->  stats.combo++
+            1, 2, 3 -> {
+                stats.combo++
+                stats.score += SCORE_GAIN_GREAT
+            }
         }
 
-        playHud.onNoteEvent(id, notePos)
-        playStage.onNoteEvent(id, notePos)
+        noteListeners.forEach { it.onNoteEvent(id, notePos) }
     }
 
     fun clickNote() {

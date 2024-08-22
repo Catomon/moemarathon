@@ -8,22 +8,32 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.AudioManager
 import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.gameplay.NoteListener
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 
-class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
+class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })), NoteListener {
 
+    private val scoreLabel = ScoreLabel(playScreen.stats)
     private val comboLabel = ComboLabel(playScreen.stats)
 
     init {
+        addActor(VisTable().apply {
+            right().top()
+            setFillParent(true)
+            add(scoreLabel).right().top().padRight(16f)
+        })
         addActor(VisTable().apply {
             left().bottom()
             setFillParent(true)
             add(comboLabel).left().bottom().padLeft(16f)
         })
+
+        playScreen.noteListeners.add(comboLabel)
+        playScreen.noteListeners.add(scoreLabel)
     }
 
-    fun onNoteEvent(id: Int, notePos: Vector2) {
+    override fun onNoteEvent(id: Int, notePos: Vector2) {
         comboLabel.onNoteEvent(id, notePos)
 
         when (id) {
@@ -65,7 +75,6 @@ class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(Orthogr
                     else -> Color.RED
                 }
                 setPosition(noteToStagePos.x, noteToStagePos.y)
-                setFontScale(2f)
                 addAction(Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)))
             }
         )

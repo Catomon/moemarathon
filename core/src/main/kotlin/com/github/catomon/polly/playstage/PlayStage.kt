@@ -8,9 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.utils.SpriteActor
 
-class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.camera), playScreen.batch) {
+class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.camera), playScreen.batch), NoteListener {
 
     val centerActor = CenterActor(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
@@ -33,7 +34,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         batch.end()
     }
 
-    fun onNoteEvent(id: Int, notePos: Vector2) {
+    override fun onNoteEvent(id: Int, notePos: Vector2) {
         when (id) {
             0 -> "Miss!"
             1, 2, 3 -> {
