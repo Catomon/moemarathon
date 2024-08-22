@@ -21,6 +21,6 @@ fun main() {
         setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
 
-        setPreferencesConfig("Documents/Polly", Files.FileType.Absolute)
+        setPreferencesConfig("Documents/$APP_NAME", Files.FileType.External)
     })
 }

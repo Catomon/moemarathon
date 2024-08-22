@@ -5,14 +5,16 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Queue
 import com.github.catomon.polly.NoteMap
 import com.github.catomon.polly.Note
+import com.github.catomon.polly.map.osu.OsuParser
+import com.github.catomon.polly.map.osu.toNote
 import kotlin.random.Random
 
 private val colors = listOf(Color.GREEN, Color.SKY, Color.TAN, Color.BLUE, Color.GOLD)
 
 fun loadNoteMap(fileName: String): NoteMap {
-    val hits = HitObjectParser(
+    val hits = OsuParser.parseHitObjects(
         Gdx.files.internal("maps/$fileName").readString()
-    ).parse()
+    )
 
     val noteMap = NoteMap(Queue(hits.size / 10 + 1))
     noteMap.chunks.addFirst(NoteMap.Chunk())

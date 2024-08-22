@@ -1,4 +1,4 @@
-package com.github.catomon.polly
+package com.github.catomon.polly.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -6,17 +6,26 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.github.catomon.polly.AudioManager
+import com.github.catomon.polly.PlayScreen
 import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisTable
 
-class PlayHud : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
+class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
+
+    private val comboLabel = ComboLabel(playScreen.stats)
 
     init {
-//        addActor(VisTable().apply {
-//
-//        })
+        addActor(VisTable().apply {
+            left().bottom()
+            setFillParent(true)
+            add(comboLabel).left().bottom().padLeft(16f)
+        })
     }
 
     fun onNoteEvent(id: Int, notePos: Vector2) {
+        comboLabel.onNoteEvent(id, notePos)
+
         when (id) {
             0 -> "Miss!"
             1 -> {
@@ -56,6 +65,7 @@ class PlayHud : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(fal
                     else -> Color.RED
                 }
                 setPosition(noteToStagePos.x, noteToStagePos.y)
+                setFontScale(2f)
                 addAction(Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)))
             }
         )

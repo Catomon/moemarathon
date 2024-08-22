@@ -8,14 +8,26 @@ import com.badlogic.gdx.utils.ScreenUtils
 import com.github.catomon.polly.utils.setMouseCursor
 import com.kotcrab.vis.ui.VisUI
 
+lateinit var assets: Assets
+
 open class GameMain : Game() {
+
+    companion object {
+        var screenWidth = -1
+            private set
+        var screenHeight = -1
+            private set
+    }
+
     override fun create() {
-        VisUI.load()
+        assets = Assets()
 
         if (Const.IS_DESKTOP)
             setMouseCursor()
 
-        setScreen(PlayScreen())
+        assets.loadUI()
+
+        setScreen(LoadingScreen(this))
     }
 
     override fun render() {
@@ -30,5 +42,12 @@ open class GameMain : Game() {
                 Gdx.graphics.setWindowedMode(Gdx.graphics.width, Gdx.graphics.height)
             else
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+    }
+
+    override fun resize(width: Int, height: Int) {
+        screenWidth = width
+        screenHeight = height
+
+        super.resize(width, height)
     }
 }

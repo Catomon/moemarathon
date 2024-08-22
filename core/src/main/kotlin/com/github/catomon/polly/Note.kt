@@ -8,3 +8,4 @@ data class Note(
     var visual: Int = 0,
     var color: Int = 0,
 )
+
