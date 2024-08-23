@@ -6,8 +6,6 @@ import com.badlogic.gdx.audio.Sound
 
 object AudioManager {
 
-    val testMusic = Gdx.audio.newMusic(Gdx.files.internal("maps/juna.mp3"))
-
     var soundVolume = GamePref.soundVolume
 
     var musicVolume = GamePref.musicVolume
@@ -21,6 +19,10 @@ object AudioManager {
     var currentMusic2: Music? = null
 
     lateinit var hitSound: Sound
+
+    fun setMapMusic(name: String) {
+        mapMusic = Gdx.audio.newMusic(Gdx.files.internal("maps/$name"))
+    }
 
     fun onMusicLoaded() {
         this.hitSound = assets.getSound("hit.ogg")

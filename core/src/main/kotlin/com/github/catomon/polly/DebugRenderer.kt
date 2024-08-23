@@ -40,7 +40,7 @@ class DebugRenderer(val playScreen: PlayScreen, val shapes: ShapeRenderer) {
                 notes.addAll(noteMap.chunks.elementAtOrNull(noteMap.chunks.size - 2)?.notes ?: emptyList())
                 val notePos = Vector2()
                 for (note in notes) {
-                    val timeLeft = note.timing - time - noteClickTimeWindow
+                    val timeLeft = note.calcTimeLeft()
                     if (timeLeft <= noteSpawnTime) {
                         note.calcPosition(notePos)
                         shapes.color =

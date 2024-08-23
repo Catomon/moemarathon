@@ -1,6 +1,7 @@
 package com.github.catomon.polly.ui
 
 import com.badlogic.gdx.math.Vector2
+import com.github.catomon.polly.Note
 import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.gameplay.Stats
 import com.github.catomon.polly.uiactions.DelayRepeatAction
@@ -29,7 +30,7 @@ class ScoreLabel(private val stats: Stats) : VisLabel("0"), NoteListener {
         })
     }
 
-    override fun onNoteEvent(id: Int, notePos: Vector2) {
+    override fun onNoteEvent(id: Int, note: Note) {
         when (id) {
             1, 2, 3 -> {
 

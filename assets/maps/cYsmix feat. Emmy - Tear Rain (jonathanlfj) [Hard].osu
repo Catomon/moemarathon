@@ -1,3 +1,105 @@
+osu file format v12
+
+[General]
+AudioFilename: tearrain.mp3
+AudioLeadIn: 1500
+PreviewTime: 195852
+Countdown: 0
+SampleSet: None
+StackLeniency: 0.5
+Mode: 0
+LetterboxInBreaks: 0
+WidescreenStoryboard: 0
+
+[Editor]
+Bookmarks: 852,113352,195852
+DistanceSpacing: 1.3
+BeatDivisor: 4
+GridSize: 4
+
+[Metadata]
+Title:Tear Rain
+TitleUnicode:Tear Rain
+Artist:cYsmix feat. Emmy
+ArtistUnicode:cYsmix feat. えみぃ
+Creator:jonathanlfj
+Version:Hard
+Source:Touhou
+Tags:Amateras Records Mizuyosi Radical Destruction 魔法少女達の百年祭 The Centennial Festival for Magical Girls 東方紅魔郷 ～ the Embodiment of Scarlet Devil Extra stage theme monthly beatmapping contest two
+BeatmapID:351188
+BeatmapSetID:140662
+
+[Difficulty]
+HPDrainRate:5
+CircleSize:4
+OverallDifficulty:6
+ApproachRate:7
+SliderMultiplier:1.4
+SliderTickRate:2
+
+[Events]
+//Background and Video events
+0,0,"BG.png",0,0
+//Break Periods
+2,106051,112452
+2,190227,194952
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+//Storyboard Sound Samples
+//Background Colour Transformations
+3,100,163,162,255
+
+[TimingPoints]
+852.123875140607,468.75,4,2,1,50,1,0
+15383,-76.9230769230769,4,2,1,50,0,0
+15852,-100,4,3,1,60,0,0
+45852,-117.647058823529,4,2,1,50,0,0
+60383,-117.647058823529,4,2,1,55,0,0
+60852,-100,4,2,1,60,0,0
+75852,-117.647058823529,4,3,1,60,0,0
+77258,-76.9230769230769,4,3,1,80,0,0
+77727,-86.9565217391304,4,3,1,80,0,1
+92258,-76.9230769230769,4,3,1,80,0,1
+92727,-86.9565217391304,4,3,1,80,0,1
+97414,-86.9565217391304,4,3,1,70,0,1
+97648,-86.9565217391304,4,3,1,60,0,1
+97883,-86.9565217391304,4,3,1,50,0,1
+98117,-86.9565217391304,4,3,1,40,0,1
+98352,-86.9565217391304,4,3,1,80,0,1
+105852,-100,4,2,1,60,0,0
+120852,-117.647058823529,4,2,1,50,0,0
+133977,-100,4,3,1,70,0,0
+134914,-76.9230769230769,4,3,1,80,0,0
+135852,-100,4,3,1,60,0,0
+165852,-117.647058823529,4,2,1,50,0,0
+178742,-117.647058823529,4,2,1,45,0,0
+180852,-117.647058823529,4,2,1,40,0,0
+188469,-117.647058823529,4,2,1,20,0,0
+195852,-100,4,3,1,70,0,0
+197258,-76.9230769230769,4,3,1,80,0,0
+197727,-86.9565217391304,4,3,1,80,0,1
+223977,-100,4,2,1,70,0,1
+225852,-100,4,2,1,60,0,1
+227727,-117.647058823529,4,2,1,50,0,0
+238977,-117.647058823529,4,2,1,40,0,0
+239445,-117.647058823529,4,2,1,45,0,0
+239914,-117.647058823529,4,2,1,50,0,0
+240383,-117.647058823529,4,2,1,55,0,0
+240852,-117.647058823529,4,2,1,60,0,0
+241320,-117.647058823529,4,2,1,65,0,0
+241789,-117.647058823529,4,2,1,70,0,0
+
+
+[Colours]
+Combo1 : 255,17,17
+Combo2 : 71,204,254
+Combo3 : 253,234,123
+Combo4 : 218,121,255
+Combo5 : 254,146,184
+
+[HitObjects]
 408,80,852,2,0,P|420:132|408:168,1,70,4|0,0:0|0:0,0:0:0:0:
 344,124,1320,2,0,P|300:128|260:112,1,70,0|2,0:0|0:0,0:0:0:0:
 216,72,1789,2,0,P|128:88|88:136,1,140,0|0,0:0|0:0,0:0:0:0:

@@ -2,11 +2,11 @@ package com.github.catomon.polly.playstage
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.github.catomon.polly.Note
 import com.github.catomon.polly.PlayScreen
 import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.utils.SpriteActor
@@ -34,7 +34,8 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         batch.end()
     }
 
-    override fun onNoteEvent(id: Int, notePos: Vector2) {
+    override fun onNoteEvent(id: Int, note: Note) {
+        val notePos = with(playScreen) { note.calcPosition() }
         when (id) {
             0 -> "Miss!"
             1, 2, 3 -> {

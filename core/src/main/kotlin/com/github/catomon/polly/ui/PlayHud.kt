@@ -2,17 +2,18 @@ package com.github.catomon.polly.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.AudioManager
+import com.github.catomon.polly.Note
 import com.github.catomon.polly.PlayScreen
 import com.github.catomon.polly.gameplay.NoteListener
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 
-class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })), NoteListener {
+class PlayHud(private val playScreen: PlayScreen) :
+    Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })), NoteListener {
 
     private val scoreLabel = ScoreLabel(playScreen.stats)
     private val comboLabel = ComboLabel(playScreen.stats)
@@ -33,41 +34,34 @@ class PlayHud(private val playScreen: PlayScreen) : Stage(ScreenViewport(Orthogr
         playScreen.noteListeners.add(scoreLabel)
     }
 
-    override fun onNoteEvent(id: Int, notePos: Vector2) {
-        comboLabel.onNoteEvent(id, notePos)
+    override fun onNoteEvent(id: Int, note: Note) {
+        val notePos = with(playScreen) { note.calcPosition() }
+
+        comboLabel.onNoteEvent(id, note)
 
         when (id) {
-            0 -> "Miss!"
-            1 -> {
+            1, 2, 3, NoteListener.NOTE_TRACE_START -> {
                 AudioManager.hitSound.play()
             }
-            2 -> {
-                AudioManager.hitSound.play()
-            }
-            3 -> {
-                AudioManager.hitSound.play()
-            }
-            4 -> "Too early!"
-            5 -> "Too far!"
-            else -> "Unknown"
         }
 
         val noteToStagePos = notePos
+        val noteIsGreat = with(playScreen) { note.isGreat() }
         addActor(
             VisLabel(
                 when (id) {
                     0 -> "Miss!"
-                    1 -> "Great!"
+                    1 -> if (noteIsGreat) "Great!" else "Ok!"
                     2 -> "Early"
                     3 -> "Late"
                     4 -> "Too early!"
                     5 -> "Too far!"
-                    else -> "Unknown"
+                    else -> ""
                 }
             ).apply {
                 color = when (id) {
                     0 -> Color.RED
-                    1 -> Color.GREEN
+                    1 -> if (noteIsGreat) Color.GREEN else Color.YELLOW
                     2 -> Color.ORANGE
                     3 -> Color.BLUE
                     4 -> Color.ORANGE

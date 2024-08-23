@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
+import com.github.catomon.polly.Const.SCORE_GAIN_OK
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
 import com.github.catomon.polly.gameplay.NoteListener
@@ -27,7 +28,7 @@ class PlayScreen : ScreenAdapter() {
     }
     val batch = SpriteBatch()
 
-    val noteMap = loadNoteMap("Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu")
+    val noteMap = loadNoteMap("cYsmix feat. Emmy - Tear Rain (jonathanlfj) [Hard].osu")
 
     var mapOffset = -1.5f
 
@@ -53,40 +54,40 @@ class PlayScreen : ScreenAdapter() {
     val pointerSize = 0.05f
 
     val noteSpawnTime = 1f //1 hard //3.5f
-    val noteClickTimeWindow = 0.200f
+    val noteClickTimeWindow = 0.200f // actual time window is twice this value
+    val noteClickGreat = 0.075f // actual time window is twice this value
     val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
     val earlyClickRad get() = circleRadius + circleRadius * 2 * (noteClickTimeWindow / noteSpawnTime)
 
     var isTracing = false
+    var tracingButton = -1
 
     val stats = Stats()
 
     private val shapes = ShapeRenderer().apply { setAutoShapeType(true) }
     private val debugRenderer = DebugRenderer(this, shapes)
 
-    private var paused = false
-    private var autoPlay = false
+    var paused = false
+    var autoPlay = false
 
     val noteListeners = Array<NoteListener>()
 
     val playStage = PlayStage(this)
     val playHud = PlayHud(this)
 
+    var debug = false
 
     init {
         Gdx.input.inputProcessor = PlayInputProcessor(this)
         AudioManager
-
-//        val osuMap = OsuParser.parse(Gdx.files.internal("maps/3L - Endless night (sjoy) [Eternal].osu").readString())
-//        println(osuMap)
 
         noteListeners.add(playStage)
         noteListeners.add(playHud)
     }
 
     var action: (() -> Unit)? = {
-        AudioManager.testMusic.play()
-        time = AudioManager.testMusic.position
+        AudioManager.mapMusic?.play() ?: IllegalStateException("AudioManager.mapMusic must be not null at this point")
+        time = AudioManager.mapMusic!!.position
     }
 
     private fun update(delta: Float) {
@@ -95,7 +96,7 @@ class PlayScreen : ScreenAdapter() {
         if (action != null) {
             time += delta
         } else {
-            time = AudioManager.testMusic.position
+            time = AudioManager.mapMusic!!.position
         }
 
         if (action != null && time >= 0) {
@@ -121,13 +122,13 @@ class PlayScreen : ScreenAdapter() {
                         isTracing = false
 
                     notes.removeLast()
-                    onNoteEvent(0, note.calcPosition(Vector2()))
+                    onNoteEvent(NoteListener.MISS, note)
                 }
 
                 if (autoPlay) {
                     if (note.timing <= time) {
                         notes.removeLast()
-                        onNoteEvent(1, note.calcPosition(Vector2()))
+                        onNoteEvent(NoteListener.HIT, note)
                     }
                 }
             }
@@ -143,7 +144,7 @@ class PlayScreen : ScreenAdapter() {
 
         playHud.draw()
 
-        if (Const.DEBUG)
+        if (Const.DEBUG || debug)
             debugRenderer.draw()
     }
 
@@ -153,7 +154,9 @@ class PlayScreen : ScreenAdapter() {
 
     fun calcNotePosition(note: Note, vector2: Vector2 = Vector2()): Vector2 = note.calcPosition(vector2)
 
-    fun Note.calcPosition(vector2: Vector2): Vector2 {
+    fun Note.isGreat(): Boolean = time - timing in -noteClickGreat..noteClickGreat
+
+    fun Note.calcPosition(vector2: Vector2 = Vector2()): Vector2 {
         val timeLeft = (timing - time) / noteSpawnTime
         val cameraX = camera.position.x
         val cameraY = camera.position.y
@@ -181,19 +184,19 @@ class PlayScreen : ScreenAdapter() {
         return vector2.set(clickerX, clickerY)
     }
 
-    private fun onNoteEvent(id: Int, notePos: Vector2) {
+    private fun onNoteEvent(id: Int, note: Note) {
         when (id) {
-            0 -> stats.combo = 0
+            NoteListener.MISS -> stats.combo = 0
             1, 2, 3 -> {
                 stats.combo++
-                stats.score += SCORE_GAIN_GREAT
+                stats.score += if (note.isGreat()) SCORE_GAIN_GREAT else SCORE_GAIN_OK
             }
         }
 
-        noteListeners.forEach { it.onNoteEvent(id, notePos) }
+        noteListeners.forEach { it.onNoteEvent(id, note) }
     }
 
-    fun clickNote() {
+    fun clickNote(button: Int) {
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
@@ -204,29 +207,34 @@ class PlayScreen : ScreenAdapter() {
         if (isInTiming && isPointerNear) {
             noteMap.chunks.last().notes.removeLast()
 
-            if (note.tracingNext)
+            if (note.tracingNext) {
                 isTracing = true
-            else {
-                if (note.tracingPrev)
-                    isTracing = false
+                tracingButton = button
 
-                onNoteEvent(1, notePos)
+                onNoteEvent(NoteListener.NOTE_TRACE_START, note)
+            } else {
+                if (note.tracingPrev) {
+                    isTracing = false
+                    tracingButton = -1
+                }
+
+                onNoteEvent(NoteListener.HIT, note)
             }
         } else {
             if (isTracing) {
                 isTracing = false
 
                 noteMap.chunks.last().notes.removeLast()
-                onNoteEvent(0, notePos)
+                onNoteEvent(NoteListener.MISS, note)
             } else {
                 if (note.timing - time > noteSpawnTime / 4f) {
-                    onNoteEvent(4, notePos)
+                    onNoteEvent(NoteListener.TOO_EARLY, note)
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
                         noteMap.chunks.last().notes.removeLast()
-                        onNoteEvent(0, notePos)
+                        onNoteEvent(NoteListener.MISS, note)
                     } else {
-                        onNoteEvent(5, notePos)
+                        onNoteEvent(NoteListener.TOO_FAR, note)
                     }
                 }
             }

@@ -5,34 +5,50 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.math.Vector3
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
+
     override fun keyDown(keycode: Int): Boolean {
         when (keycode) {
             Input.Keys.W -> {
                 playScreen.circleSize += 0.05f
                 playScreen.mapSize = playScreen.mapSize
             }
+
             Input.Keys.Q -> {
                 playScreen.noteSize += 0.01f
                 playScreen.mapSize = playScreen.mapSize
             }
+
             Input.Keys.S -> {
                 playScreen.circleSize -= 0.05f
                 playScreen.mapSize = playScreen.mapSize
             }
+
             Input.Keys.E -> {
                 playScreen.noteSize -= 0.01f
                 playScreen.mapSize = playScreen.mapSize
             }
 
-            else -> playScreen.clickNote()
+            Input.Keys.F1 -> {
+                playScreen.debug = !playScreen.debug
+            }
+
+            Input.Keys.F2 -> {
+                playScreen.paused = !playScreen.paused
+            }
+
+            Input.Keys.F3 -> {
+                playScreen.autoPlay = !playScreen.autoPlay
+            }
+
+            else -> playScreen.clickNote(keycode)
         }
 
         return super.keyDown(keycode)
     }
 
     override fun keyUp(keycode: Int): Boolean {
-        if (playScreen.isTracing) {
-            playScreen.clickNote()
+        if (playScreen.isTracing && playScreen.tracingButton == keycode) {
+            playScreen.clickNote(keycode)
         }
 
         return super.keyUp(keycode)
@@ -44,7 +60,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
         playScreen.camera.unproject(tmpVec)
         playScreen.pointerX = tmpVec.x
         playScreen.pointerY = tmpVec.y
-        playScreen.clickNote()
+        playScreen.clickNote(button)
 
         return super.touchDown(screenX, screenY, pointer, button)
     }
@@ -55,8 +71,8 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
         playScreen.camera.unproject(tmpVec)
         playScreen.pointerX = tmpVec.x
         playScreen.pointerY = tmpVec.y
-        if (playScreen.isTracing) {
-            playScreen.clickNote()
+        if (playScreen.isTracing && playScreen.tracingButton == button) {
+            playScreen.clickNote(button)
         }
 
         return super.touchUp(screenX, screenY, pointer, button)
