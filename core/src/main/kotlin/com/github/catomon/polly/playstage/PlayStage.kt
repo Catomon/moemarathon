@@ -13,10 +13,12 @@ import com.github.catomon.polly.utils.SpriteActor
 
 class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.camera), playScreen.batch), NoteListener {
 
+    val background = BackgroundActor(Sprite(Texture("bg.jpg")))
     val centerActor = CenterActor(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
     init {
+        addActor(background)
         addActor(centerActor)
         addActor(notesDrawer)
     }
@@ -39,7 +41,8 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         when (id) {
             0 -> "Miss!"
             1, 2, 3 -> {
-                addActor(SpriteActor(Sprite(Texture("textures/note3.png"))).apply {
+                //todo leak
+                addActor(SpriteActor(Sprite(Texture("textures/note2.png"))).apply {
                     setPosition(notePos.x, notePos.y)
                     setSize(playScreen.noteRadius, playScreen.noteRadius)
                     addAction(

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
 import com.github.catomon.polly.Const.SCORE_GAIN_OK
@@ -28,7 +29,7 @@ class PlayScreen : ScreenAdapter() {
     }
     val batch = SpriteBatch()
 
-    val noteMap = loadNoteMap("cYsmix feat. Emmy - Tear Rain (jonathanlfj) [Hard].osu")
+    val noteMap = loadNoteMap("Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu")
 
     var mapOffset = -1.5f
 
@@ -49,8 +50,6 @@ class PlayScreen : ScreenAdapter() {
 
     var time = -3f
 
-    var pointerX: Float = 0f
-    var pointerY: Float = 0f
     val pointerSize = 0.05f
 
     val noteSpawnTime = 1f //1 hard //3.5f
@@ -61,6 +60,15 @@ class PlayScreen : ScreenAdapter() {
 
     var isTracing = false
     var tracingButton = -1
+
+    private val tempVec3 = Vector3()
+    fun getPointer(): Vector3 {
+        return tempVec3.apply {
+            x = Gdx.input.x.toFloat()
+            y = Gdx.input.y.toFloat()
+            camera.unproject(tempVec3)
+        }
+    }
 
     val stats = Stats()
 
@@ -175,6 +183,10 @@ class PlayScreen : ScreenAdapter() {
     }
 
     fun calcClickerPos(vector2: Vector2): Vector2 {
+        val pointer = getPointer()
+        val pointerX = pointer.x
+        val pointerY = pointer.y
+
         val cameraX = camera.position.x
         val cameraY = camera.position.y
         val angle = atan2(cameraY - pointerY, cameraX - pointerX)

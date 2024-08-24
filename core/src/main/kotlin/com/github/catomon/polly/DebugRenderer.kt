@@ -10,6 +10,9 @@ class DebugRenderer(val playScreen: PlayScreen, val shapes: ShapeRenderer) {
 
     fun draw() {
         playScreen.apply {
+            val pointer = getPointer()
+            val pointerX = pointer.x
+            val pointerY = pointer.y
 
             val cameraX = camera.position.x
             val cameraY = camera.position.y

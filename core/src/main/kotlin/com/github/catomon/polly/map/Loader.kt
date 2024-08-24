@@ -53,13 +53,6 @@ fun loadNoteMap(fileName: String): NoteMap {
 
             val sliderEndTime = length / (sliderMultiplier * 100f * sv) * beatLength
 
-            println()
-            println(sv)
-            println((hit.time + sliderEndTime * slides) / 1000f)
-            println(beatLength)
-            println(slides)
-            println()
-
             val sliderEndNote =
                 Note(
                     (hit.time + sliderEndTime * slides) / 1000f,

@@ -55,22 +55,12 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        tmpVec.x = screenX.toFloat()
-        tmpVec.y = screenY.toFloat()
-        playScreen.camera.unproject(tmpVec)
-        playScreen.pointerX = tmpVec.x
-        playScreen.pointerY = tmpVec.y
         playScreen.clickNote(button)
 
         return super.touchDown(screenX, screenY, pointer, button)
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        tmpVec.x = screenX.toFloat()
-        tmpVec.y = screenY.toFloat()
-        playScreen.camera.unproject(tmpVec)
-        playScreen.pointerX = tmpVec.x
-        playScreen.pointerY = tmpVec.y
         if (playScreen.isTracing && playScreen.tracingButton == button) {
             playScreen.clickNote(button)
         }
@@ -79,23 +69,10 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-        tmpVec.x = screenX.toFloat()
-        tmpVec.y = screenY.toFloat()
-        playScreen.camera.unproject(tmpVec)
-        playScreen.pointerX = tmpVec.x
-        playScreen.pointerY = tmpVec.y
-
         return super.touchDragged(screenX, screenY, pointer)
     }
 
-    private val tmpVec = Vector3()
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        tmpVec.x = screenX.toFloat()
-        tmpVec.y = screenY.toFloat()
-        playScreen.camera.unproject(tmpVec)
-        playScreen.pointerX = tmpVec.x
-        playScreen.pointerY = tmpVec.y
-
         return super.mouseMoved(screenX, screenY)
     }
 }

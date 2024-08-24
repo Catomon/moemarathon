@@ -1,13 +1,15 @@
 package com.github.catomon.polly.playstage
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.github.catomon.polly.Note
 import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.assets
+import com.github.catomon.polly.utils.degrees
+import com.github.catomon.polly.utils.setPositionByCenter
 
 class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 
@@ -15,15 +17,36 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteSpawnTime get() = playScreen.noteSpawnTime
     private val noteRadius get() = playScreen.noteRadius
 
-    private val noteName = "note3"
-    private val noteSprite = Sprite(Texture("textures/$noteName.png"))
+    private val noteName = "note"
+    private val noteOuterTex = assets.mainAtlas.findRegion(noteName + "_outer")
+    private val noteInnerTex = assets.mainAtlas.findRegion(noteName + "_inner")
+    private val noteTraceTex = assets.mainAtlas.findRegion(noteName + "_trace")
+    private val pointerTraceTex = assets.mainAtlas.findRegion(noteName + "_pointer_trace")
+
+    private val noteInnerSprite = Sprite(noteInnerTex)
+    private val noteOuterSprite = Sprite(noteOuterTex)
+    private val noteTraceSprite = Sprite(noteTraceTex)
+    private val pointerTraceSprite = Sprite(pointerTraceTex)
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         drawNotes(batch)
     }
 
     private fun drawNotes(batch: Batch) {
+        val spriteWidth = noteRadius * 4
+        val spriteHeight = noteRadius * 4
+        noteInnerSprite.setSize(spriteWidth, spriteHeight)
+        noteInnerSprite.setOriginCenter()
+        noteOuterSprite.setSize(spriteWidth, spriteHeight)
+        noteOuterSprite.setOriginCenter()
+        noteTraceSprite.setSize(spriteWidth, spriteHeight)
+        noteTraceSprite.setOriginCenter()
+        pointerTraceSprite.setSize(spriteWidth, spriteHeight)
+        pointerTraceSprite.setOriginCenter()
+
         val firstNote = noteMap.chunks.lastOrNull()?.notes?.lastOrNull()
+        if (firstNote == null) return
+        val firstNotePos = firstNote.calcPosition(Vector2())
 
         var notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
         if (notes != null) {
@@ -36,33 +59,92 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                 if (timeLeft <= noteSpawnTime) {
                     note.calcPosition(notePos)
 
-                    drawNote(batch, notePos, timeLeft)
+                    when {
+                        note.tracingNext -> {
+                            val nextNotePos = notes.getOrNull(notes.indexOf(note) - 1)?.calcPosition(Vector2())
+                            if (nextNotePos != null) {
+                                drawNote(batch, notePos, timeLeft, traceToNote = nextNotePos)
+                            } else {
+                                drawNote(batch, notePos, timeLeft)
+                            }
+                        }
 
-                    if (note.tracingNext) {
+                        note.tracingPrev -> {
+                            val prevNotePos =
+                                notes.getOrNull(notes.indexOf(note) + 1)?.calcPosition(Vector2()) ?: firstNotePos
+                            drawNote(batch, notePos, timeLeft, traceToNote = prevNotePos)
+                        }
 
-                        val nextNotePos = notes.getOrNull(notes.indexOf(note) - 1)?.calcPosition(Vector2())
-                        if (nextNotePos != null) {
-                            //shapes.line(notePos.x, notePos.y, nextNotePos.x, nextNotePos.y)
+                        else -> {
+                            drawNote(batch, notePos, timeLeft)
                         }
                     }
                 }
             }
-        }
 
-        if (firstNote != null) {
-            drawNote(batch, firstNote.calcPosition(Vector2()), playScreen.calcNoteTimeLeft(firstNote), Color.YELLOW)
+            val timeLeft = playScreen.calcNoteTimeLeft(firstNote)
+
+            if (firstNote.tracingNext) {
+                val nextNotePos = notes.lastOrNull()?.calcPosition(Vector2())
+                if (nextNotePos != null) {
+                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW, nextNotePos)
+                } else {
+                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                }
+            } else {
+                if (playScreen.isTracing) {
+                    val pointer = playScreen.getPointer()
+
+                    when {
+                        firstNote.tracingPrev -> {
+                            val prevNotePos = Vector2(pointer.x, pointer.y)
+                            drawNote(batch, firstNotePos, timeLeft, Color.YELLOW, prevNotePos)
+                        }
+
+                        else -> {
+                            drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                        }
+                    }
+
+                    pointerTraceSprite.setPositionByCenter(pointer.x, pointer.y)
+                    pointerTraceSprite.rotation = degrees(pointer.x, pointer.y, firstNotePos.x, firstNotePos.y)
+                    pointerTraceSprite.draw(batch)
+                } else {
+                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                }
+            }
         }
     }
 
-    private fun drawNote(batch: Batch, notePos: Vector2, timeLeft: Float, color: Color? = null) {
-        noteSprite.setSize(noteRadius * 2, noteRadius * 2)
-        noteSprite.setPosition(notePos.x - noteSprite.width / 2, notePos.y - noteSprite.height / 2)
-        noteSprite.setAlpha(0f)
+    private fun drawNote(
+        batch: Batch,
+        notePos: Vector2,
+        timeLeft: Float,
+        color: Color? = null,
+        traceToNote: Vector2? = null
+    ) {
+        if (traceToNote != null) {
+            noteTraceSprite.setPositionByCenter(notePos.x, notePos.y)
+            noteTraceSprite.rotation = degrees(notePos.x, notePos.y, traceToNote.x, traceToNote.y)
+            noteTraceSprite.draw(batch)
+        }
+
+        noteInnerSprite.setPositionByCenter(notePos.x, notePos.y)
+        noteOuterSprite.setPositionByCenter(notePos.x, notePos.y)
+        noteInnerSprite.setAlpha(0f)
+        noteOuterSprite.setAlpha(0f)
+
         var a = (noteSpawnTime - timeLeft) / (noteSpawnTime * 0.1f)
         if (a > 1) a = 1f
-        noteSprite.color = color ?: Color.WHITE
-        noteSprite.setAlpha(a)
-        noteSprite.draw(batch)
+
+        noteOuterSprite.color = color ?: Color.WHITE
+
+        noteOuterSprite.setAlpha(a)
+        noteOuterSprite.draw(batch)
+
+        noteInnerSprite.color = Color.PURPLE
+        noteInnerSprite.setAlpha(a)
+        noteInnerSprite.draw(batch)
     }
 
     fun Note.calcPosition(vector2: Vector2): Vector2 = playScreen.calcNotePosition(this, vector2)
