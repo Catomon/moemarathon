@@ -11,11 +11,12 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
 import com.github.catomon.polly.Const.SCORE_GAIN_OK
+import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
 import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.gameplay.Stats
-import com.github.catomon.polly.map.loadNoteMap
+import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.playstage.PlayStage
 import com.github.catomon.polly.ui.PlayHud
 import kotlin.math.cos
@@ -29,7 +30,8 @@ class PlayScreen : ScreenAdapter() {
     }
     val batch = SpriteBatch()
 
-    val noteMap = loadNoteMap("Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu")
+    val gameMap = GameMap(Gdx.files.internal("maps/Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu"))
+    val noteMap = gameMap.notMap
 
     var mapOffset = -1.5f
 
@@ -87,10 +89,11 @@ class PlayScreen : ScreenAdapter() {
 
     init {
         Gdx.input.inputProcessor = PlayInputProcessor(this)
-        AudioManager
 
         noteListeners.add(playStage)
         noteListeners.add(playHud)
+
+        AudioManager.loadMapMusic(gameMap.osuBeatmap.audioFileName)
     }
 
     var action: (() -> Unit)? = {
@@ -129,8 +132,10 @@ class PlayScreen : ScreenAdapter() {
                     if (note.tracingPrev)
                         isTracing = false
 
-                    notes.removeLast()
-                    onNoteEvent(NoteListener.MISS, note)
+                    onNoteEvent(NoteListener.MISS, notes.removeLast())
+
+                    if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
+                        onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
                 }
 
                 if (autoPlay) {
@@ -201,7 +206,10 @@ class PlayScreen : ScreenAdapter() {
             NoteListener.MISS -> stats.combo = 0
             1, 2, 3 -> {
                 stats.combo++
-                stats.score += if (note.isGreat()) SCORE_GAIN_GREAT else SCORE_GAIN_OK
+                stats.score +=
+                    if (note.tracingPrev) SCORE_GAIN_TRACE
+                    else if (note.isGreat()) SCORE_GAIN_GREAT
+                    else SCORE_GAIN_OK
             }
         }
 

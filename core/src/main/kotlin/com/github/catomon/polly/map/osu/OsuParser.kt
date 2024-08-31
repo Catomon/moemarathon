@@ -11,7 +11,7 @@ object OsuParser {
         lines.forEach { line ->
             val params = line.split(",")
             when {
-                params.size > 10 -> {
+                params.size > 7 -> {
                     val hitObject = HitObject(
                         x = params[0].toInt(),
                         y = params[1].toInt(),
@@ -36,7 +36,7 @@ object OsuParser {
         return hitObjects
     }
 
-    fun parse(text: String): OsuFile {
+    fun parse(text: String): OsuBeatmap {
         val lines = text.lines()
 
         val versionLine = lines.first().let {
@@ -46,7 +46,7 @@ object OsuParser {
                 it
         }
 
-        val osuFile = OsuFile(versionLine.split("\\s+".toRegex()).lastOrNull() ?: "unknown")
+        val osuBeatmap = OsuBeatmap(versionLine.split("\\s+".toRegex()).lastOrNull() ?: "unknown")
 
         var section = ""
         for (line in lines) {
@@ -65,21 +65,21 @@ object OsuParser {
                     }
                     .mapNotNull { if (it.contains("//") || it.isEmpty()) null else it }
 
-                if (!osuFile.sections.containsKey(section))
-                    osuFile.sections.put(section, ArrayMap())
+                if (!osuBeatmap.sections.containsKey(section))
+                    osuBeatmap.sections.put(section, ArrayMap())
 
                 options.forEachIndexed { i, opt ->
                     val nameVal = opt.split(": ", ":")
                     if (nameVal.size == 2 && section != "HitObjects" && section != "TimingPoints")
-                        osuFile.sections[section].put(nameVal[0], nameVal.drop(1).first())
+                        osuBeatmap.sections[section].put(nameVal[0], nameVal.drop(1).first())
                     else
-                        osuFile.sections[section].put(i.toString(), opt)
+                        osuBeatmap.sections[section].put(i.toString(), opt)
                 }
 
                 section = ""
             }
         }
 
-        return osuFile
+        return osuBeatmap
     }
 }

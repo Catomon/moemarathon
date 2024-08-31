@@ -39,12 +39,25 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     override fun onNoteEvent(id: Int, note: Note) {
         val notePos = with(playScreen) { note.calcPosition() }
         when (id) {
-            0 -> "Miss!"
+            0 -> {
+                //todo leak
+                addActor(SpriteActor(Sprite(Texture("textures/note2.png"))).apply {
+                    setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
+                    setPosition(notePos.x, notePos.y)
+                    addAction(
+                        Actions.sequence(
+                            Actions.parallel(Actions.moveBy(0f, -16f, 1f), Actions.fadeOut(1f)),
+                            Actions.removeActor()
+                        )
+                    )
+                })
+            }
+
             1, 2, 3 -> {
                 //todo leak
                 addActor(SpriteActor(Sprite(Texture("textures/note2.png"))).apply {
-                    setPosition(notePos.x, notePos.y)
                     setSize(playScreen.noteRadius, playScreen.noteRadius)
+                    setPosition(notePos.x, notePos.y)
                     addAction(
                         Actions.sequence(
                             Actions.parallel(

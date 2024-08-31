@@ -6,6 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.AudioManager
+import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
+import com.github.catomon.polly.Const.SCORE_GAIN_OK
+import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.Note
 import com.github.catomon.polly.PlayScreen
 import com.github.catomon.polly.gameplay.NoteListener
@@ -51,7 +54,18 @@ class PlayHud(private val playScreen: PlayScreen) :
             VisLabel(
                 when (id) {
                     0 -> "Miss!"
-                    1 -> if (noteIsGreat) "Great!" else "Ok!"
+                    1 -> {
+                        //if (noteIsGreat) "Great!" else "Ok!"
+
+//                        (if (note.tracingPrev) SCORE_GAIN_TRACE
+//                        else if (noteIsGreat) SCORE_GAIN_GREAT
+//                        else SCORE_GAIN_OK).toString()
+
+                        if (note.tracingPrev) "九百"
+                        else if (noteIsGreat) "三百"
+                        else "\t\t二百"
+                    }
+
                     2 -> "Early"
                     3 -> "Late"
                     4 -> "Too early!"
@@ -61,14 +75,21 @@ class PlayHud(private val playScreen: PlayScreen) :
             ).apply {
                 color = when (id) {
                     0 -> Color.RED
-                    1 -> if (noteIsGreat) Color.GREEN else Color.YELLOW
+                    1 -> {
+                        //if (noteIsGreat) Color.GREEN else Color.YELLOW
+                        if (note.tracingPrev) Color.YELLOW
+                        else if (noteIsGreat) Color.YELLOW
+                        else Color.GREEN
+                    }
                     2 -> Color.ORANGE
                     3 -> Color.BLUE
                     4 -> Color.ORANGE
                     5 -> Color.BLUE
                     else -> Color.RED
                 }
-                setPosition(noteToStagePos.x, noteToStagePos.y)
+                setFontScale(0.75f)
+                pack()
+                setPosition(noteToStagePos.x - width / 2, noteToStagePos.y - height / 2)
                 addAction(Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)))
             }
         )

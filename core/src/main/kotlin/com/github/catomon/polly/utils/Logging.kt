@@ -2,10 +2,10 @@ package com.github.catomon.polly.utils
 
 import com.badlogic.gdx.Gdx
 
-fun Any.log(msg: String) {
+fun Any.logMsg(msg: String) {
     Gdx.app.log(this::class.simpleName, msg)
 }
 
-fun Any.err(msg: String) {
+fun Any.logErr(msg: String) {
     Gdx.app.error(this::class.simpleName, msg)
 }

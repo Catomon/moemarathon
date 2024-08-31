@@ -17,7 +17,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteSpawnTime get() = playScreen.noteSpawnTime
     private val noteRadius get() = playScreen.noteRadius
 
-    private val noteName = "note"
+    private val noteName = "note2"
     private val noteOuterTex = assets.mainAtlas.findRegion(noteName + "_outer")
     private val noteInnerTex = assets.mainAtlas.findRegion(noteName + "_inner")
     private val noteTraceTex = assets.mainAtlas.findRegion(noteName + "_trace")
@@ -27,6 +27,22 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteOuterSprite = Sprite(noteOuterTex)
     private val noteTraceSprite = Sprite(noteTraceTex)
     private val pointerTraceSprite = Sprite(pointerTraceTex)
+
+    private val outerColor = Color.RED.cpy()
+    private val innerColor = Color.DARK_GRAY.cpy()
+    private val traceColor = Color.RED.cpy()
+    private val nextColor = Color.YELLOW.cpy()
+
+    private val applyColor = false
+
+    init {
+        if (applyColor) {
+            noteInnerSprite.color = innerColor
+            pointerTraceSprite.color = traceColor
+            noteOuterSprite.color = outerColor
+            noteTraceSprite.color = traceColor
+        }
+    }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         drawNotes(batch)
@@ -44,8 +60,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
         pointerTraceSprite.setSize(spriteWidth, spriteHeight)
         pointerTraceSprite.setOriginCenter()
 
-        val firstNote = noteMap.chunks.lastOrNull()?.notes?.lastOrNull()
-        if (firstNote == null) return
+        val firstNote = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val firstNotePos = firstNote.calcPosition(Vector2())
 
         var notes = noteMap.chunks.lastOrNull()?.notes?.toMutableList()
@@ -87,9 +102,9 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
             if (firstNote.tracingNext) {
                 val nextNotePos = notes.lastOrNull()?.calcPosition(Vector2())
                 if (nextNotePos != null) {
-                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW, nextNotePos)
+                    drawNote(batch, firstNotePos, timeLeft, nextColor, nextNotePos)
                 } else {
-                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                    drawNote(batch, firstNotePos, timeLeft, nextColor)
                 }
             } else {
                 if (playScreen.isTracing) {
@@ -98,11 +113,11 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                     when {
                         firstNote.tracingPrev -> {
                             val prevNotePos = Vector2(pointer.x, pointer.y)
-                            drawNote(batch, firstNotePos, timeLeft, Color.YELLOW, prevNotePos)
+                            drawNote(batch, firstNotePos, timeLeft, nextColor, prevNotePos)
                         }
 
                         else -> {
-                            drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                            drawNote(batch, firstNotePos, timeLeft, nextColor)
                         }
                     }
 
@@ -110,7 +125,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                     pointerTraceSprite.rotation = degrees(pointer.x, pointer.y, firstNotePos.x, firstNotePos.y)
                     pointerTraceSprite.draw(batch)
                 } else {
-                    drawNote(batch, firstNotePos, timeLeft, Color.YELLOW)
+                    drawNote(batch, firstNotePos, timeLeft, nextColor)
                 }
             }
         }
@@ -123,27 +138,29 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
         color: Color? = null,
         traceToNote: Vector2? = null
     ) {
-        if (traceToNote != null) {
-            noteTraceSprite.setPositionByCenter(notePos.x, notePos.y)
-            noteTraceSprite.rotation = degrees(notePos.x, notePos.y, traceToNote.x, traceToNote.y)
-            noteTraceSprite.draw(batch)
-        }
-
         noteInnerSprite.setPositionByCenter(notePos.x, notePos.y)
         noteOuterSprite.setPositionByCenter(notePos.x, notePos.y)
+
+        if (applyColor)
+            noteOuterSprite.color = color ?: outerColor
+
         noteInnerSprite.setAlpha(0f)
         noteOuterSprite.setAlpha(0f)
 
         var a = (noteSpawnTime - timeLeft) / (noteSpawnTime * 0.1f)
         if (a > 1) a = 1f
 
-        noteOuterSprite.color = color ?: Color.WHITE
-
         noteOuterSprite.setAlpha(a)
-        noteOuterSprite.draw(batch)
-
-        noteInnerSprite.color = Color.PURPLE
         noteInnerSprite.setAlpha(a)
+
+        if (traceToNote != null) {
+            noteTraceSprite.setPositionByCenter(notePos.x, notePos.y)
+            noteTraceSprite.rotation = degrees(notePos.x, notePos.y, traceToNote.x, traceToNote.y)
+            noteTraceSprite.setAlpha(a)
+            noteTraceSprite.draw(batch)
+        }
+
+        noteOuterSprite.draw(batch)
         noteInnerSprite.draw(batch)
     }
 

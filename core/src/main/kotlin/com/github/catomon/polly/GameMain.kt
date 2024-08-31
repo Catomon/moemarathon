@@ -34,7 +34,7 @@ open class GameMain : Game() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             AudioManager.mapMusic?.stop()
-            setScreen(PlayScreen())
+            setScreen(MenuScreen(this))
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11))

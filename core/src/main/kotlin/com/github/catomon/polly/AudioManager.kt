@@ -12,16 +12,28 @@ object AudioManager {
         set(value) {
             field = value
             mapMusic?.volume = value
-            currentMusic2?.volume = value
+            music?.volume = value
         }
 
     var mapMusic: Music? = null
-    var currentMusic2: Music? = null
+        private set
+
+    var music: Music? = null
+        private set
 
     lateinit var hitSound: Sound
+        private set
 
-    fun setMapMusic(name: String) {
+    fun loadMapMusic(name: String) : Music {
         mapMusic = Gdx.audio.newMusic(Gdx.files.internal("maps/$name"))
+        mapMusic!!.volume = musicVolume
+        return mapMusic!!
+    }
+
+    fun loadMusic(name: String) : Music {
+        music = Gdx.audio.newMusic(Gdx.files.internal("maps/$name"))
+        music!!.volume = musicVolume
+        return music!!
     }
 
     fun onMusicLoaded() {
@@ -30,7 +42,20 @@ object AudioManager {
 
     fun disposeMusic() {
         mapMusic?.dispose()
-        currentMusic2?.dispose()
+        music?.dispose()
+    }
+
+    fun play(music: Music, volume: Float = musicVolume) {
+        music.volume = volume
+        music.play()
+    }
+
+    fun play(sound: Sound, volume: Float = soundVolume) {
+        sound.play(soundVolume)
+    }
+
+    fun playSound(name: String, volume: Float = soundVolume) {
+        assets.getSound(name).play(volume)
     }
 
     fun sound(name: String): Long {

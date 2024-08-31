@@ -15,6 +15,7 @@ object Const {
     val IS_MOBILE = Gdx.app.type == Application.ApplicationType.Android
         || Gdx.app.type == Application.ApplicationType.iOS
 
+    const val SCORE_GAIN_TRACE = 900
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
 }

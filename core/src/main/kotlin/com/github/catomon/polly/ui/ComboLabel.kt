@@ -9,7 +9,7 @@ import com.kotcrab.vis.ui.widget.VisLabel
 
 class ComboLabel(private val stats: Stats) : VisLabel("x0"), NoteListener {
 
-    private val scaleUp = 0.25f
+    private val scaleUp = 0.175f
 
     override fun scaleChanged() {
         super.scaleChanged()

@@ -11,7 +11,7 @@ class LoadingScreen(private val game: GameMain) : ScreenAdapter() {
     override fun render(delta: Float) {
         if (assets.update()) {
             assets.onFinishLoading()
-            game.setScreen(PlayScreen())
+            game.setScreen(MenuScreen(game))
         }
     }
 }

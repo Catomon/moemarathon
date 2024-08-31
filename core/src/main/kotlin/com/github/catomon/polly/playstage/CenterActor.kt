@@ -21,6 +21,7 @@ class CenterActor(private val playScreen: PlayScreen) : Actor() {
             clickZoneSprite.draw(batch)
 
             //todo only on resize
+            centerSprite.setSize(circleRadius * 2, circleRadius * 2)
             centerSprite.setPosition(cameraX - centerSprite.width / 2, cameraY - centerSprite.height / 2)
             centerSprite.draw(batch)
         }

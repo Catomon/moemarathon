@@ -2,12 +2,12 @@ package com.github.catomon.polly.map.osu
 
 import com.badlogic.gdx.utils.ArrayMap
 
-data class OsuFile(
+data class OsuBeatmap(
     var version: String,
     val sections: ArrayMap<String, ArrayMap<String, String>> = ArrayMap(),
 ) {
 
-    val audioFileName get() = sections["General"]["AudioFilename"]
+    val audioFileName: String get() = sections["General"]["AudioFilename"] ?: throw IllegalStateException("audioFileName == null")
 
     val sliderMultiplier get() = sections["Difficulty"]["SliderMultiplier"].toFloat()
 
