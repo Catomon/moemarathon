@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.Note
 import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.assets
 import com.github.catomon.polly.gameplay.NoteListener
 import com.github.catomon.polly.utils.SpriteActor
 
@@ -53,7 +54,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
                 })
             }
 
-            1, 2, 3 -> {
+            1, 2, 3, 7 -> {
                 //todo leak
                 addActor(SpriteActor(Sprite(Texture("textures/note2.png"))).apply {
                     setSize(playScreen.noteRadius, playScreen.noteRadius)

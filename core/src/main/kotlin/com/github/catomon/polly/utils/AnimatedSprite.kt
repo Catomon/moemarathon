@@ -19,4 +19,8 @@ class AnimatedSprite(
         animation.update(delta)
         setRegion(animation.currentFrame)
     }
+
+    fun setRegion(ani: RegionAnimation) {
+        animation = ani
+    }
 }

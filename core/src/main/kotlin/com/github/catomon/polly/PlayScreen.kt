@@ -25,13 +25,13 @@ import kotlin.math.sin
 
 class PlayScreen : ScreenAdapter() {
 
-    val camera = OrthographicCamera(100f, 100f).apply {
+    val camera = OrthographicCamera().apply {
         setToOrtho(false)
     }
     val batch = SpriteBatch()
 
     val gameMap = GameMap(Gdx.files.internal("maps/Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu"))
-    val noteMap = gameMap.notMap
+    val noteMap = gameMap.noteMap
 
     var mapOffset = -1.5f
 
@@ -134,8 +134,8 @@ class PlayScreen : ScreenAdapter() {
 
                     onNoteEvent(NoteListener.MISS, notes.removeLast())
 
-                    if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
-                        onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
+//                    if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
+//                        onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
                 }
 
                 if (autoPlay) {
@@ -211,6 +211,10 @@ class PlayScreen : ScreenAdapter() {
                     else if (note.isGreat()) SCORE_GAIN_GREAT
                     else SCORE_GAIN_OK
             }
+            7 -> {
+                stats.combo++
+                stats.score += SCORE_GAIN_TRACE
+            }
         }
 
         noteListeners.forEach { it.onNoteEvent(id, note) }
@@ -231,27 +235,29 @@ class PlayScreen : ScreenAdapter() {
                 isTracing = true
                 tracingButton = button
 
-                onNoteEvent(NoteListener.NOTE_TRACE_START, note)
+//                onNoteEvent(NoteListener.NOTE_TRACE_START, note)
+                onNoteEvent(NoteListener.HIT, note)
             } else {
-                if (note.tracingPrev) {
+                if (isTracing) {
                     isTracing = false
                     tracingButton = -1
+                    onNoteEvent(NoteListener.HIT_TRACE, note)
+                } else {
+                    onNoteEvent(NoteListener.HIT, note)
                 }
-
-                onNoteEvent(NoteListener.HIT, note)
             }
         } else {
             if (isTracing) {
                 isTracing = false
 
-                noteMap.chunks.last().notes.removeLast()
+                //noteMap.chunks.last().notes.removeLast()
                 onNoteEvent(NoteListener.MISS, note)
             } else {
                 if (note.timing - time > noteSpawnTime / 4f) {
                     onNoteEvent(NoteListener.TOO_EARLY, note)
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
-                        noteMap.chunks.last().notes.removeLast()
+                        //noteMap.chunks.last().notes.removeLast()
                         onNoteEvent(NoteListener.MISS, note)
                     } else {
                         onNoteEvent(NoteListener.TOO_FAR, note)

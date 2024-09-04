@@ -6,5 +6,5 @@ import com.github.catomon.polly.map.osu.OsuParser
 class GameMap(val file: FileHandle) {
 
     val osuBeatmap = OsuParser.parse(file.readString())
-    val notMap = MapsManager.createNoteMap(osuBeatmap)
+    val noteMap = MapsManager.createNoteMap(osuBeatmap)
 }

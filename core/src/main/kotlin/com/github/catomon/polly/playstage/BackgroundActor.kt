@@ -10,7 +10,7 @@ import com.github.catomon.polly.utils.worldCenterY
 class BackgroundActor(private val sprite: Sprite) : Actor() {
 
     init {
-        sprite.setAlpha(0f)
+        sprite.setAlpha(0.25f)
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
