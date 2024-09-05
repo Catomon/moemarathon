@@ -1,10 +1,9 @@
-package com.github.catomon.polly.ui
+package com.github.catomon.polly.playscreen.ui
 
-import com.badlogic.gdx.math.Vector2
-import com.github.catomon.polly.Note
-import com.github.catomon.polly.gameplay.NoteListener
-import com.github.catomon.polly.gameplay.Stats
-import com.github.catomon.polly.uiactions.DelayRepeatAction
+import com.github.catomon.polly.playscreen.Note
+import com.github.catomon.polly.playscreen.NoteListener
+import com.github.catomon.polly.playscreen.Stats
+import com.github.catomon.polly.scene2d.actions.DelayRepeatAction
 import com.kotcrab.vis.ui.widget.VisLabel
 import kotlin.math.max
 

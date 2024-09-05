@@ -10,9 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.github.catomon.polly.uiactions.OneAction
+import com.github.catomon.polly.scene2d.actions.OneAction
 import com.kotcrab.vis.ui.widget.VisTable
-import ctmn.petals.widgets.StageCover
+import com.github.catomon.polly.scene2d.StageCover
 import kotlin.math.atan2
 
 fun Color.rgba(r: Int, g: Int, b: Int, a: Int = 255): Color = set(r / 255f, g / 255f, b / 255f, a / 255f)

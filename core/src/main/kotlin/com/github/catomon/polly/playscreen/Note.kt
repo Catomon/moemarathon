@@ -1,4 +1,4 @@
-package com.github.catomon.polly
+package com.github.catomon.polly.playscreen
 
 import kotlin.random.Random
 

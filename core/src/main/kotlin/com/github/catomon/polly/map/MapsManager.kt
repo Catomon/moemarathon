@@ -4,11 +4,11 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Queue
 import com.github.catomon.polly.Const
-import com.github.catomon.polly.Note
-import com.github.catomon.polly.NoteMap
 import com.github.catomon.polly.map.osu.OsuBeatmap
 import com.github.catomon.polly.map.osu.OsuParser
 import com.github.catomon.polly.map.osu.toNote
+import com.github.catomon.polly.playscreen.Note
+import com.github.catomon.polly.playscreen.NoteMap
 import com.github.catomon.polly.utils.calculateDegrees
 import kotlin.math.abs
 
@@ -19,7 +19,10 @@ object MapsManager {
                 Gdx.files.internal("maps/")
             ) + collectOsuFilesFromFolder(Gdx.files.local("maps/"))
         } else {
-            collectOsuFilesFromFolder(Gdx.files.local("maps/"))
+            if (Const.IS_RELEASE)
+                collectOsuFilesFromFolder(Gdx.files.local("maps/"))
+            else
+                collectOsuFilesFromFolder(Gdx.files.internal("maps/"))
         }
     }
 
@@ -32,7 +35,7 @@ object MapsManager {
             if (file.isDirectory) {
                 collectOsuFilesFromFolder(file, maps)
             } else {
-                if (file.extension() == ".osu")
+                if (file.extension() == "osu")
                     maps.add(file)
             }
         }

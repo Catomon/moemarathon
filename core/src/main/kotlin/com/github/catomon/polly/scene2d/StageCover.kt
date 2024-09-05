@@ -1,4 +1,4 @@
-package ctmn.petals.widgets
+package com.github.catomon.polly.scene2d
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.github.catomon.polly.assets
-import com.github.catomon.polly.uiactions.OneAction
-import com.github.catomon.polly.uiactions.UpdateAction
+import com.github.catomon.polly.scene2d.actions.OneAction
+import com.github.catomon.polly.scene2d.actions.UpdateAction
 
 class StageCover(alpha: Float = 1f) : Widget() {
 
-    private val sprite = Sprite(assets.skinAtlas.findRegion("white"))
+    private val sprite = Sprite(assets.mainAtlas.findRegion("white"))
 
     private var afterFadeOutTime = 0f
 

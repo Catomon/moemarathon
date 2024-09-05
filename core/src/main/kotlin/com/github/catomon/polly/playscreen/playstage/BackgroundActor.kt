@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playstage
+package com.github.catomon.polly.playscreen.playstage
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite

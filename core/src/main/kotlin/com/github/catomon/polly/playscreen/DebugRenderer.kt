@@ -1,4 +1,4 @@
-package com.github.catomon.polly
+package com.github.catomon.polly.playscreen
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer

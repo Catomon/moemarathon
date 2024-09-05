@@ -1,18 +1,16 @@
-package com.github.catomon.polly.ui
+package com.github.catomon.polly.playscreen.ui
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.Note
-import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.playscreen.Note
+import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.assets
-import com.github.catomon.polly.gameplay.NoteListener
+import com.github.catomon.polly.playscreen.NoteListener
 import com.github.catomon.polly.utils.SpriteActor
-import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 
 class PlayHud(private val playScreen: PlayScreen) :

@@ -2,7 +2,7 @@ package com.github.catomon.polly
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
-import com.badlogic.gdx.math.Vector3
+import com.github.catomon.polly.playscreen.PlayScreen
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 

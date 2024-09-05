@@ -1,6 +1,4 @@
-package com.github.catomon.polly.gameplay
-
-import com.github.catomon.polly.Note
+package com.github.catomon.polly.playscreen
 
 interface NoteListener {
 

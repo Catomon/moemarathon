@@ -1,13 +1,14 @@
-package com.github.catomon.polly.playstage
+package com.github.catomon.polly.playscreen.playstage
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.github.catomon.polly.Note
-import com.github.catomon.polly.PlayScreen
+import com.github.catomon.polly.playscreen.Note
 import com.github.catomon.polly.assets
+import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.degrees
 import com.github.catomon.polly.utils.setPositionByCenter
 
@@ -137,6 +138,14 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
         }
     }
 
+    fun getNoteTexture(visual: Int) : TextureRegion =
+        when (visual) {
+            0 -> enemy0
+            1 -> enemy1
+            2 -> enemy2
+            else -> noteInnerTex
+        }
+
     private fun drawNote(
         batch: Batch,
         notePos: Vector2,
@@ -145,14 +154,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
         traceToNote: Vector2? = null,
         visual: Int = -1
     ) {
-        noteInnerSprite.setRegion(
-            when (visual) {
-                0 -> enemy0
-                1 -> enemy1
-                2 -> enemy2
-                else -> noteInnerTex
-            }
-        )
+        noteInnerSprite.setRegion(getNoteTexture(visual))
 
         noteInnerSprite.setPositionByCenter(notePos.x, notePos.y)
         noteOuterSprite.setPositionByCenter(notePos.x, notePos.y)

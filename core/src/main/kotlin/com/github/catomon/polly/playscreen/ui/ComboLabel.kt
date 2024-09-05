@@ -1,10 +1,10 @@
-package com.github.catomon.polly.ui
+package com.github.catomon.polly.playscreen.ui
 
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.github.catomon.polly.Note
-import com.github.catomon.polly.gameplay.NoteListener
-import com.github.catomon.polly.gameplay.Stats
+import com.github.catomon.polly.playscreen.Note
+import com.github.catomon.polly.playscreen.NoteListener
+import com.github.catomon.polly.playscreen.Stats
 import com.kotcrab.vis.ui.widget.VisLabel
 
 class ComboLabel(private val stats: Stats) : VisLabel("x0"), NoteListener {

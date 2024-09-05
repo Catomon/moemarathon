@@ -1,4 +1,4 @@
-package ctmn.petals.widgets
+package com.github.catomon.polly.playscreen.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
@@ -11,6 +11,7 @@ import com.github.catomon.polly.utils.RegionAnimation
 import com.github.catomon.polly.utils.centerX
 import com.github.catomon.polly.utils.centerY
 import com.github.catomon.polly.utils.setPositionByCenter
+import ctmn.petals.widgets.newLabel
 
 class LoadingCover(labelText: String = "") : Widget() {
 

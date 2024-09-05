@@ -1,4 +1,4 @@
-package com.github.catomon.polly
+package com.github.catomon.polly.playscreen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
@@ -9,29 +9,30 @@ import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
+import com.github.catomon.polly.*
 import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
 import com.github.catomon.polly.Const.SCORE_GAIN_OK
 import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
-import com.github.catomon.polly.gameplay.NoteListener
-import com.github.catomon.polly.gameplay.Stats
 import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.playstage.PlayStage
-import com.github.catomon.polly.ui.PlayHud
+import com.github.catomon.polly.map.MapsManager
+import com.github.catomon.polly.playscreen.playstage.PlayStage
+import com.github.catomon.polly.playscreen.ui.PlayHud
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-class PlayScreen : ScreenAdapter() {
+class PlayScreen(
+    val gameMap: GameMap = GameMap(Gdx.files.internal("maps/Jun.A - The Refrain of the Lovely Great War (KanbeKotori) [Easy].osu"))
+) : ScreenAdapter() {
 
     val camera = OrthographicCamera().apply {
         setToOrtho(false)
     }
     val batch = SpriteBatch()
 
-    val gameMap = GameMap(Gdx.files.internal("maps/Jun.A - Bucuresti no Ningyoushi (Ryaldin) [Lunatic].osu"))
-    val noteMap = gameMap.noteMap
+    val noteMap = MapsManager.createNoteMap(gameMap.osuBeatmap)
 
     var mapOffset = -1.5f
 
@@ -211,6 +212,7 @@ class PlayScreen : ScreenAdapter() {
                     else if (note.isGreat()) SCORE_GAIN_GREAT
                     else SCORE_GAIN_OK
             }
+
             7 -> {
                 stats.combo++
                 stats.score += SCORE_GAIN_TRACE

@@ -1,6 +1,6 @@
 package com.github.catomon.polly.map.osu
 
-import com.github.catomon.polly.Note
+import com.github.catomon.polly.playscreen.Note
 import com.github.catomon.polly.utils.calculateDegrees
 
 fun HitObject.toNote(tracingNext: Boolean = false, tracingPrev: Boolean = false): Note { //512x384

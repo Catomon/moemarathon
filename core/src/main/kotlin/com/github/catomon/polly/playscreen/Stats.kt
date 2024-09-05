@@ -1,4 +1,4 @@
-package com.github.catomon.polly.gameplay
+package com.github.catomon.polly.playscreen
 
 class Stats {
 
