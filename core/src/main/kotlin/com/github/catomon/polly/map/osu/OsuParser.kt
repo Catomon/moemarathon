@@ -70,7 +70,7 @@ object OsuParser {
 
                 options.forEachIndexed { i, opt ->
                     val nameVal = opt.split(": ", ":")
-                    if (nameVal.size == 2 && section != "HitObjects" && section != "TimingPoints")
+                    if (nameVal.size == 2 && section != "HitObjects" && section != "TimingPoints" && section != "Events")
                         osuBeatmap.sections[section].put(nameVal[0], nameVal.drop(1).first())
                     else
                         osuBeatmap.sections[section].put(i.toString(), opt)

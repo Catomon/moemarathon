@@ -86,6 +86,8 @@ class PlayScreen(
     val playStage = PlayStage(this)
     val playHud = PlayHud(this)
 
+    var skinName = "default"
+
     var debug = false
 
     init {
@@ -94,7 +96,7 @@ class PlayScreen(
         noteListeners.add(playStage)
         noteListeners.add(playHud)
 
-        AudioManager.loadMapMusic(gameMap.osuBeatmap.audioFileName)
+        AudioManager.loadMapMusic(gameMap.file.parent().child(gameMap.osuBeatmap.audioFileName))
     }
 
     var action: (() -> Unit)? = {

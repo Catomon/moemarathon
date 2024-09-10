@@ -17,7 +17,8 @@ import kotlin.random.Random
 
 class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.camera), playScreen.batch), NoteListener {
 
-    val background = BackgroundActor(Sprite(Texture("bg.jpg")))
+    val bgTexture = Texture(playScreen.gameMap.file.parent().child(playScreen.gameMap.osuBeatmap.backgroundFileName))
+    val background = BackgroundActor(Sprite(bgTexture))
     val centerActor = CenterActor(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
@@ -97,5 +98,11 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
 
     fun addActorBeforeNotes(actor: Actor) {
         root.addActorBefore(notesDrawer, actor)
+    }
+
+    override fun dispose() {
+        super.dispose()
+
+        bgTexture.dispose()
     }
 }

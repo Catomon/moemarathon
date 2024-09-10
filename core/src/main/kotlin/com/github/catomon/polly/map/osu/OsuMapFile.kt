@@ -8,6 +8,7 @@ data class OsuBeatmap(
 ) {
 
     val audioFileName: String get() = sections["General"]["AudioFilename"] ?: throw IllegalStateException("audioFileName == null")
+    val backgroundFileName: String get() = sections["Events"]["0"]?.split(",")?.getOrNull(2)?.removeSurrounding("\"") ?: "bg.jpg"
 
     val sliderMultiplier get() = sections["Difficulty"]["SliderMultiplier"].toFloat()
 

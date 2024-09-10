@@ -13,7 +13,7 @@ class RegionAnimation(frameDuration: Float, regions: Array<TextureAtlas.AtlasReg
     /** 1f means animation is at the last frame*/
     val progressLast get() = (stateTime + frameDuration) / animationDuration
 
-    /** 1f means animation is ended */
+    /** >=1f means animation is ended */
     val progress get() = stateTime / animationDuration
 
     init {

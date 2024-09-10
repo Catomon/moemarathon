@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
 
-class SpriteActor(
+open class SpriteActor(
     val sprite: Sprite = Sprite()
 ) : Actor() {
 
@@ -21,6 +21,7 @@ class SpriteActor(
     override fun sizeChanged() {
         sprite.setSize(width, height)
         sprite.setPosition(x - width / 2, y - height / 2)
+        sprite.setOriginCenter()
     }
 
     override fun positionChanged() {

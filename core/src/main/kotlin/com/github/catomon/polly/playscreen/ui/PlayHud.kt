@@ -74,7 +74,12 @@ class PlayHud(private val playScreen: PlayScreen) :
             ).apply {
                 setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
                 setPosition(noteToStagePos.x, noteToStagePos.y)
-                addAction(Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)))
+                addAction(
+                    Actions.sequence(
+                        Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)),
+                        Actions.removeActor()
+                    )
+                )
             }
         )
 

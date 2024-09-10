@@ -3,6 +3,7 @@ package com.github.catomon.polly
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.files.FileHandle
 
 object AudioManager {
 
@@ -25,16 +26,22 @@ object AudioManager {
         private set
 
     fun loadMapMusic(name: String) : Music {
-        mapMusic = Gdx.audio.newMusic(Gdx.files.internal("maps/$name"))
+        return loadMapMusic(Gdx.files.internal("maps/$name"))
+    }
+
+    fun loadMapMusic(file: FileHandle) : Music {
+        mapMusic = Gdx.audio.newMusic(file)
         mapMusic!!.volume = musicVolume
         return mapMusic!!
     }
 
-    fun loadMusic(name: String) : Music {
-        music = Gdx.audio.newMusic(Gdx.files.internal("maps/$name"))
+    fun loadMusic(file: FileHandle) : Music {
+        music = Gdx.audio.newMusic(file)
         music!!.volume = musicVolume
         return music!!
     }
+
+    fun loadMusic(name: String) : Music = loadMusic(Gdx.files.internal("maps/$name"))
 
     fun onMusicLoaded() {
         this.hitSound = assets.getSound("hit.ogg")
