@@ -55,7 +55,7 @@ class PlayScreen(
 
     val pointerSize = 0.05f
 
-    val noteSpawnTime = 1f //1 hard //3.5f
+    var noteSpawnTime = 1f //1 hard //3.5f
     val noteClickTimeWindow = 0.200f // actual time window is twice this value
     val noteClickGreat = 0.075f // actual time window is twice this value
     val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
@@ -78,25 +78,43 @@ class PlayScreen(
     private val shapes = ShapeRenderer().apply { setAutoShapeType(true) }
     private val debugRenderer = DebugRenderer(this, shapes)
 
+    val noteListeners = Array<NoteListener>()
+
     var paused = false
     var autoPlay = false
-
-    val noteListeners = Array<NoteListener>()
+    var skinName = "komugi"
+    var noTracers = true
+    var debug = false
 
     val playStage = PlayStage(this)
     val playHud = PlayHud(this)
 
-    var skinName = "default"
-
-    var debug = false
+    class Presets(
+        var noTracers: Boolean = true
+    )
 
     init {
         Gdx.input.inputProcessor = PlayInputProcessor(this)
 
         noteListeners.add(playStage)
         noteListeners.add(playHud)
+    }
+
+    private var isReady = false
+    fun ready() {
+        if (isReady) return
 
         AudioManager.loadMapMusic(gameMap.file.parent().child(gameMap.osuBeatmap.audioFileName))
+
+        if (noTracers) {
+            noteMap.chunks.forEach {
+                it.notes.forEach {
+                    it.tracingNext = false; it.tracingPrev = false
+                }
+            }
+        }
+
+        isReady = true
     }
 
     var action: (() -> Unit)? = {
@@ -142,7 +160,7 @@ class PlayScreen(
                 }
 
                 if (autoPlay) {
-                    if (note.timing <= time) {
+                    if (note.timing <= time && !notes.isEmpty) {
                         notes.removeLast()
                         onNoteEvent(NoteListener.HIT, note)
                     }

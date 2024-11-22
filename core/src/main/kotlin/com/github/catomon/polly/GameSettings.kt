@@ -78,7 +78,7 @@ object GamePref {
             prefs.putFloat("music_volume", value)
         }
 
-    var player: UserSave
+    var userSave: UserSave
         get() {
             return try {
                 fromGson(decryptData(prefs.getString("player"), generateSecretKey("cringe")), UserSave::class.java)
@@ -92,8 +92,8 @@ object GamePref {
         }
 
     init {
-        if (player == null) {
-            player = UserSave("trash", 1, 2)
+        if (userSave == null) {
+            userSave = UserSave("trash", 1, 2)
             prefs.flush()
         }
 

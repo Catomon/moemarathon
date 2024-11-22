@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.GameMain
-import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.scene2d.StageScreen
 import com.github.catomon.polly.utils.createTable
 import com.kotcrab.vis.ui.widget.VisTextButton
@@ -21,7 +20,7 @@ class MenuScreen(val game: GameMain) : StageScreen() {
         menuStage.createTable().apply {
             center()
             add(VisTextButton("Start").addChangeListener {
-                game.screen = PlayScreen()
+                changeStage(DifficultySelectStage(this@MenuScreen))
             }).center()
             row()
             add(VisTextButton("Maps").addChangeListener {

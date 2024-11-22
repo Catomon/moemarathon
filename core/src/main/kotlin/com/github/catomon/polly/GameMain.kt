@@ -3,8 +3,10 @@ package com.github.catomon.polly
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ScreenUtils
 import com.github.catomon.polly.mainmenu.MenuScreen
+import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.setMouseCursor
 
 lateinit var assets: Assets
@@ -27,6 +29,12 @@ open class GameMain : Game() {
         assets.loadUI()
 
         setScreen(LoadingScreen(this))
+    }
+
+    override fun setScreen(screen: Screen?) {
+        super.setScreen(screen)
+
+        if (screen is PlayScreen) screen.ready()
     }
 
     override fun render() {

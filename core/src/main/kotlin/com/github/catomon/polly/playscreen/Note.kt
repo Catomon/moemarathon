@@ -3,10 +3,10 @@ package com.github.catomon.polly.playscreen
 import kotlin.random.Random
 
 data class Note(
-    val timing: Float,
+    var timing: Float,
     var initialPosition: Float = 1f,
-    val tracingNext: Boolean = false,
-    val tracingPrev: Boolean = false,
+    var tracingNext: Boolean = false,
+    var tracingPrev: Boolean = false,
     var visual: Int = Random.nextInt(0, 3),
     var color: Int = 0,
 )

@@ -1,5 +1,6 @@
 package com.github.catomon.polly.playscreen.playstage
 
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Interpolation
@@ -7,17 +8,31 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import com.github.catomon.polly.playscreen.Note
 import com.github.catomon.polly.assets
+import com.github.catomon.polly.playscreen.Note
 import com.github.catomon.polly.playscreen.NoteListener
 import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.scene2d.actions.AccelAction
 import com.github.catomon.polly.utils.SpriteActor
+import com.github.catomon.polly.utils.copyAndScale
 import kotlin.random.Random
+
 
 class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.camera), playScreen.batch), NoteListener {
 
-    val bgTexture = Texture(playScreen.gameMap.file.parent().child(playScreen.gameMap.osuBeatmap.backgroundFileName))
+    var bgTextureScale = 1f
+
+    val bgTexture = run {
+        val texture = playScreen.gameMap.newBackgroundTexture()
+        if (bgTextureScale == 1f) {
+            texture
+        } else {
+            val bg = texture.copyAndScale(bgTextureScale)
+            texture.dispose()
+            bg
+        }
+    }
+
     val background = BackgroundActor(Sprite(bgTexture))
     val centerActor = CenterActor(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
@@ -79,17 +94,19 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
                     addActorBeforeNotes(SpriteActor(Sprite(notesDrawer.getNoteTexture(note.visual))).apply {
                         setSize(playScreen.noteRadius * 3, playScreen.noteRadius * 3)
                         setPosition(notePos.x, notePos.y)
-                        addAction(Actions.parallel(
-                            Actions.moveBy(Random.nextFloat() * 200 - 100, 0f, 1.5f, Interpolation.fastSlow),
-                            Actions.sequence(
-                                Actions.moveBy(0f, Random.nextFloat() * 100, 0.3f, Interpolation.fastSlow),
-                                AccelAction {
-                                    y -= it * 25
-                                    y < -viewport.worldHeight - playScreen.noteRadius * 2
-                                },
-                                Actions.removeActor()
-                            ),
-                        ))
+                        addAction(
+                            Actions.parallel(
+                                Actions.moveBy(Random.nextFloat() * 200 - 100, 0f, 1.5f, Interpolation.fastSlow),
+                                Actions.sequence(
+                                    Actions.moveBy(0f, Random.nextFloat() * 100, 0.3f, Interpolation.fastSlow),
+                                    AccelAction {
+                                        y -= it * 25
+                                        y < -viewport.worldHeight - playScreen.noteRadius * 2
+                                    },
+                                    Actions.removeActor()
+                                ),
+                            )
+                        )
                     })
                 }
             }

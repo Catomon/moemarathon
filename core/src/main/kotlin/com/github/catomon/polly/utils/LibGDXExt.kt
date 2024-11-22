@@ -1,9 +1,7 @@
 package com.github.catomon.polly.utils
 
 import com.badlogic.gdx.audio.Sound
-import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.*
@@ -14,6 +12,23 @@ import com.github.catomon.polly.scene2d.actions.OneAction
 import com.kotcrab.vis.ui.widget.VisTable
 import com.github.catomon.polly.scene2d.StageCover
 import kotlin.math.atan2
+
+fun Texture.copyAndScale(scale: Float): Texture {
+    val originalTexture = this
+    originalTexture.textureData.prepare()
+    val pixmap: Pixmap = originalTexture.textureData.consumePixmap()
+
+    val newWidth = (originalTexture.width * scale).toInt()
+    val newHeight = (originalTexture.height * scale).toInt()
+    val resizedPixmap = Pixmap(newWidth, newHeight, pixmap.format)
+    resizedPixmap.drawPixmap(pixmap, 0, 0, pixmap.width, pixmap.height, 0, 0, newWidth, newHeight)
+
+    val resizedTexture = Texture(resizedPixmap)
+    pixmap.dispose()
+    resizedPixmap.dispose()
+
+    return resizedTexture
+}
 
 fun Color.rgba(r: Int, g: Int, b: Int, a: Int = 255): Color = set(r / 255f, g / 255f, b / 255f, a / 255f)
 

@@ -27,6 +27,8 @@ object RunTexturePacker {
         settings.scaleResampling = arrayOf(Resampling.nearest)
 
         process(settings, "assets/textures/", "./assets", "textures")
+
+//        process(settings, "assets/textures/skin/tinted/tinted-raw", "./assets/skin/tinted", "tinted")
     }
 
     private fun process(settings: TexturePacker.Settings, input: String, output: String, packFileName: String) {
