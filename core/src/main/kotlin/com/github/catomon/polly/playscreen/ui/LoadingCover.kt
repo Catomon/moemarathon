@@ -11,7 +11,7 @@ import com.github.catomon.polly.utils.RegionAnimation
 import com.github.catomon.polly.utils.centerX
 import com.github.catomon.polly.utils.centerY
 import com.github.catomon.polly.utils.setPositionByCenter
-import ctmn.petals.widgets.newLabel
+import com.github.catomon.polly.widgets.newLabel
 
 class LoadingCover(labelText: String = "") : Widget() {
 

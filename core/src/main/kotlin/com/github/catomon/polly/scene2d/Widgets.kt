@@ -1,4 +1,4 @@
-package ctmn.petals.widgets
+package com.github.catomon.polly.widgets
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.Actor

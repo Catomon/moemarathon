@@ -40,6 +40,10 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
                 playScreen.autoPlay = !playScreen.autoPlay
             }
 
+            Input.Keys.P -> {
+                playScreen.onDone()
+            }
+
             else -> playScreen.clickNote(keycode)
         }
 

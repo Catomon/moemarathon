@@ -16,6 +16,7 @@ com.badlogic.gdx.graphics.Color: {
 	t-highlight-dark: {r: 0.6, g: 0.3, b: 0, a: 1 },
 	t-warn: {r: 1, g: 0, b: 0, a: 1 },
 	t-light: {r: 0.4, g: 0.4, b: 0.4, a: 1 },
+    t-light50: {r: 0.4, g: 0.4, b: 0.4, a: 0.5 },
 	t-medium: {r: 0.2, g: 0.2, b: 0.2, a: 1 },
 	t-medium-dark: {r: 0.15, g: 0.15, b: 0.15, a: 1 },
 	t-dark: {r: 0.1, g: 0.1, b: 0.1, a: 1 },
@@ -36,13 +37,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	border-dark-blue: {name: t-border, color: t-highlight-dark },
 	border-error: {name: t-border, color: t-warn },
     clear: {name: t-base, color: clear },
-	button: {name: t-base, color: t-medium },
+	button: {name: t-base, color: clear },
 	button-blue: {name: t-base, color: t-highlight },
 	button-blue-down: {name: t-base, color: t-highlight-dark },
 	button-blue-over: {name: t-base, color: t-highlight-medium },
-	button-down: {name: t-base, color: t-highlight },
+	button-down: {name: t-base, color: clear },
     button-down-50: {name: t-base, color: t-highlight-50 },
-	button-over: {name: t-base, color: t-light },
+	button-over: {name: t-base, color: t-light50 },
 	button-red: {name: t-base, color: t-warn },
 	button-window-bg: {name: t-base, color: t-dark },
 	check-off: {name: t-check, color: t-medium },
@@ -192,7 +193,7 @@ com.kotcrab.vis.ui.widget.VisTextField$VisTextFieldStyle: {
 	label: {selection: selection, errorBorder: border-error, font: default-font, fontColor: white, disabledFontColor: grey }
 },
 com.kotcrab.vis.ui.widget.VisTextButton$VisTextButtonStyle: {
-	default: {focusBorder: border, down: button-down, up: button, over: button-over, disabled: button, font: default-font, fontColor: white, disabledFontColor: grey },
+	default: {down: button-down, up: button, over: button-over, disabled: button, font: default-font, fontColor: white, disabledFontColor: grey },
 	toggle: {focusBorder: border, checked: button-down, down: button-down, up: button, font: default-font, fontColor: white, over: button-over, disabled: button, disabledFontColor: grey },
 	blue: {focusBorder: border-dark-blue, down: button-blue-down, up: button-blue, over: button-blue-over, disabled: button, font: default-font, fontColor: white, disabledFontColor: grey },
 	menu-bar: {over: button-down, font: default-font, fontColor: white, down: button-down, up: button, disabled: button, disabledFontColor: grey }

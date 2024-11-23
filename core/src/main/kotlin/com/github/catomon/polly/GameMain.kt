@@ -11,6 +11,8 @@ import com.github.catomon.polly.utils.setMouseCursor
 
 lateinit var assets: Assets
 
+lateinit var game: GameMain
+
 open class GameMain : Game() {
 
     companion object {
@@ -27,6 +29,8 @@ open class GameMain : Game() {
             setMouseCursor()
 
         assets.loadUI()
+
+        game = this
 
         setScreen(LoadingScreen(this))
     }
