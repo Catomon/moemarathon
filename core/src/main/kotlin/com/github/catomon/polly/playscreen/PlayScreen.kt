@@ -15,6 +15,9 @@ import com.github.catomon.polly.Const.SCORE_GAIN_OK
 import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
+import com.github.catomon.polly.mainmenu.MapSelectStage
+import com.github.catomon.polly.mainmenu.MenuScreen
+import com.github.catomon.polly.mainmenu.StatsStage
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.playstage.PlayStage
@@ -24,7 +27,13 @@ import kotlin.math.min
 import kotlin.math.sin
 
 class PlayScreen(
-    val gameMap: GameMap = GameMap(Gdx.files.internal("maps/Jun.A - The Refrain of the Lovely Great War (KanbeKotori) [Easy].osu"))
+    val gameMap: GameMap = GameMap(Gdx.files.internal("maps/Jun.A - The Refrain of the Lovely Great War (KanbeKotori) [Easy].osu")),
+    var onReturn: () -> Unit = {
+        val menuScreen = MenuScreen(game)
+        game.screen = menuScreen
+        menuScreen.stage?.clear()
+        menuScreen.changeStage(MapSelectStage(menuScreen))
+    }
 ) : ScreenAdapter() {
 
     val camera = OrthographicCamera().apply {
@@ -84,6 +93,7 @@ class PlayScreen(
     var autoPlay = false
     var skinName = "komugi"
     var noTracers = true
+    var isDone = false
     var debug = false
 
     val playStage = PlayStage(this)
@@ -170,7 +180,14 @@ class PlayScreen(
             if (notes.isEmpty) {
                 noteMap.chunks.removeLast()
             }
+        } else {
+            isDone = true
+            onDone()
         }
+    }
+
+    fun onDone() {
+        game.screen = MenuScreen(initialStage = { StatsStage(this, onReturn) })
     }
 
     private fun draw() {
@@ -224,20 +241,30 @@ class PlayScreen(
 
     private fun onNoteEvent(id: Int, note: Note) {
         when (id) {
-            NoteListener.MISS -> stats.combo = 0
+            NoteListener.MISS -> {
+                stats.combo = 0
+                stats.misses++
+            }
             1, 2, 3 -> {
                 stats.combo++
                 stats.score +=
                     if (note.tracingPrev) SCORE_GAIN_TRACE
                     else if (note.isGreat()) SCORE_GAIN_GREAT
                     else SCORE_GAIN_OK
+                if (note.tracingPrev) stats.greats++
+                else if (note.isGreat()) stats.greats++
+                else stats.oks++
             }
 
             7 -> {
                 stats.combo++
                 stats.score += SCORE_GAIN_TRACE
+                stats.greats++
             }
         }
+
+        if (stats.maxCombo < stats.combo)
+            stats.maxCombo = stats.combo
 
         noteListeners.forEach { it.onNoteEvent(id, note) }
     }

@@ -26,18 +26,19 @@ import com.kotcrab.vis.ui.widget.ListView
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
-import ctmn.petals.widgets.addChangeListener
+import com.kotcrab.vis.ui.widget.VisTextButton
+import com.github.catomon.polly.widgets.addChangeListener
 import kotlin.concurrent.thread
 
 class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> = emptyList(), val onMapSelect: ((map: GameMap) -> Unit)? = null) :
-    Stage(ExtendViewport(2000f, 2000f)) {
+    Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
 
     private var isLoading = false
     private var loadedItems = emptyList<GameMap>()
 
     private var mapList = ListView(object : ArrayListAdapter<GameMap, VisLabel>(ArrayList(loadedItems)) {
         override fun createView(item: GameMap): VisLabel {
-            return VisLabel(item.file.nameWithoutExtension())
+            return VisLabel(item.file.nameWithoutExtension()).also { it.setFontScale(0.5f) }
         }
     })
 
@@ -123,6 +124,11 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
                     add(mapList.scrollPane).center().fillY().expandY().expandX().fillX()
                 }
 
+                createTable(VisTextButton("<Menu").addChangeListener {
+                    menuScreen.changeStage(menuScreen.menuStage())
+                }).apply {
+                    left().bottom()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -156,11 +162,13 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
             add(VisImage().also { image ->
                 GamePref.userSave.mapRanks.forEach {
                     if (it.key == map.file.name()) {
-                        image.drawable = SpriteDrawable(assets.mainAtlas.createSprite(Ranks.getRankChar(7)))//it.value
+                        image.drawable = SpriteDrawable(assets.mainAtlas.createSprite(Ranks.getRankChar(it.value)))
                     }
                 }
-            }).size(100f)
-            add(VisLabel(mapName)).height(100f)
+            }).size(50f)
+            add(VisLabel(if (mapName.length > 100) mapName.substring(0, 100) else mapName).also {
+                it.setFontScale(0.4f)
+            }).height(50f)
         }
     }
 }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.Preferences
 import com.github.catomon.polly.Const.APP_NAME
 import com.github.catomon.polly.Const.IS_MOBILE
 import com.github.catomon.polly.utils.*
-import ctmn.petals.UserSave
+import com.github.catomon.polly.UserSave
 import java.lang.Exception
 import java.util.*
 
@@ -81,26 +81,15 @@ object GamePref {
     var userSave: UserSave
         get() {
             return try {
-                fromGson(decryptData(prefs.getString("player"), generateSecretKey("cringe")), UserSave::class.java)
+                fromGson(decryptData(prefs.getString("userSave"), generateSecretKey("moe")), UserSave::class.java)
             } catch (e: Exception) {
                 e.printStackTrace()
                 UserSave()
             }
         }
         set(value) {
-            prefs.putString("player", encryptData(value.toGson(), generateSecretKey("cringe")))
+            prefs.putString("userSave", encryptData(value.toGson(), generateSecretKey("moe")))
         }
-
-    init {
-        if (userSave == null) {
-            userSave = UserSave("trash", 1, 2)
-            prefs.flush()
-        }
-
-        println(prefs.getString("player"))
-        println()
-        println(decryptData(prefs.getString("player"), generateSecretKey("cringe")))
-    }
 
     fun save() {
         prefs.flush()

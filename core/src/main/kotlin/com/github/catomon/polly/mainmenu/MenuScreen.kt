@@ -8,19 +8,25 @@ import com.github.catomon.polly.GameMain
 import com.github.catomon.polly.scene2d.StageScreen
 import com.github.catomon.polly.utils.createTable
 import com.kotcrab.vis.ui.widget.VisTextButton
-import ctmn.petals.widgets.addChangeListener
+import com.github.catomon.polly.widgets.addChangeListener
 
-class MenuScreen(val game: GameMain) : StageScreen() {
+class MenuScreen(val game: GameMain = com.github.catomon.polly.game, val initialStage: (() -> Stage)? = null) : StageScreen() {
+    override fun show() {
+        if (initialStage == null) {
+            val menuStage = menuStage()
 
-    private val menuStage = Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) }))
+            changeStage(menuStage)
+        } else {
+            changeStage(initialStage.invoke())
+        }
+    }
 
-    init {
-        changeStage(menuStage)
-
+    fun menuStage() : Stage {
+        val menuStage = Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) }))
         menuStage.createTable().apply {
             center()
             add(VisTextButton("Start").addChangeListener {
-                changeStage(DifficultySelectStage(this@MenuScreen))
+                changeStage(DifficultySelectStage())
             }).center()
             row()
             add(VisTextButton("Maps").addChangeListener {
@@ -33,5 +39,7 @@ class MenuScreen(val game: GameMain) : StageScreen() {
                 Gdx.app.exit()
             }).center()
         }
+
+        return menuStage
     }
 }
