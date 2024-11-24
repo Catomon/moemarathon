@@ -5,18 +5,21 @@ import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 
-open class StageScreen(
-    stage: Stage? = null,
+open class  StageScreen<T : Stage>(
+    stage: T? = null,
 ) : ScreenAdapter() {
 
-    var stage: Stage? = stage
+    var stage: T? = stage
         private set(value) {
             field = value
             Gdx.input.inputProcessor = value
         }
 
-    fun changeStage(newStage: Stage) {
+    open fun changeStage(newStage: T) {
         val stage = stage
+        this.stage = newStage
+
+        return
         if (stage != null) {
             stage.addAction(
                 Actions.sequence(

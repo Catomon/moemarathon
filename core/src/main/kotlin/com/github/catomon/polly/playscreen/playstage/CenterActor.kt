@@ -27,7 +27,7 @@ class CenterActor(private val playScreen: PlayScreen) : Actor(), NoteListener {
 
     private val centerReg = RegionAnimation(0.5f, assets.mainAtlas.findRegions("center"))
 
-    private val clickZoneSprite = Sprite(assets.mainAtlas.findRegion("click_zone"))
+    private val clickZoneSprite = Sprite(assets.mainAtlas.findRegion("click_zone2")) //todo skin
     private val centerSprite = AnimatedSprite(centerReg)
 
     private val centerMagicRegs = assets.mainAtlas.findRegions("center_magic")
@@ -44,7 +44,6 @@ class CenterActor(private val playScreen: PlayScreen) : Actor(), NoteListener {
         super.act(delta)
 
         if (playScreen.skinName == "default") return
-
 
         centerSprite.update(delta)
 

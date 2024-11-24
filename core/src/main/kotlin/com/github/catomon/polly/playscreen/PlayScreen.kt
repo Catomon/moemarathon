@@ -15,8 +15,7 @@ import com.github.catomon.polly.Const.SCORE_GAIN_OK
 import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
-import com.github.catomon.polly.mainmenu.MapSelectStage
-import com.github.catomon.polly.mainmenu.MenuScreen
+import com.github.catomon.polly.difficulties.PlaySettings
 import com.github.catomon.polly.mainmenu.StatsStage
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
@@ -27,13 +26,8 @@ import kotlin.math.min
 import kotlin.math.sin
 
 class PlayScreen(
-    val gameMap: GameMap = GameMap(Gdx.files.internal("maps/Jun.A - The Refrain of the Lovely Great War (KanbeKotori) [Easy].osu")),
-    var onReturn: () -> Unit = {
-        val menuScreen = MenuScreen(game)
-        game.screen = menuScreen
-        menuScreen.stage?.clear()
-        menuScreen.changeStage(MapSelectStage(menuScreen))
-    }
+    val gameMap: GameMap,
+    val playSets: PlaySettings,
 ) : ScreenAdapter() {
 
     val camera = OrthographicCamera().apply {
@@ -91,17 +85,13 @@ class PlayScreen(
 
     var paused = false
     var autoPlay = false
-    var skinName = "komugi"
+    var skinName = "komugi" // "default"
     var noTracers = true
     var isDone = false
     var debug = false
 
     val playStage = PlayStage(this)
     val playHud = PlayHud(this)
-
-    class Presets(
-        var noTracers: Boolean = true
-    )
 
     init {
         Gdx.input.inputProcessor = PlayInputProcessor(this)
@@ -114,12 +104,25 @@ class PlayScreen(
     fun ready() {
         if (isReady) return
 
+        noteSpawnTime = playSets.noteSpawnTime
+        noTracers = playSets.noTracers
+
+        ///
+
         AudioManager.loadMapMusic(gameMap.file.parent().child(gameMap.osuBeatmap.audioFileName))
 
         if (noTracers) {
-            noteMap.chunks.forEach {
-                it.notes.forEach {
-                    it.tracingNext = false; it.tracingPrev = false
+            noteMap.chunks.forEach { chunk ->
+                chunk.notes.forEach { note ->
+                    note.tracingNext = false; note.tracingPrev = false
+                }
+            }
+        }
+
+        if (skinName != "komugi") {
+            noteMap.chunks.forEach { chunk ->
+                chunk.notes.forEach { note ->
+                    note.visual = -1
                 }
             }
         }
@@ -187,7 +190,8 @@ class PlayScreen(
     }
 
     fun onDone() {
-        game.screen = MenuScreen(initialStage = { StatsStage(this, onReturn) })
+        game.screen = game.menuScreen
+        game.menuScreen.changeStage(StatsStage(this))
     }
 
     private fun draw() {

@@ -1,31 +1,26 @@
 package com.github.catomon.polly.mainmenu
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
-import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.GamePref
 import com.github.catomon.polly.assets
+import com.github.catomon.polly.difficulties.DEFAULT
 import com.github.catomon.polly.difficulties.Ranks
 import com.github.catomon.polly.game
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.playscreen.playstage.BackgroundActor
 import com.github.catomon.polly.utils.createTable
+import com.github.catomon.polly.widgets.addChangeListener
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextButton
-import com.github.catomon.polly.widgets.addChangeListener
 import kotlin.concurrent.thread
 
-class StatsStage(val playScreen: PlayScreen, val onReturn: () -> Unit = playScreen.onReturn) : Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
+class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
-    private val menuScreen: MenuScreen = game.screen as MenuScreen
     private val stats = playScreen.stats
-    var background = BackgroundActor(Sprite(playScreen.gameMap.newBackgroundTexture())) //todo dispose
+    private val playSets = playScreen.playSets
 
     init {
         val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap).size
@@ -42,15 +37,20 @@ class StatsStage(val playScreen: PlayScreen, val onReturn: () -> Unit = playScre
             else -> "F"
         }
         thread(true) {
+            val rankInt = Ranks.getRankInt(rank)
             val userSave = GamePref.userSave
-            userSave.mapRanks[playScreen.gameMap.file.name()] = Ranks.getRankInt(rank)
+            userSave.mapRanks[playScreen.gameMap.file.name()]?.let { existingRank ->
+                if (existingRank > rankInt)
+                    return@thread
+            }
+            userSave.mapRanks[playScreen.gameMap.file.name()] = rankInt
             GamePref.userSave = userSave
             GamePref.save()
         }
 
-        addActor(background)
         createTable().apply {
-            add(VisLabel(playScreen.gameMap.file.nameWithoutExtension()).also { it.setFontScale(0.5f) }).colspan(2).width(768f)
+            add(VisLabel(playScreen.gameMap.file.nameWithoutExtension()).also { it.setFontScale(0.5f) }).colspan(2)
+                .width(768f)
             row()
             add(VisImage(SpriteDrawable(assets.mainAtlas.createSprite(rank)))).size(320f, 320f)
             add(VisTable().apply {
@@ -67,7 +67,7 @@ class StatsStage(val playScreen: PlayScreen, val onReturn: () -> Unit = playScre
         }
 
         createTable(VisTextButton("<Continue").addChangeListener {
-            onReturn()
+            game.menuScreen.changeStage(MapSelectStage(playSets))
         }).apply {
             left().bottom()
         }

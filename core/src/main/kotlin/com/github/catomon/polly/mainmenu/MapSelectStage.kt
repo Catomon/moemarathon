@@ -2,23 +2,21 @@ package com.github.catomon.polly.mainmenu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
-import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.GamePref
 import com.github.catomon.polly.assets
+import com.github.catomon.polly.difficulties.DefaultPlaySets
+import com.github.catomon.polly.difficulties.PlaySettings
 import com.github.catomon.polly.difficulties.Ranks
+import com.github.catomon.polly.game
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.playscreen.playstage.BackgroundActor
 import com.github.catomon.polly.utils.*
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
@@ -30,8 +28,11 @@ import com.kotcrab.vis.ui.widget.VisTextButton
 import com.github.catomon.polly.widgets.addChangeListener
 import kotlin.concurrent.thread
 
-class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> = emptyList(), val onMapSelect: ((map: GameMap) -> Unit)? = null) :
-    Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })) {
+class MapSelectStage(
+    val playSets: PlaySettings = DefaultPlaySets(),
+    val mapFileNames: List<String> = playSets.maps,
+) :
+    BgStage() {
 
     private var isLoading = false
     private var loadedItems = emptyList<GameMap>()
@@ -43,8 +44,6 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
     })
 
     private val textureBgCache = mutableMapOf<String, Texture>()
-
-    private val background = BackgroundActor()
 
     init {
         addActor(background)
@@ -68,10 +67,12 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
                 addCover()
                 isLoading = true
                 loadedItems =
-                    if (mapFileNames.isEmpty())
+                    (if (mapFileNames.isEmpty())
                         MapsManager.collectMapFiles().map { GameMap(it) }
                     else
-                        MapsManager.collectMapFiles().map { GameMap(it) }.filter { mapFileNames.any { mapFileName -> mapFileName == it.file.name() } } + MapsManager.collectMapFiles().map { GameMap(it) }.filter { mapFileNames.any { mapFileName -> mapFileName == it.file.name() } }
+                        MapsManager.collectMapFiles().map { GameMap(it) }
+                            .filter { mapFileNames.any { mapFileName -> mapFileName == it.file.name() } }
+                        ).reversed()
 
                 mapList = ListView(object : ArrayListAdapter<GameMap, MapListItem>(ArrayList(loadedItems)) {
                     init {
@@ -87,23 +88,20 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
                             buttonGroup.add(newMapListItem)
 
                             newMapListItem.addChangeListener {
-                                    if (it.isChecked) {
-                                        background.sprite =
-                                            Sprite(
-                                                textureBgCache[it.map.file.name()] ?: throw IllegalStateException("no bg")
-                                            )
+                                if (it.isChecked) {
+                                    background.sprite =
+                                        Sprite(
+                                            textureBgCache[it.map.file.name()] ?: throw IllegalStateException("no bg")
+                                        )
 
-                                        if (selected == null)
-                                            selected = it
-                                    }
+                                    if (selected == null)
+                                        selected = it
+                                }
                             }
                             newMapListItem.addClickListener {
                                 if (buttonGroup.checked == selected) {
                                     this@MapSelectStage.fadeInAndThen(0.5f) {
-                                        if (onMapSelect != null)
-                                            onMapSelect.invoke(newMapListItem.map)
-                                        else
-                                            menuScreen.game.screen = PlayScreen(newMapListItem.map)
+                                        game.screen = PlayScreen(newMapListItem.map, playSets)
                                     }
                                 }
                             }
@@ -125,7 +123,7 @@ class MapSelectStage(val menuScreen: MenuScreen, val mapFileNames: List<String> 
                 }
 
                 createTable(VisTextButton("<Menu").addChangeListener {
-                    menuScreen.changeStage(menuScreen.menuStage())
+                    game.menuScreen.changeStage(MenuStage())
                 }).apply {
                     left().bottom()
                 }

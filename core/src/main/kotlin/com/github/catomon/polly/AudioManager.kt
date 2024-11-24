@@ -30,7 +30,10 @@ object AudioManager {
     }
 
     fun loadMapMusic(file: FileHandle) : Music {
+        mapMusic?.stop()
+        mapMusic?.dispose()
         mapMusic = Gdx.audio.newMusic(file)
+        mapMusic?.isLooping = true
         mapMusic!!.volume = musicVolume
         return mapMusic!!
     }

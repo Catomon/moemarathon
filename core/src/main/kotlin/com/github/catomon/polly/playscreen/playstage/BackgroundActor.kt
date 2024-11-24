@@ -23,11 +23,15 @@ class BackgroundActor(pSprite: Sprite? = null) : Actor() {
         val sprite = sprite
         if (sprite == null || sprite.texture == null) return
 
-        if (sprite.height != stage.height) {
-            val ratio = stage.height / sprite.height
-            sprite.setSize(sprite.width * ratio, sprite.height * ratio)
-            if (sprite.width <= 0f || sprite.height <= 0f) {
-                sprite.setSize(1f, 1f)
+        if (stage.width < stage.height) {
+            if (sprite.height != stage.height) {
+                val ratio = stage.height / sprite.texture.height
+                sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
+            }
+        } else {
+            if (sprite.width != stage.width) {
+                val ratio = stage.width / sprite.texture.width
+                sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
             }
         }
 

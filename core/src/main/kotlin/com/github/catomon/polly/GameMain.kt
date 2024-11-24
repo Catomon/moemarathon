@@ -6,6 +6,8 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ScreenUtils
 import com.github.catomon.polly.mainmenu.MenuScreen
+import com.github.catomon.polly.mainmenu.MenuStage
+import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.setMouseCursor
 
@@ -14,6 +16,8 @@ lateinit var assets: Assets
 lateinit var game: GameMain
 
 open class GameMain : Game() {
+
+    lateinit var menuScreen: MenuScreen
 
     companion object {
         var screenWidth = -1
@@ -38,6 +42,11 @@ open class GameMain : Game() {
     override fun setScreen(screen: Screen?) {
         super.setScreen(screen)
 
+        if (screen is MenuScreen) {
+            if (::menuScreen.isInitialized && menuScreen != screen) throw IllegalStateException("menuScreen is already initialized")
+            else menuScreen = screen
+        }
+
         if (screen is PlayScreen) screen.ready()
     }
 
@@ -47,7 +56,8 @@ open class GameMain : Game() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             AudioManager.mapMusic?.stop()
-            setScreen(MenuScreen(this))
+            setScreen(menuScreen)
+            menuScreen.changeStage(MenuStage())
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11))
