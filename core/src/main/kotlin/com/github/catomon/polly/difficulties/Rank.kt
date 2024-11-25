@@ -1,6 +1,17 @@
 package com.github.catomon.polly.difficulties
 
-object Ranks {
+import com.badlogic.gdx.graphics.Color
+
+data class Rank(
+    val id: Int = 0,
+    val score: Int = 0,
+    val great: Int = 0,
+    val ok: Int = 0,
+    val miss: Int = 0,
+    val combo: Int = 0,
+)
+
+object RankUtil {
 
     fun getRankChar(i: Int): String {
         return when (i) {
@@ -26,6 +37,20 @@ object Ranks {
             "A" -> 5
             "S" -> 6
             "SS" -> 7
+            else -> throw IllegalArgumentException("rank $rank doesn't exist")
+        }
+    }
+
+    fun getRankColor(rank: String): Color {
+        return when (rank) {
+            "" -> Color.WHITE
+            "F" -> Color.PURPLE
+            "D" -> Color.NAVY
+            "C" -> Color.BLUE
+            "B" -> Color.ROYAL
+            "A" -> Color.GREEN
+            "S" -> Color.YELLOW
+            "SS" -> Color.ORANGE
             else -> throw IllegalArgumentException("rank $rank doesn't exist")
         }
     }

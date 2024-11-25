@@ -8,24 +8,21 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
+import com.github.catomon.polly.AudioManager
 import com.github.catomon.polly.GamePref
 import com.github.catomon.polly.assets
 import com.github.catomon.polly.difficulties.DefaultPlaySets
 import com.github.catomon.polly.difficulties.PlaySettings
-import com.github.catomon.polly.difficulties.Ranks
+import com.github.catomon.polly.difficulties.RankUtil
 import com.github.catomon.polly.game
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.*
+import com.github.catomon.polly.widgets.addChangeListener
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
-import com.kotcrab.vis.ui.widget.ListView
-import com.kotcrab.vis.ui.widget.VisImage
-import com.kotcrab.vis.ui.widget.VisLabel
-import com.kotcrab.vis.ui.widget.VisTable
-import com.kotcrab.vis.ui.widget.VisTextButton
-import com.github.catomon.polly.widgets.addChangeListener
+import com.kotcrab.vis.ui.widget.*
 import kotlin.concurrent.thread
 
 class MapSelectStage(
@@ -81,7 +78,7 @@ class MapSelectStage(
                         selectionMode = SelectionMode.DISABLED
                     }
 
-                    var selected: MapListItem? = null
+                    var selectedItem: MapListItem? = null
 
                     override fun createView(item: GameMap): MapListItem {
                         return MapListItem(item.file.nameWithoutExtension(), item).also { newMapListItem ->
@@ -94,12 +91,17 @@ class MapSelectStage(
                                             textureBgCache[it.map.file.name()] ?: throw IllegalStateException("no bg")
                                         )
 
-                                    if (selected == null)
-                                        selected = it
+                                    if (selectedItem == null)
+                                        selectedItem = it
+
+                                    thread(true) {
+                                        AudioManager.loadMapMusic(it.map).play()
+                                    }
+
                                 }
                             }
                             newMapListItem.addClickListener {
-                                if (buttonGroup.checked == selected) {
+                                if (buttonGroup.checked == selectedItem) {
                                     this@MapSelectStage.fadeInAndThen(0.5f) {
                                         game.screen = PlayScreen(newMapListItem.map, playSets)
                                     }
@@ -107,7 +109,7 @@ class MapSelectStage(
                             }
                             newMapListItem.addClickListener {
                                 if (newMapListItem.isChecked) {
-                                    selected = newMapListItem
+                                    selectedItem = newMapListItem
                                 }
                             }
                         }
@@ -154,13 +156,14 @@ class MapSelectStage(
         textureBgCache.clear()
     }
 
-    class MapListItem(val mapName: String, val map: GameMap) :
+    class MapListItem(mapName: String, val map: GameMap) :
         Button(VisUI.getSkin().get("mapItem", ButtonStyle::class.java)) {
         init {
             add(VisImage().also { image ->
                 GamePref.userSave.mapRanks.forEach {
                     if (it.key == map.file.name()) {
-                        image.drawable = SpriteDrawable(assets.mainAtlas.createSprite(Ranks.getRankChar(it.value)))
+                        image.drawable =
+                            SpriteDrawable(assets.mainAtlas.createSprite(RankUtil.getRankChar(it.value.id)))
                     }
                 }
             }).size(50f)

@@ -26,6 +26,10 @@ object MapsManager {
         }
     }
 
+    fun getInternalMapFile(name: String) : FileHandle {
+     return  Gdx.files.internal("maps/$name")
+    }
+
     fun collectOsuFilesFromFolder(
         folder: FileHandle,
         maps: MutableList<FileHandle> = mutableListOf()

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.files.FileHandle
+import com.github.catomon.polly.map.GameMap
 
 object AudioManager {
 
@@ -16,35 +17,42 @@ object AudioManager {
             music?.volume = value
         }
 
+    @set:Synchronized
     var mapMusic: Music? = null
         private set
 
+    @set:Synchronized
     var music: Music? = null
         private set
 
     lateinit var hitSound: Sound
         private set
 
-    fun loadMapMusic(name: String) : Music {
+    fun loadMapMusic(name: String): Music {
         return loadMapMusic(Gdx.files.internal("maps/$name"))
     }
 
-    fun loadMapMusic(file: FileHandle) : Music {
+    @Synchronized
+    fun loadMapMusic(file: FileHandle): Music {
         mapMusic?.stop()
         mapMusic?.dispose()
         mapMusic = Gdx.audio.newMusic(file)
-        mapMusic?.isLooping = true
+        mapMusic?.isLooping = false
         mapMusic!!.volume = musicVolume
         return mapMusic!!
     }
 
-    fun loadMusic(file: FileHandle) : Music {
+    fun loadMapMusic(map: GameMap): Music {
+        return loadMapMusic(map.file.parent().child(map.osuBeatmap.audioFileName))
+    }
+
+    fun loadMusic(file: FileHandle): Music {
         music = Gdx.audio.newMusic(file)
         music!!.volume = musicVolume
         return music!!
     }
 
-    fun loadMusic(name: String) : Music = loadMusic(Gdx.files.internal("maps/$name"))
+    fun loadMusic(name: String): Music = loadMusic(Gdx.files.internal("maps/$name"))
 
     fun onMusicLoaded() {
         this.hitSound = assets.getSound("hit.ogg")

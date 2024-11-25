@@ -10,13 +10,13 @@ open class PlaySettings(
     val maps: List<String>,
     val noteSpawnTime: Float,
     val noTracers: Boolean = true,
+    val ranks: MutableMap<String, String> = mutableMapOf(),
 )
 
 class DefaultPlaySets : PlaySettings(
     DEFAULT,
     emptyList(),
     noteSpawnTime = 1f,
-    true,
 )
 
 class EasyDiff() : PlaySettings(

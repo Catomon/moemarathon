@@ -41,6 +41,11 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
             }
 
             Input.Keys.P -> {
+                playScreen.stats.greats = 9999
+                playScreen.onDone()
+            }
+
+            Input.Keys.L -> {
                 playScreen.onDone()
             }
 

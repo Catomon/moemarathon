@@ -3,6 +3,7 @@ package com.github.catomon.polly.playscreen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
@@ -191,6 +192,7 @@ class PlayScreen(
 
     fun onDone() {
         game.screen = game.menuScreen
+        game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
         game.menuScreen.changeStage(StatsStage(this))
     }
 

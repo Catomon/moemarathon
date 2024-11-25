@@ -92,6 +92,8 @@ object GamePref {
         }
 
     fun save() {
+        logMsg("Saving: $userSave")
+
         prefs.flush()
     }
 }
