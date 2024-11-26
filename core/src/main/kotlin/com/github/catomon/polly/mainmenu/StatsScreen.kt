@@ -1,21 +1,21 @@
-package com.github.catomon.polly.mainmenu
+package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
-import com.github.catomon.polly.GamePref
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.difficulties.*
-import com.github.catomon.polly.game
-import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.map.MapsManager
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.scene2d.actions.UpdateAction
-import com.github.catomon.polly.utils.addCover
-import com.github.catomon.polly.utils.createTable
-import com.github.catomon.polly.utils.fadeInAndThen
-import com.github.catomon.polly.utils.removeCover
-import com.github.catomon.polly.widgets.addChangeListener
-import com.github.catomon.polly.widgets.newLabel
+import com.github.catomon.moemarathon.GamePref
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.difficulties.*
+import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.map.MapsManager
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.scene2d.actions.UpdateAction
+import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.createTable
+import com.github.catomon.moemarathon.utils.fadeInAndThen
+import com.github.catomon.moemarathon.utils.removeCover
+import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.github.catomon.moemarathon.widgets.newLabel
 import com.kotcrab.vis.ui.widget.*
 import kotlin.concurrent.thread
 import kotlin.math.max
@@ -30,6 +30,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         val pGreats = stats.greats.toFloat() / totalNotes.toFloat()
         val pOks = stats.oks.toFloat() / totalNotes.toFloat()
         val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
+        if (!playScreen.noHoldNotes) {
+            stats.score * 1.1f
+        }
         val rank = when {
             pGreats >= 1f && pMisses == 0f -> "SS"
             pGreats >= 0.8f && pMisses == 0f -> "S"
@@ -67,6 +70,10 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 add(VisLabel("Miss: " + stats.misses).also { it.color = Color.RED })
                 row()
                 add(VisLabel("Combo: " + stats.maxCombo))
+                if (!playScreen.noHoldNotes) {
+                    row()
+                    add(newLabel("Hold Notes: +10% score"))
+                }
             }).width(480f)
         }
 
@@ -90,7 +97,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             val minRank = "C"
             if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank)) {
                 createTable(VisTextButton("Restart>").addChangeListener {
-                    this@StatsStage.fadeInAndThen(0.5f) {
+                    this@StatsStage.fadeInAndThen(1f) {
                         game.screen = PlayScreen(playScreen.gameMap, playSets)
                     }
                 }).apply {
@@ -187,7 +194,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 })
             })
         } else {
-            this@StatsStage.fadeInAndThen(0.5f) {
+            this@StatsStage.fadeInAndThen(1f) {
                 game.screen = PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == nextMap }),
                     playSets

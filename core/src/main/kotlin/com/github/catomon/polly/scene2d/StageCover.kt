@@ -1,13 +1,13 @@
-package com.github.catomon.polly.scene2d
+package com.github.catomon.moemarathon.scene2d
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.scene2d.actions.OneAction
-import com.github.catomon.polly.scene2d.actions.UpdateAction
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.scene2d.actions.OneAction
+import com.github.catomon.moemarathon.scene2d.actions.UpdateAction
 
 class StageCover(alpha: Float = 1f) : Widget() {
 

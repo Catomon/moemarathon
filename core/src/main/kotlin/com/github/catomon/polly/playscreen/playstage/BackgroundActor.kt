@@ -1,11 +1,11 @@
-package com.github.catomon.polly.playscreen.playstage
+package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.github.catomon.polly.utils.setPositionByCenter
-import com.github.catomon.polly.utils.worldCenterX
-import com.github.catomon.polly.utils.worldCenterY
+import com.github.catomon.moemarathon.utils.setPositionByCenter
+import com.github.catomon.moemarathon.utils.worldCenterX
+import com.github.catomon.moemarathon.utils.worldCenterY
 
 class BackgroundActor(pSprite: Sprite? = null) : Actor() {
 

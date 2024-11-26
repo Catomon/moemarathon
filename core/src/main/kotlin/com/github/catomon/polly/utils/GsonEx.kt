@@ -1,10 +1,10 @@
-package com.github.catomon.polly.utils
+package com.github.catomon.moemarathon.utils
 
 import com.badlogic.gdx.utils.Json
 
 val gson: Json = Json()
 
-fun <T> fromGson(json: String, clazz: Class<T>) : T {
+fun <T> fromGson(json: String, clazz: Class<T>) : T? {
     return gson.fromJson(clazz, json)
 }
 

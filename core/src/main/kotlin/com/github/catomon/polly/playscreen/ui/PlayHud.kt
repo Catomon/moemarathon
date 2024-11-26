@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen.ui
+package com.github.catomon.moemarathon.playscreen.ui
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -6,19 +6,19 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.removeActor
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.game
-import com.github.catomon.polly.mainmenu.MenuStage
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.NoteListener
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.utils.SpriteActor
-import com.github.catomon.polly.utils.addCover
-import com.github.catomon.polly.utils.removeCover
-import com.github.catomon.polly.widgets.addChangeListener
-import com.github.catomon.polly.widgets.newLabel
-import com.github.catomon.polly.widgets.newTextButton
+import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.mainmenu.MenuStage
+import com.github.catomon.moemarathon.playscreen.Note
+import com.github.catomon.moemarathon.playscreen.NoteListener
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.SpriteActor
+import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.removeCover
+import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.github.catomon.moemarathon.widgets.newLabel
+import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisTable
 
 class PlayHud(private val playScreen: PlayScreen) :

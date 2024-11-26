@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-  namespace "com.github.catomon.polly"
+  namespace "com.github.catomon.moemarathon"
   compileSdk 34
   sourceSets {
     main {
@@ -24,7 +24,7 @@ android {
 		}
   }
   defaultConfig {
-    applicationId 'com.github.catomon.polly'
+    applicationId 'com.github.catomon.moemarathon'
     minSdkVersion 19
     targetSdkVersion 34
     versionCode 1
@@ -44,7 +44,7 @@ android {
   }
 
   kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
-  
+
 }
 
 repositories {
@@ -118,7 +118,7 @@ tasks.register('run', Exec) {
   }
 
   def adb = path + "/platform-tools/adb"
-  commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.github.catomon.polly/com.github.catomon.polly.android.AndroidLauncher'
+  commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.github.catomon.moemarathon/com.github.catomon.moemarathon.android.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"

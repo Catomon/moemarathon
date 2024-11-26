@@ -1,8 +1,8 @@
-package com.github.catomon.polly.map
+package com.github.catomon.moemarathon.map
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
-import com.github.catomon.polly.map.osu.OsuParser
+import com.github.catomon.moemarathon.map.osu.OsuParser
 
 class GameMap(val file: FileHandle) {
     val osuBeatmap = OsuParser.parse(file.readString())

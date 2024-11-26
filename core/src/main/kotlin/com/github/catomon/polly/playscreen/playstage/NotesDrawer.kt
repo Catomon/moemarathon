@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen.playstage
+package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.utils.degrees
-import com.github.catomon.polly.utils.setPositionByCenter
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.playscreen.Note
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.degrees
+import com.github.catomon.moemarathon.utils.setPositionByCenter
 
 class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 

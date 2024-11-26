@@ -1,4 +1,4 @@
-package com.github.catomon.polly.map.osu
+package com.github.catomon.moemarathon.map.osu
 
 import com.badlogic.gdx.utils.ArrayMap
 

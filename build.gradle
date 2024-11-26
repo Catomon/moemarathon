@@ -54,12 +54,12 @@ configure(subprojects - project(':android')) {
     }
   }
   compileKotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
-  
+
 }
 
 subprojects {
   version = '0.1'
-  ext.appName = 'polly'
+  ext.appName = 'moemarathon'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
@@ -71,4 +71,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = 'polly' + '-parent'
+eclipse.project.name = 'moemarathon' + '-parent'

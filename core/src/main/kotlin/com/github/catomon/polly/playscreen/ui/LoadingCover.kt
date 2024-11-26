@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen.ui
+package com.github.catomon.moemarathon.playscreen.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.utils.RegionAnimation
-import com.github.catomon.polly.utils.centerX
-import com.github.catomon.polly.utils.centerY
-import com.github.catomon.polly.utils.setPositionByCenter
-import com.github.catomon.polly.widgets.newLabel
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.utils.RegionAnimation
+import com.github.catomon.moemarathon.utils.centerX
+import com.github.catomon.moemarathon.utils.centerY
+import com.github.catomon.moemarathon.utils.setPositionByCenter
+import com.github.catomon.moemarathon.widgets.newLabel
 
 class LoadingCover(labelText: String = "") : Widget() {
 

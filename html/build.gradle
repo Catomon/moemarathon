@@ -17,8 +17,8 @@ gwt {
   minHeapSize = '1G'
 
   src = files(file('src/main/java')) // Needs to be in front of "modules" below.
-  modules 'com.github.catomon.polly.GdxDefinition'
-  devModules 'com.github.catomon.polly.GdxDefinitionSuperdev'
+  modules 'com.github.catomon.moemarathon.GdxDefinition'
+  devModules 'com.github.catomon.moemarathon.GdxDefinitionSuperdev'
   project.webAppDirName = 'webapp'
 
   compiler.strict = true

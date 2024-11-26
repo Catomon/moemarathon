@@ -1,4 +1,4 @@
-package com.github.catomon.polly.difficulties
+package com.github.catomon.moemarathon.difficulties
 
 import com.badlogic.gdx.graphics.Color
 

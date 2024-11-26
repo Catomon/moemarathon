@@ -1,4 +1,4 @@
-package com.github.catomon.polly.widgets
+package com.github.catomon.moemarathon.widgets
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
-import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.utils.addClickListener
+import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.utils.addClickListener
 import com.kotcrab.vis.ui.Focusable
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.BorderOwner
@@ -142,9 +142,9 @@ fun <T : Actor> T.addChangeListener(listener: (actor: T) -> Unit): T {
         }
     })
 
-    return this as T
+    return this
 }
 
 fun <T : Actor> T.addClickSound(soundName: String = "click"): T {
-    return addClickListener { AudioManager.sound(soundName) } as T
+    return addClickListener { AudioManager.sound(soundName) }
 }

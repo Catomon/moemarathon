@@ -11,7 +11,7 @@ apply plugin: 'robovm'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-  mainClassName = "com.github.catomon.polly.ios.IOSLauncher"
+  mainClassName = "com.github.catomon.moemarathon.ios.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build

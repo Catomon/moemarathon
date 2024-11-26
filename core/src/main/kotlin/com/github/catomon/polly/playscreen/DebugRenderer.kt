@@ -1,10 +1,10 @@
-package com.github.catomon.polly.playscreen
+package com.github.catomon.moemarathon.playscreen
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.github.catomon.polly.GameMain.Companion.screenHeight
-import com.github.catomon.polly.GameMain.Companion.screenWidth
+import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
+import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
 
 class DebugRenderer(val playScreen: PlayScreen, val shapes: ShapeRenderer) {
 

@@ -1,4 +1,4 @@
-package com.github.catomon.polly.scene2d.actions
+package com.github.catomon.moemarathon.scene2d.actions
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import kotlin.math.pow

@@ -1,15 +1,15 @@
-package com.github.catomon.polly.map
+package com.github.catomon.moemarathon.map
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Queue
-import com.github.catomon.polly.Const
-import com.github.catomon.polly.map.osu.OsuBeatmap
-import com.github.catomon.polly.map.osu.OsuParser
-import com.github.catomon.polly.map.osu.toNote
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.NoteMap
-import com.github.catomon.polly.utils.calculateDegrees
+import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.map.osu.OsuBeatmap
+import com.github.catomon.moemarathon.map.osu.OsuParser
+import com.github.catomon.moemarathon.map.osu.toNote
+import com.github.catomon.moemarathon.playscreen.Note
+import com.github.catomon.moemarathon.playscreen.NoteMap
+import com.github.catomon.moemarathon.utils.calculateDegrees
 import kotlin.math.abs
 
 object MapsManager {

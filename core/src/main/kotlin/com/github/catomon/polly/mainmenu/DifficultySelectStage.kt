@@ -1,24 +1,29 @@
-package com.github.catomon.polly.mainmenu
+package com.github.catomon.moemarathon.mainmenu
 
-import com.github.catomon.polly.GamePref
-import com.github.catomon.polly.difficulties.*
-import com.github.catomon.polly.game
-import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.map.MapsManager
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.utils.createTable
-import com.github.catomon.polly.utils.fadeInAndThen
-import com.github.catomon.polly.widgets.addChangeListener
-import com.github.catomon.polly.widgets.newLabel
-import com.github.catomon.polly.widgets.newTextButton
+import com.github.catomon.moemarathon.GamePref
+import com.github.catomon.moemarathon.difficulties.*
+import com.github.catomon.moemarathon.difficulties.PlaySets.EasyDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.HardDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.NormalDiff
+import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.map.MapsManager
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.createTable
+import com.github.catomon.moemarathon.utils.fadeInAndThen
+import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.github.catomon.moemarathon.widgets.newLabel
+import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisTextButton
 
 class DifficultySelectStage() :
     BgStage() {
 
     private val difficulties: List<PlaySettings> = listOf(
-        EasyDiff(), NormalDiff(), HardDiff()
+        EasyDiff, NormalDiff, HardDiff
     )
+
+    private var holdNotesOn = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
@@ -55,12 +60,26 @@ class DifficultySelectStage() :
         }).apply {
             left().bottom()
         }
+
+        createTable(VisTextButton("Hold Notes Off (Easier)").apply {
+            label.setFontScale(0.75f)
+            addChangeListener {
+                holdNotesOn = !holdNotesOn
+                if (holdNotesOn) {
+                    it.setText("Hold Notes On (Harder)")
+                } else {
+                    it.setText("Hold Notes Off (Easier)")
+                }
+            }
+        }).apply {
+            center().bottom()
+        }
     }
 
     private fun chooseDiff(diff: PlaySettings) {
-        this@DifficultySelectStage.fadeInAndThen(0.5f) {
+        this@DifficultySelectStage.fadeInAndThen(1f) {
             game.screen =
-                PlayScreen(GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }), diff)
+                PlayScreen(GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }), diff.copy(noHoldNotes = !holdNotesOn))
         }
 
         //menuScreen.changeStage(MapSelectStage(diff))

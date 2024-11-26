@@ -1,10 +1,10 @@
-package com.github.catomon.polly.playscreen
+package com.github.catomon.moemarathon.playscreen
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
-import com.github.catomon.polly.Const
-import com.github.catomon.polly.utils.addCover
-import com.github.catomon.polly.utils.removeCover
+import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.removeCover
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 

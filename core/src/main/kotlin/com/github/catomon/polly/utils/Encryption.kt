@@ -1,4 +1,4 @@
-package com.github.catomon.polly.utils
+package com.github.catomon.moemarathon.utils
 
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec

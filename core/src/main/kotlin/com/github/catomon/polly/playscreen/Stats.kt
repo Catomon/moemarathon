@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen
+package com.github.catomon.moemarathon.playscreen
 
 class Stats {
     var score = 0

@@ -1,4 +1,4 @@
-package com.github.catomon.polly.mainmenu
+package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -8,27 +8,30 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
-import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.GamePref
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.difficulties.DefaultPlaySets
-import com.github.catomon.polly.difficulties.PlaySettings
-import com.github.catomon.polly.difficulties.RankUtil
-import com.github.catomon.polly.difficulties.UnlockedOnlyPlaySets
-import com.github.catomon.polly.game
-import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.map.MapsManager
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.utils.*
-import com.github.catomon.polly.widgets.addChangeListener
-import com.github.catomon.polly.widgets.newLabel
+import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.GamePref
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.difficulties.PlaySets.DefaultPlaySets
+import com.github.catomon.moemarathon.difficulties.PlaySets.EasyDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.HardDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.NormalDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
+import com.github.catomon.moemarathon.difficulties.PlaySettings
+import com.github.catomon.moemarathon.difficulties.RankUtil
+import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.map.MapsManager
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.*
+import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.github.catomon.moemarathon.widgets.newLabel
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
 import com.kotcrab.vis.ui.widget.*
 import kotlin.concurrent.thread
 
 class MapSelectStage(
-    val playSets: PlaySettings = DefaultPlaySets(),
+    val playSets: PlaySettings = DefaultPlaySets,
     val mapFileNames: List<String> = playSets.maps,
 ) :
     BgStage() {
@@ -67,7 +70,7 @@ class MapSelectStage(
                 isLoading = true
                 loadedItems =
                     (if (mapFileNames.isEmpty()) {
-                        if (playSets is UnlockedOnlyPlaySets) {
+                        if (playSets == UnlockedOnlyPlaySets) {
                             val userSaveMapRanks = GamePref.userSave.mapRanks
                             MapsManager.collectMapFiles().map { GameMap(it) }
                                 .filter { userSaveMapRanks.contains(it.file.name()) }
@@ -102,18 +105,29 @@ class MapSelectStage(
                                     if (selectedItem == null)
                                         selectedItem = it
 
-                                    thread(true) {
-                                        try {
-                                            AudioManager.loadMapMusic(it.map).play()
-                                        } catch (e: Exception) {
-                                            e.printStackTrace()
-                                        }
-                                    }
+                                    AudioManager.loadMapMusic(it.map)
+                                    AudioManager.playMapMusic()
                                 }
                             }
                             newMapListItem.addClickListener {
                                 if (buttonGroup.checked == selectedItem) {
-                                    this@MapSelectStage.fadeInAndThen(0.5f) {
+                                    this@MapSelectStage.fadeInAndThen(1f) {
+                                        var playSets = playSets
+                                        if (playSets == UnlockedOnlyPlaySets) {
+                                            when {
+                                                EasyDiff.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = EasyDiff.noteSpawnTime)
+                                                }
+
+                                                NormalDiff.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = NormalDiff.noteSpawnTime)
+                                                }
+
+                                                HardDiff.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = HardDiff.noteSpawnTime)
+                                                }
+                                            }
+                                        }
                                         game.screen = PlayScreen(newMapListItem.map, playSets)
                                     }
                                 }
@@ -130,7 +144,7 @@ class MapSelectStage(
                 }
 
                 createTable().apply {
-                    if (loadedItems.isEmpty() && playSets is UnlockedOnlyPlaySets) {
+                    if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
                         add("Unlock new maps by playing marathon!")
                         center()
                     } else {
@@ -166,7 +180,7 @@ class MapSelectStage(
                             textureBgCache.put(it.file.name(), it.newBackgroundTexture())
                     }
 
-                    buttonGroup.buttons.first().isChecked = true
+                    buttonGroup.buttons.random().isChecked = true
                     buttonGroup.setMinCheckCount(1)
                     scrollFocus = mapList.scrollPane
                 }

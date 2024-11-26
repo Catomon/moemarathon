@@ -1,4 +1,4 @@
-package com.github.catomon.polly.utils
+package com.github.catomon.moemarathon.utils
 
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas

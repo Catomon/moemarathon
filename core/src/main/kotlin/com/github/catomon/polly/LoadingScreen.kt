@@ -1,7 +1,7 @@
-package com.github.catomon.polly
+package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.ScreenAdapter
-import com.github.catomon.polly.mainmenu.MenuScreen
+import com.github.catomon.moemarathon.mainmenu.MenuScreen
 
 class LoadingScreen(private val game: GameMain) : ScreenAdapter() {
 

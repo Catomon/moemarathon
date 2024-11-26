@@ -1,10 +1,10 @@
-package com.github.catomon.polly.scene2d
+package com.github.catomon.moemarathon.scene2d
 
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.github.catomon.polly.utils.RegionAnimation
-import com.github.catomon.polly.utils.SpriteActor
+import com.github.catomon.moemarathon.utils.RegionAnimation
+import com.github.catomon.moemarathon.utils.SpriteActor
 
 class AnimationActor(val regionAnimation: RegionAnimation) : SpriteActor(Sprite(regionAnimation.currentFrame)) {
 

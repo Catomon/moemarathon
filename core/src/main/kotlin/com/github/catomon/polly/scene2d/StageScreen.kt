@@ -1,4 +1,4 @@
-package com.github.catomon.polly.scene2d
+package com.github.catomon.moemarathon.scene2d
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
@@ -16,24 +16,24 @@ open class  StageScreen<T : Stage>(
         }
 
     open fun changeStage(newStage: T) {
-        val stage = stage
+//        val stage = stage
         this.stage = newStage
 
         return
-        if (stage != null) {
-            stage.addAction(
-                Actions.sequence(
-                    Actions.alpha(0f, 0.25f),
-                    Actions.run {
-                        newStage.addAction(Actions.alpha(1f, 0.25f))
-                        this.stage = newStage
-                    }
-                )
-            )
-        } else {
-            newStage.addAction(Actions.alpha(1f, 0.25f))
-            this.stage = newStage
-        }
+//        if (stage != null) {
+//            stage.addAction(
+//                Actions.sequence(
+//                    Actions.alpha(0f, 0.25f),
+//                    Actions.run {
+//                        newStage.addAction(Actions.alpha(1f, 0.25f))
+//                        this.stage = newStage
+//                    }
+//                )
+//            )
+//        } else {
+//            newStage.addAction(Actions.alpha(1f, 0.25f))
+//            this.stage = newStage
+//        }
     }
 
     override fun render(delta: Float) {

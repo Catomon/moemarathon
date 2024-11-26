@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen
+package com.github.catomon.moemarathon.playscreen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
@@ -10,21 +10,22 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
-import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.Const
-import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
-import com.github.catomon.polly.Const.SCORE_GAIN_OK
-import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
-import com.github.catomon.polly.GameMain.Companion.screenHeight
-import com.github.catomon.polly.GameMain.Companion.screenWidth
-import com.github.catomon.polly.difficulties.PlaySettings
-import com.github.catomon.polly.game
-import com.github.catomon.polly.mainmenu.StatsStage
-import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.map.MapsManager
-import com.github.catomon.polly.playscreen.playstage.PlayStage
-import com.github.catomon.polly.playscreen.ui.PlayHud
+import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
+import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
+import com.github.catomon.moemarathon.Const.SCORE_GAIN_TRACE
+import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
+import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
+import com.github.catomon.moemarathon.difficulties.PlaySettings
+import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.mainmenu.StatsStage
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.map.MapsManager
+import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
+import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -91,13 +92,13 @@ class PlayScreen(
         set(value) {
             field = value
             if (value)
-                AudioManager.mapMusic?.pause()
+                AudioManager.pauseMapMusic()
             else
-                AudioManager.mapMusic?.play()
+                AudioManager.playMapMusic()
         }
     var autoPlay = false
     var skinName = "komugi" // "default"
-    var noTracers = true
+    var noHoldNotes = true
     var isDone = false
     var debug = false
 
@@ -116,13 +117,13 @@ class PlayScreen(
         if (isReady) return
 
         noteSpawnTime = playSets.noteSpawnTime
-        noTracers = playSets.noTracers
+        noHoldNotes = playSets.noHoldNotes
 
         ///
 
-        AudioManager.loadMapMusic(gameMap.file.parent().child(gameMap.osuBeatmap.audioFileName))
+        AudioManager.loadMapMusic(gameMap)
 
-        if (noTracers) {
+        if (noHoldNotes) {
             noteMap.chunks.forEach { chunk ->
                 chunk.notes.forEach { note ->
                     note.tracingNext = false; note.tracingPrev = false
@@ -142,8 +143,8 @@ class PlayScreen(
     }
 
     var action: (() -> Unit)? = {
-        AudioManager.mapMusic?.play() ?: IllegalStateException("AudioManager.mapMusic must be not null at this point")
-        time = AudioManager.mapMusic!!.position
+        AudioManager.playMapMusic()
+        time = AudioManager.getMapMusicPosition()
     }
 
     private fun update(delta: Float) {
@@ -154,7 +155,7 @@ class PlayScreen(
         if (action != null) {
             time += delta
         } else {
-            time = AudioManager.mapMusic!!.position
+            time = AudioManager.getMapMusicPosition()
         }
 
         if (action != null && time >= 0) {
@@ -197,15 +198,18 @@ class PlayScreen(
                 noteMap.chunks.removeLast()
             }
         } else {
-            isDone = true
             onDone()
         }
     }
 
     fun onDone() {
-        game.screen = game.menuScreen
-        game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
-        game.menuScreen.changeStage(StatsStage(this))
+        if (isDone) return
+        playStage.addAction(Actions.sequence(Actions.delay(if (Const.IS_RELEASE) 2.5f else 0f), Actions.run {
+            game.screen = game.menuScreen
+            game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
+            game.menuScreen.changeStage(StatsStage(this))
+        }))
+        isDone = true
     }
 
     private fun draw() {

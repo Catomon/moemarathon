@@ -1,10 +1,10 @@
-package com.github.catomon.polly.android
+package com.github.catomon.moemarathon.android
 
 import android.os.Bundle
 
 import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
-import com.github.catomon.polly.GameMain
+import com.github.catomon.moemarathon.GameMain
 
 /** Launches the Android application. */
 class AndroidLauncher : AndroidApplication() {

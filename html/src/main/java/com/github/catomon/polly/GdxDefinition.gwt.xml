@@ -18,14 +18,14 @@
   <inherits name="com.badlogic.ashley_gwt" />
   <inherits name="com.badlogic.gdx.controllers" />
   <inherits name="com.badlogic.gdx.controllers.controllers-gwt" />
-  <inherits name="com.github.catomon.polly.GameMain" />
+  <inherits name="com.github.catomon.moemarathon.GameMain" />
   <inherits name="com.kotcrab.vis.vis-ui" />
   <inherits name="com.rafaskoberg.gdx.typinglabel.typinglabel" />
   <inherits name="de.tomgrill.gdxdialogs.html.gdx_dialogs_html" />
   <inherits name="regexodus.regexodus" />
 
   <!-- You must change this if you rename packages later, or rename GwtLauncher. -->
-  <entry-point class="com.github.catomon.polly.gwt.GwtLauncher" />
+  <entry-point class="com.github.catomon.moemarathon.gwt.GwtLauncher" />
 
   <!-- You usually won't need to make changes to the rest of this. -->
   <set-configuration-property name="gdx.assetpath" value="../assets" />

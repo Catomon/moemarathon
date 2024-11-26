@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen
+package com.github.catomon.moemarathon.playscreen
 
 interface NoteListener {
 

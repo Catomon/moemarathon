@@ -1,6 +1,6 @@
-package com.github.catomon.polly
+package com.github.catomon.moemarathon
 
-import com.github.catomon.polly.difficulties.Rank
+import com.github.catomon.moemarathon.difficulties.Rank
 
 data class UserSave(
     var name: String = "Player",

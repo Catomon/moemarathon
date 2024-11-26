@@ -1,15 +1,15 @@
-package com.github.catomon.polly
+package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ScreenUtils
-import com.github.catomon.polly.mainmenu.MenuScreen
-import com.github.catomon.polly.mainmenu.MenuStage
-import com.github.catomon.polly.map.GameMap
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.utils.setMouseCursor
+import com.github.catomon.moemarathon.mainmenu.MenuScreen
+import com.github.catomon.moemarathon.mainmenu.MenuStage
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.setMouseCursor
 
 lateinit var assets: Assets
 
@@ -55,7 +55,7 @@ open class GameMain : Game() {
         super.render()
 
         if (!Const.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
-            AudioManager.mapMusic?.stop()
+            AudioManager.stopMapMusic()
             setScreen(menuScreen)
             menuScreen.changeStage(MenuStage())
         }

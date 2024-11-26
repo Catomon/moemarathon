@@ -1,10 +1,11 @@
-package com.github.catomon.polly
+package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.files.FileHandle
-import com.github.catomon.polly.map.GameMap
+import com.github.catomon.moemarathon.map.GameMap
+import com.github.catomon.moemarathon.utils.logMsg
 import kotlin.concurrent.thread
 
 object AudioManager {
@@ -20,7 +21,16 @@ object AudioManager {
 
     @set:Synchronized
     @get:Synchronized
-    var mapMusic: Music? = null
+    private var mapMusic: Music? = null
+        private set
+
+    var currentMap: GameMap? = null
+
+    var mapMusicPlay = false
+        private set
+    var mapMusicPause = false
+        private set
+    var mapMusicStop = false
         private set
 
     @set:Synchronized
@@ -31,24 +41,120 @@ object AudioManager {
     lateinit var hitSound: Sound
         private set
 
+    init {
+        var playback: Thread? = null
+        var playbackRun = {
+            while (true) {
+                if (currentMap != null) {
+                    if (mapMusic != null) {
+                        val oldMusic = mapMusic!!
+                        Gdx.app.postRunnable {
+                            oldMusic.stop()
+                            oldMusic.dispose()
+                            logMsg("Prev. Map music disposed.")
+                        }
+                        mapMusic = null
+                    }
+                    mapMusic =
+                        Gdx.audio.newMusic(currentMap!!.file.parent().child(currentMap!!.osuBeatmap.audioFileName))
+                    mapMusic!!.isLooping = false
+                    mapMusic!!.volume = musicVolume
+                    currentMap = null
+                    logMsg("Map music loaded.")
+                    continue
+                }
+
+                if (mapMusic != null) {
+                    if (mapMusicPause) {
+                        if (mapMusic!!.isPlaying) {
+                            mapMusicPause = false
+                            Gdx.app.postRunnable {
+                                mapMusic!!.pause()
+                            }
+                            logMsg("Map music pause.")
+                            continue
+                        }
+                    }
+
+                    if (mapMusicPlay) {
+                        if (!mapMusic!!.isPlaying) {
+                            mapMusicPlay = false
+                            Gdx.app.postRunnable {
+                                mapMusic!!.play()
+                            }
+                            logMsg("Map music play.")
+                            continue
+                        }
+                    }
+
+                    if (mapMusicStop) {
+                        mapMusicStop = false
+                        Gdx.app.postRunnable {
+                            mapMusic!!.stop()
+                        }
+                        logMsg("Map music stop.")
+                        continue
+                    }
+                }
+
+                Thread.sleep(250)
+            }
+        }
+
+        thread(true, isDaemon = true) {
+            while (true) {
+                if (playback?.isAlive != true) {
+                    try {
+                        playback = thread(true, block = playbackRun, isDaemon = true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                Thread.sleep(1000)
+            }
+        }
+    }
+
     @Synchronized
     fun loadMapMusic(name: String): Music {
         return loadMapMusic(Gdx.files.internal("maps/$name"))
     }
 
     @Synchronized
-    fun loadMapMusic(file: FileHandle): Music {
+    private fun loadMapMusic(file: FileHandle): Music {
         mapMusic?.stop()
         mapMusic?.dispose()
         mapMusic = Gdx.audio.newMusic(file)
         mapMusic!!.isLooping = false
         mapMusic!!.volume = musicVolume
+
         return mapMusic!!
     }
 
+    fun getMapMusicPosition(): Float = mapMusic?.position ?: 0f
+
+    fun playMapMusic() {
+        mapMusicPlay = true
+        mapMusicPause = false
+        mapMusicStop = false
+    }
+
+    fun pauseMapMusic() {
+        mapMusicPause = true
+        mapMusicPlay = false
+        mapMusicStop = false
+    }
+
+    fun stopMapMusic() {
+        mapMusicPause = false
+        mapMusicPlay = false
+        mapMusicStop = true
+    }
+
     @Synchronized
-    fun loadMapMusic(map: GameMap): Music {
-        return loadMapMusic(map.file.parent().child(map.osuBeatmap.audioFileName))
+    fun loadMapMusic(map: GameMap) {
+        currentMap = map
     }
 
     @Synchronized
@@ -76,7 +182,7 @@ object AudioManager {
     }
 
     fun play(sound: Sound, volume: Float = soundVolume) {
-        sound.play(soundVolume)
+        sound.play(volume)
     }
 
     fun playSound(name: String, volume: Float = soundVolume) {

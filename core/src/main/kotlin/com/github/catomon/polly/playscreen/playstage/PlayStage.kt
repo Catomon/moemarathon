@@ -1,4 +1,4 @@
-package com.github.catomon.polly.playscreen.playstage
+package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
@@ -8,13 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.NoteListener
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.scene2d.actions.AccelAction
-import com.github.catomon.polly.utils.SpriteActor
-import com.github.catomon.polly.utils.copyAndScale
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.playscreen.Note
+import com.github.catomon.moemarathon.playscreen.NoteListener
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.scene2d.actions.AccelAction
+import com.github.catomon.moemarathon.utils.SpriteActor
+import com.github.catomon.moemarathon.utils.copyAndScale
 import kotlin.random.Random
 
 

@@ -1,4 +1,4 @@
-package com.github.catomon.polly.utils
+package com.github.catomon.moemarathon.utils
 
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.*
@@ -8,9 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.github.catomon.polly.scene2d.actions.OneAction
+import com.github.catomon.moemarathon.scene2d.actions.OneAction
 import com.kotcrab.vis.ui.widget.VisTable
-import com.github.catomon.polly.scene2d.StageCover
+import com.github.catomon.moemarathon.scene2d.StageCover
 import kotlin.math.atan2
 
 fun Texture.copyAndScale(scale: Float): Texture {
@@ -73,7 +73,7 @@ fun Stage.removeCover() {
 }
 
 fun Stage.fadeInAndThen(duration: Float = 1f, action: Action.() -> Unit) {
-    addActor(StageCover().fadeInAndThen(OneAction(action)))
+    addActor(StageCover().fadeInAndThen(OneAction(action), duration))
 }
 
 fun Stage.fadeInAndThen(duration: Float = 1f, addTime: Float = 0f, action: Action.() -> Unit) {
@@ -157,7 +157,7 @@ fun <T : Actor> T.addClickListener(function: (InputEvent) -> Unit): T {
         }
     })
 
-    return this as T
+    return this
 }
 
 /** Sets actor position so its center x == [x] and center y == [y] */

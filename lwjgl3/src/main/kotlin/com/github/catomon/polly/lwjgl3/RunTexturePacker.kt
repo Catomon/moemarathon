@@ -1,4 +1,4 @@
-package com.github.catomon.polly.lwjgl3;
+package com.github.catomon.moemarathon.lwjgl3;
 
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Resampling

@@ -1,13 +1,13 @@
 @file:JvmName("IOSLauncher")
 
-package com.github.catomon.polly.ios
+package com.github.catomon.moemarathon.ios
 
 import org.robovm.apple.foundation.NSAutoreleasePool
 import org.robovm.apple.uikit.UIApplication
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration
-import com.github.catomon.polly.GameMain
+import com.github.catomon.moemarathon.GameMain
 
 /** Launches the iOS (RoboVM) application. */
 class IOSLauncher : IOSApplication.Delegate() {

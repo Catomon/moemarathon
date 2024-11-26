@@ -1,15 +1,15 @@
-package com.github.catomon.polly.playscreen.playstage
+package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.github.catomon.polly.assets
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.NoteListener
-import com.github.catomon.polly.playscreen.PlayScreen
-import com.github.catomon.polly.scene2d.AnimationActor
-import com.github.catomon.polly.utils.*
+import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.playscreen.Note
+import com.github.catomon.moemarathon.playscreen.NoteListener
+import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.scene2d.AnimationActor
+import com.github.catomon.moemarathon.utils.*
 import kotlin.random.Random
 
 class CenterActor(private val playScreen: PlayScreen) : Actor(), NoteListener {

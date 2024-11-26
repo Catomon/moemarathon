@@ -1,8 +1,8 @@
-package com.github.catomon.polly.utils
+package com.github.catomon.moemarathon.utils
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Json
-import com.github.catomon.polly.Strings
+import com.github.catomon.moemarathon.Strings
 
 fun main() {
     val fileHande = FileHandle("assets/lang/strings.json")

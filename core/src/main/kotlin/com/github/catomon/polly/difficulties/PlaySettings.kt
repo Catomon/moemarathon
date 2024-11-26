@@ -1,66 +1,83 @@
-package com.github.catomon.polly.difficulties
+package com.github.catomon.moemarathon.difficulties
 
 const val DEFAULT = "Default"
 const val EASY = "Easy"
 const val NORMAL = "Normal"
 const val HARD = "Hard"
 
-open class PlaySettings(
+data class PlaySettings(
     val name: String,
     val maps: List<String>,
     val noteSpawnTime: Float,
-    val noTracers: Boolean = true,
+    val noHoldNotes: Boolean = true,
     val ranks: MutableMap<String, String> = mutableMapOf(),
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return other is PlaySettings && name == other.name
+    }
 
-class DefaultPlaySets : PlaySettings(
-    DEFAULT,
-    emptyList(),
-    noteSpawnTime = 1f,
-)
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+}
 
-class UnlockedOnlyPlaySets : PlaySettings(
-    DEFAULT,
-    emptyList(),
-    noteSpawnTime = 1f,
-)
+object PlaySets {
+    val DefaultPlaySets = PlaySettings(
+        DEFAULT,
+        emptyList(),
+        noteSpawnTime = 1f,
+    )
 
-class EasyDiff() : PlaySettings(
-    EASY,
-    listOf(
-        "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Easy].osu",
-        "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Easy].osu",
-        "nao - Kirihirake! GracieStar (Tari) [Easy].osu",
-        "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Easy].osu",
-        "solfa feat. Chata - Colorful precious life (Natsu) [Xinely's Easy].osu"
-    ),
-    3f
-)
+    val UnlockedOnlyPlaySets = PlaySettings(
+        "UnlockedOnlyPlaySets",
+        emptyList(),
+        noteSpawnTime = 1f,
+    )
 
-class NormalDiff() : PlaySettings(
-    NORMAL,
-    listOf(
-        "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Normal].osu",
-        "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Normal].osu",
-        "nao - Kirihirake! GracieStar (Tari) [Normal].osu",
-        "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Normal].osu",
-        "solfa feat. Chata - Colorful precious life (Natsu) [lfj's Normal].osu",
-        "U - the first the last (Phyrearms) [Normal].osu",
-        "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Normal].osu",
-    ),
-    2f
-)
+    val EasyDiff = PlaySettings(
+        EASY,
+        listOf(
+            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Easy].osu",
+            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Easy].osu",
+            "nao - Kirihirake! GracieStar (Tari) [Easy].osu",
+            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Easy].osu",
+            "solfa feat. Chata - Colorful precious life (Natsu) [Xinely's Easy].osu",
+            "Yousei Teikoku - Torikago (Furawa) [Easy].osu",
+            "Ichijo - Roulette Roulette (ztrot) [Easy].osu"
+        ),
+        3f
+    )
 
-class HardDiff() : PlaySettings(
-    HARD,
-    listOf(
-        "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Laurier's Hard].osu",
-        "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Hard].osu",
-        "nao - Kirihirake! GracieStar (Tari) [Hard].osu",
-        "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Hard].osu",
-        "solfa feat. Chata - Colorful precious life (Natsu) [Hard].osu",
-        "U - the first the last (Phyrearms) [Hard].osu",
-        "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Hard].osu",
-    ),
-    1f
-)
+    val NormalDiff = PlaySettings(
+        NORMAL,
+        listOf(
+            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Normal].osu",
+            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Normal].osu",
+            "nao - Kirihirake! GracieStar (Tari) [Normal].osu",
+            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Normal].osu",
+            "solfa feat. Chata - Colorful precious life (Natsu) [lfj's Normal].osu",
+            "U - the first the last (Phyrearms) [Normal].osu",
+            "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Normal].osu",
+            "Yousei Teikoku - Torikago (Furawa) [yoru].osu",
+            "Ichijo - Roulette Roulette (ztrot) [Azure's Normal].osu",
+        ),
+        2f
+    )
+
+    val HardDiff = PlaySettings(
+        HARD,
+        listOf(
+            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Laurier's Hard].osu",
+            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Hard].osu",
+            "nao - Kirihirake! GracieStar (Tari) [Hard].osu",
+            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Hard].osu",
+            "solfa feat. Chata - Colorful precious life (Natsu) [Hard].osu",
+            "U - the first the last (Phyrearms) [Hard].osu",
+            "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Hard].osu",
+            "Yousei Teikoku - Torikago (Furawa) [Alazy].osu",
+            "Ichijo - Roulette Roulette (ztrot) [Hard].osu",
+        ),
+        1f
+    )
+
+}

@@ -1,7 +1,7 @@
-package com.github.catomon.polly.mainmenu
+package com.github.catomon.moemarathon.mainmenu
 
-import com.github.catomon.polly.scene2d.StageScreen
-import com.github.catomon.polly.utils.logMsg
+import com.github.catomon.moemarathon.scene2d.StageScreen
+import com.github.catomon.moemarathon.utils.logMsg
 
 class MenuScreen(initialStage: (() -> BgStage)? = null) :
     StageScreen<BgStage>() {

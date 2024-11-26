@@ -1,10 +1,10 @@
-package com.github.catomon.polly.gwt;
+package com.github.catomon.moemarathon.gwt;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-// import com.github.catomon.polly.GameMain;
+// import com.github.catomon.moemarathon.GameMain;
 
 /** Launches the GWT application. */
 public class GwtLauncher extends GwtApplication {

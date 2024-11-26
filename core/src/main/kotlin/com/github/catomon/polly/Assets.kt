@@ -1,4 +1,4 @@
-package com.github.catomon.polly
+package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager

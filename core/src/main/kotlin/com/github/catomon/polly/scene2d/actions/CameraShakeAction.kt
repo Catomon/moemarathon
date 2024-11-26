@@ -1,9 +1,9 @@
-package com.github.catomon.polly.scene2d.actions
+package com.github.catomon.moemarathon.scene2d.actions
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
-import com.github.catomon.polly.utils.Rumble
-import com.github.catomon.polly.utils.setPosition
+import com.github.catomon.moemarathon.utils.Rumble
+import com.github.catomon.moemarathon.utils.setPosition
 
 class CameraShakeAction(val power: Float = 3f, duration: Float = 0.5f) : TemporalAction(duration) {
 
