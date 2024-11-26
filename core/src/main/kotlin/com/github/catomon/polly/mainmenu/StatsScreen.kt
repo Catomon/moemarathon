@@ -9,6 +9,7 @@ import com.github.catomon.polly.game
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.PlayScreen
+import com.github.catomon.polly.scene2d.actions.UpdateAction
 import com.github.catomon.polly.utils.addCover
 import com.github.catomon.polly.utils.createTable
 import com.github.catomon.polly.utils.fadeInAndThen
@@ -17,6 +18,7 @@ import com.github.catomon.polly.widgets.addChangeListener
 import com.github.catomon.polly.widgets.newLabel
 import com.kotcrab.vis.ui.widget.*
 import kotlin.concurrent.thread
+import kotlin.math.max
 
 class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
@@ -102,77 +104,94 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                     center().bottom().padBottom(16f)
                 }
             } else {
-                createTable(VisTextButton("Continue>").addChangeListener {
-                    val nextMapIndex = playSets.maps.indexOf(playScreen.gameMap.file.name())
-                    val nextMap = playSets.maps.getOrNull(if (nextMapIndex < 0) -1 else nextMapIndex + 1)
-                    if (nextMap == null) {
-                        game.menuScreen.changeStage(MenuStage().also { menuStage ->
-                            menuStage.addCover()
-                            menuStage.addActor(VisWindow("Congrats!").also { window ->
-                                window.setCenterOnAdd(true)
-                                window.add("You completed ${playSets.name} mode!")
-                                window.row()
-                                window.add(VisTable().also { table ->
-                                    playSets.ranks.forEach { itRank ->
-                                        table.add(newLabel(itRank.value + " ").also {
-                                            it.color = RankUtil.getRankColor(itRank.value)
-                                        })
-                                        if (playSets.ranks.keys.indexOf(itRank.key) + 1 % 10 == 0)
-                                            table.row()
-                                    }
-                                })
-                                window.row()
-                                window.add(VisTable().also { table ->
-                                    table.add("Result: ")
-                                    var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
-                                        .toFloatArray().average().toFloat()
-                                    if (avg < RankUtil.getRankInt("S") + 0.5f)
-                                        avg += 0.5f
-                                    val resultRankInt = avg.toInt()
-                                    val resultRank = RankUtil.getRankChar(avg.toInt())
-                                    table.add(newLabel(resultRank).also {
-                                        it.color = RankUtil.getRankColor(resultRank); it.setFontScale(1.50f)
-                                    })
-
-                                    //Save mode resul Rank
-                                    GamePref.userSave.also { userSave ->
-                                        when (playSets.name) {
-                                            EASY -> if (userSave.easyRank < resultRankInt) {
-                                                userSave.easyRank = resultRankInt
-                                                GamePref.userSave = userSave; GamePref.save()
-                                            }
-
-                                            NORMAL -> if (userSave.normalRank < resultRankInt) {
-                                                userSave.normalRank = resultRankInt
-                                                GamePref.userSave = userSave; GamePref.save()
-                                            }
-
-                                            HARD -> if (userSave.hardRank < resultRankInt) {
-                                                userSave.hardRank = resultRankInt
-                                                GamePref.userSave = userSave; GamePref.save()
-                                            }
-                                        }
-                                    }
-                                })
-                                window.row()
-                                window.add(VisTextButton("OK!").addChangeListener {
-                                    window.remove()
-                                    menuStage.removeCover()
-                                })
-                                window.pack()
-                            })
-                        })
-                    } else {
-                        this@StatsStage.fadeInAndThen(0.5f) {
-                            game.screen = PlayScreen(
-                                GameMap(MapsManager.collectMapFiles().first { it.name() == nextMap }),
-                                playSets
-                            )
+                var timeBeforeContinue = 0f
+                createTable(VisTextButton("Continue>").also { button ->
+                    button.addAction(UpdateAction({
+                        timeBeforeContinue += it
+                        button.setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue>")
+                        if (timeBeforeContinue >= 5) {
+                            continueMarathon()
+                            true
+                        } else {
+                            false
                         }
+                    }))
+                    button.addChangeListener {
+                        continueMarathon()
                     }
                 }).apply {
                     right().bottom()
                 }
+            }
+        }
+    }
+
+    private fun continueMarathon() {
+        val nextMapIndex = playSets.maps.indexOf(playScreen.gameMap.file.name())
+        val nextMap = playSets.maps.getOrNull(if (nextMapIndex < 0) -1 else nextMapIndex + 1)
+        if (nextMap == null) {
+            game.menuScreen.changeStage(MenuStage().also { menuStage ->
+                menuStage.addCover()
+                menuStage.addActor(VisWindow("Congrats!").also { window ->
+                    window.setCenterOnAdd(true)
+                    window.add("You completed ${playSets.name} mode!")
+                    window.row()
+                    window.add(VisTable().also { table ->
+                        playSets.ranks.forEach { itRank ->
+                            table.add(newLabel(itRank.value + " ").also {
+                                it.color = RankUtil.getRankColor(itRank.value)
+                            })
+                            if (playSets.ranks.keys.indexOf(itRank.key) + 1 % 10 == 0)
+                                table.row()
+                        }
+                    })
+                    window.row()
+                    window.add(VisTable().also { table ->
+                        table.add("Result: ")
+                        var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
+                            .toFloatArray().average().toFloat()
+                        if (avg < RankUtil.getRankInt("S") + 0.5f)
+                            avg += 0.5f
+                        val resultRankInt = avg.toInt()
+                        val resultRank = RankUtil.getRankChar(avg.toInt())
+                        table.add(newLabel(resultRank).also {
+                            it.color = RankUtil.getRankColor(resultRank); it.setFontScale(1.50f)
+                        })
+
+                        //Save mode resul Rank
+                        GamePref.userSave.also { userSave ->
+                            when (playSets.name) {
+                                EASY -> if (userSave.easyRank < resultRankInt) {
+                                    userSave.easyRank = resultRankInt
+                                    GamePref.userSave = userSave; GamePref.save()
+                                }
+
+                                NORMAL -> if (userSave.normalRank < resultRankInt) {
+                                    userSave.normalRank = resultRankInt
+                                    GamePref.userSave = userSave; GamePref.save()
+                                }
+
+                                HARD -> if (userSave.hardRank < resultRankInt) {
+                                    userSave.hardRank = resultRankInt
+                                    GamePref.userSave = userSave; GamePref.save()
+                                }
+                            }
+                        }
+                    })
+                    window.row()
+                    window.add(VisTextButton("OK!").addChangeListener {
+                        window.remove()
+                        menuStage.removeCover()
+                    })
+                    window.pack()
+                })
+            })
+        } else {
+            this@StatsStage.fadeInAndThen(0.5f) {
+                game.screen = PlayScreen(
+                    GameMap(MapsManager.collectMapFiles().first { it.name() == nextMap }),
+                    playSets
+                )
             }
         }
     }

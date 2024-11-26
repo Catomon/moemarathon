@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.files.FileHandle
 import com.github.catomon.polly.map.GameMap
+import kotlin.concurrent.thread
 
 object AudioManager {
 
@@ -18,16 +19,19 @@ object AudioManager {
         }
 
     @set:Synchronized
+    @get:Synchronized
     var mapMusic: Music? = null
         private set
 
     @set:Synchronized
+    @get:Synchronized
     var music: Music? = null
         private set
 
     lateinit var hitSound: Sound
         private set
 
+    @Synchronized
     fun loadMapMusic(name: String): Music {
         return loadMapMusic(Gdx.files.internal("maps/$name"))
     }
@@ -37,21 +41,24 @@ object AudioManager {
         mapMusic?.stop()
         mapMusic?.dispose()
         mapMusic = Gdx.audio.newMusic(file)
-        mapMusic?.isLooping = false
+        mapMusic!!.isLooping = false
         mapMusic!!.volume = musicVolume
         return mapMusic!!
     }
 
+    @Synchronized
     fun loadMapMusic(map: GameMap): Music {
         return loadMapMusic(map.file.parent().child(map.osuBeatmap.audioFileName))
     }
 
+    @Synchronized
     fun loadMusic(file: FileHandle): Music {
         music = Gdx.audio.newMusic(file)
         music!!.volume = musicVolume
         return music!!
     }
 
+    @Synchronized
     fun loadMusic(name: String): Music = loadMusic(Gdx.files.internal("maps/$name"))
 
     fun onMusicLoaded() {

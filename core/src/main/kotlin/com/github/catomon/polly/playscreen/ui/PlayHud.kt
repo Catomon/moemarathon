@@ -4,13 +4,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.removeActor
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.polly.AudioManager
-import com.github.catomon.polly.playscreen.Note
-import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.assets
+import com.github.catomon.polly.game
+import com.github.catomon.polly.mainmenu.MenuStage
+import com.github.catomon.polly.playscreen.Note
 import com.github.catomon.polly.playscreen.NoteListener
+import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.SpriteActor
+import com.github.catomon.polly.utils.addCover
+import com.github.catomon.polly.utils.removeCover
+import com.github.catomon.polly.widgets.addChangeListener
+import com.github.catomon.polly.widgets.newLabel
+import com.github.catomon.polly.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisTable
 
 class PlayHud(private val playScreen: PlayScreen) :
@@ -26,6 +34,23 @@ class PlayHud(private val playScreen: PlayScreen) :
     private val hitTooFar = assets.mainAtlas.findRegion("too_far")
     private val hitQuestion = assets.mainAtlas.findRegion("question")
 
+    private val menuTable = VisTable().apply {
+        setFillParent(true)
+        center()
+
+        add(newLabel("Game paused")).colspan(3).padBottom(32f)
+        row()
+        add(newTextButton("<End").addChangeListener {
+            game.menuScreen.changeStage(MenuStage())
+            game.screen = game.menuScreen
+        })
+        add().width(100f)
+        add(newTextButton("Resume>").addChangeListener {
+            playScreen.paused = false
+            hideMenu()
+        })
+    }
+
     init {
         addActor(VisTable().apply {
             right().top()
@@ -40,6 +65,16 @@ class PlayHud(private val playScreen: PlayScreen) :
 
         playScreen.noteListeners.add(comboLabel)
         playScreen.noteListeners.add(scoreLabel)
+    }
+
+    fun showMenu() {
+        addCover()
+        addActor(menuTable)
+    }
+
+    fun hideMenu() {
+        removeCover()
+        menuTable.remove()
     }
 
     override fun onNoteEvent(id: Int, note: Note) {
@@ -65,6 +100,7 @@ class PlayHud(private val playScreen: PlayScreen) :
                             if (noteIsGreat) hitGreat
                             else hitOk
                         }
+
                         7 -> hitGreat
                         4 -> hitTooEarly
                         5 -> hitTooFar

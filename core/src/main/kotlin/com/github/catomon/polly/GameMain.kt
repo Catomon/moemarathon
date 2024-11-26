@@ -54,7 +54,7 @@ open class GameMain : Game() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f)
         super.render()
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (!Const.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
             AudioManager.mapMusic?.stop()
             setScreen(menuScreen)
             menuScreen.changeStage(MenuStage())

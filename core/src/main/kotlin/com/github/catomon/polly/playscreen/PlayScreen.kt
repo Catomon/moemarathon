@@ -1,6 +1,7 @@
 package com.github.catomon.polly.playscreen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -10,13 +11,15 @@ import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
-import com.github.catomon.polly.*
+import com.github.catomon.polly.AudioManager
+import com.github.catomon.polly.Const
 import com.github.catomon.polly.Const.SCORE_GAIN_GREAT
 import com.github.catomon.polly.Const.SCORE_GAIN_OK
 import com.github.catomon.polly.Const.SCORE_GAIN_TRACE
 import com.github.catomon.polly.GameMain.Companion.screenHeight
 import com.github.catomon.polly.GameMain.Companion.screenWidth
 import com.github.catomon.polly.difficulties.PlaySettings
+import com.github.catomon.polly.game
 import com.github.catomon.polly.mainmenu.StatsStage
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
@@ -85,6 +88,13 @@ class PlayScreen(
     val noteListeners = Array<NoteListener>()
 
     var paused = false
+        set(value) {
+            field = value
+            if (value)
+                AudioManager.mapMusic?.pause()
+            else
+                AudioManager.mapMusic?.play()
+        }
     var autoPlay = false
     var skinName = "komugi" // "default"
     var noTracers = true
@@ -95,7 +105,7 @@ class PlayScreen(
     val playHud = PlayHud(this)
 
     init {
-        Gdx.input.inputProcessor = PlayInputProcessor(this)
+        Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
 
         noteListeners.add(playStage)
         noteListeners.add(playHud)
@@ -137,6 +147,8 @@ class PlayScreen(
     }
 
     private fun update(delta: Float) {
+        playHud.act()
+
         if (paused) return
 
         if (action != null) {
@@ -251,6 +263,7 @@ class PlayScreen(
                 stats.combo = 0
                 stats.misses++
             }
+
             1, 2, 3 -> {
                 stats.combo++
                 stats.score +=

@@ -14,12 +14,14 @@ import com.github.catomon.polly.assets
 import com.github.catomon.polly.difficulties.DefaultPlaySets
 import com.github.catomon.polly.difficulties.PlaySettings
 import com.github.catomon.polly.difficulties.RankUtil
+import com.github.catomon.polly.difficulties.UnlockedOnlyPlaySets
 import com.github.catomon.polly.game
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
 import com.github.catomon.polly.playscreen.PlayScreen
 import com.github.catomon.polly.utils.*
 import com.github.catomon.polly.widgets.addChangeListener
+import com.github.catomon.polly.widgets.newLabel
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
 import com.kotcrab.vis.ui.widget.*
@@ -64,9 +66,15 @@ class MapSelectStage(
                 addCover()
                 isLoading = true
                 loadedItems =
-                    (if (mapFileNames.isEmpty())
-                        MapsManager.collectMapFiles().map { GameMap(it) }
-                    else
+                    (if (mapFileNames.isEmpty()) {
+                        if (playSets is UnlockedOnlyPlaySets) {
+                            val userSaveMapRanks = GamePref.userSave.mapRanks
+                            MapsManager.collectMapFiles().map { GameMap(it) }
+                                .filter { userSaveMapRanks.contains(it.file.name()) }
+                        } else {
+                            MapsManager.collectMapFiles().map { GameMap(it) }
+                        }
+                    } else
                         MapsManager.collectMapFiles().map { GameMap(it) }
                             .filter { mapFileNames.any { mapFileName -> mapFileName == it.file.name() } }
                         ).reversed()
@@ -95,9 +103,12 @@ class MapSelectStage(
                                         selectedItem = it
 
                                     thread(true) {
-                                        AudioManager.loadMapMusic(it.map).play()
+                                        try {
+                                            AudioManager.loadMapMusic(it.map).play()
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
                                     }
-
                                 }
                             }
                             newMapListItem.addClickListener {
@@ -118,10 +129,22 @@ class MapSelectStage(
                     listView.header = Actor().also { it.setSize(50f, 50f) }
                 }
 
-                root.findActor<VisTable>("listTable")?.remove()
                 createTable().apply {
-                    name = "listTable"
-                    add(mapList.scrollPane).center().fillY().expandY().expandX().fillX()
+                    if (loadedItems.isEmpty() && playSets is UnlockedOnlyPlaySets) {
+                        add("Unlock new maps by playing marathon!")
+                        center()
+                    } else {
+                        add(newLabel("Unlock new maps by playing marathon!").also { it.setFontScale(0.6f) })
+                        center().top()
+                    }
+                }
+
+                root.findActor<VisTable>("listTable")?.remove()
+                if (loadedItems.isNotEmpty()) {
+                    createTable().apply {
+                        name = "listTable"
+                        add(mapList.scrollPane).center().fillY().expandY().expandX().fillX()
+                    }
                 }
 
                 createTable(VisTextButton("<Menu").addChangeListener {
@@ -136,16 +159,17 @@ class MapSelectStage(
                 isLoading = false
             }
 
-            Gdx.app.postRunnable {
-                loadedItems.forEach {
-                    if (!textureBgCache.containsKey(it.file.name()))
-                        textureBgCache.put(it.file.name(), it.newBackgroundTexture())
-                }
+            if (loadedItems.isNotEmpty())
+                Gdx.app.postRunnable {
+                    loadedItems.forEach {
+                        if (!textureBgCache.containsKey(it.file.name()))
+                            textureBgCache.put(it.file.name(), it.newBackgroundTexture())
+                    }
 
-                buttonGroup.buttons.first().isChecked = true
-                buttonGroup.setMinCheckCount(1)
-                scrollFocus = mapList.scrollPane
-            }
+                    buttonGroup.buttons.first().isChecked = true
+                    buttonGroup.setMinCheckCount(1)
+                    scrollFocus = mapList.scrollPane
+                }
         }
     }
 

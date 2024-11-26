@@ -2,6 +2,8 @@ package com.github.catomon.polly.mainmenu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.github.catomon.polly.Const
+import com.github.catomon.polly.difficulties.UnlockedOnlyPlaySets
 import com.github.catomon.polly.game
 import com.github.catomon.polly.map.GameMap
 import com.github.catomon.polly.map.MapsManager
@@ -19,9 +21,16 @@ class MenuStage(val menuScreen: MenuScreen = game.menuScreen) : BgStage() {
             }).center()
             row()
             add(VisTextButton("Maps").addChangeListener {
-                menuScreen.changeStage(MapSelectStage())
+                menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets()))
+                //menuScreen.changeStage(MapSelectStage())
             }).center()
             row()
+            if (!Const.IS_RELEASE) {
+                add(VisTextButton("All Maps").addChangeListener {
+                    menuScreen.changeStage(MapSelectStage())
+                }).center()
+                row()
+            }
             add(VisTextButton("Settings")).center()
             row()
             add(VisTextButton("Exit").addChangeListener {
