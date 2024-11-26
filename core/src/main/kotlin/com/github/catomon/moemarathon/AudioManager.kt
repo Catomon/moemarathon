@@ -21,10 +21,12 @@ object AudioManager {
 
     @set:Synchronized
     @get:Synchronized
-    private var mapMusic: Music? = null
+    var mapMusic: Music? = null
         private set
 
-    var currentMap: GameMap? = null
+    private var scheduledMapMusic: GameMap? = null
+    var lastMapMusic: GameMap? = null
+        private set
 
     var mapMusicPlay = false
         private set
@@ -45,7 +47,7 @@ object AudioManager {
         var playback: Thread? = null
         var playbackRun = {
             while (true) {
-                if (currentMap != null) {
+                if (scheduledMapMusic != null) {
                     if (mapMusic != null) {
                         val oldMusic = mapMusic!!
                         Gdx.app.postRunnable {
@@ -56,18 +58,20 @@ object AudioManager {
                         mapMusic = null
                     }
                     mapMusic =
-                        Gdx.audio.newMusic(currentMap!!.file.parent().child(currentMap!!.osuBeatmap.audioFileName))
+                        Gdx.audio.newMusic(scheduledMapMusic!!.file.parent().child(scheduledMapMusic!!.osuBeatmap.audioFileName))
                     mapMusic!!.isLooping = false
                     mapMusic!!.volume = musicVolume
-                    currentMap = null
+
+                    lastMapMusic = scheduledMapMusic
+                    scheduledMapMusic = null
                     logMsg("Map music loaded.")
                     continue
                 }
 
                 if (mapMusic != null) {
                     if (mapMusicPause) {
+                        mapMusicPause = false
                         if (mapMusic!!.isPlaying) {
-                            mapMusicPause = false
                             Gdx.app.postRunnable {
                                 mapMusic!!.pause()
                             }
@@ -77,8 +81,8 @@ object AudioManager {
                     }
 
                     if (mapMusicPlay) {
+                        mapMusicPlay = false
                         if (!mapMusic!!.isPlaying) {
-                            mapMusicPlay = false
                             Gdx.app.postRunnable {
                                 mapMusic!!.play()
                             }
@@ -154,7 +158,7 @@ object AudioManager {
 
     @Synchronized
     fun loadMapMusic(map: GameMap) {
-        currentMap = map
+        scheduledMapMusic = map
     }
 
     @Synchronized

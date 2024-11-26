@@ -1,7 +1,5 @@
 package com.github.catomon.moemarathon.playscreen.playstage
 
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -34,7 +32,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     }
 
     val background = BackgroundActor(Sprite(bgTexture))
-    val centerActor = CenterActor(playScreen)
+    val centerActor: Actor = if (playScreen.skinName == "komugi") CenterAniDirActor(playScreen) else BekkyDancingActor(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
     private val noteMiss = assets.mainAtlas.findRegion("note2")

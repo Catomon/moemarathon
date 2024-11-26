@@ -105,8 +105,12 @@ class MapSelectStage(
                                     if (selectedItem == null)
                                         selectedItem = it
 
-                                    AudioManager.loadMapMusic(it.map)
-                                    AudioManager.playMapMusic()
+                                    if (AudioManager.lastMapMusic?.osuBeatmap?.audioFileName == it.map.osuBeatmap.audioFileName) {
+                                        AudioManager.playMapMusic()
+                                    } else {
+                                        AudioManager.loadMapMusic(it.map)
+                                        AudioManager.playMapMusic()
+                                    }
                                 }
                             }
                             newMapListItem.addClickListener {
@@ -180,7 +184,13 @@ class MapSelectStage(
                             textureBgCache.put(it.file.name(), it.newBackgroundTexture())
                     }
 
-                    buttonGroup.buttons.random().isChecked = true
+                    val alreadyPlayingMapMusic = buttonGroup.buttons.firstOrNull { it.map.file.name() == AudioManager.lastMapMusic?.file?.name() }
+                    if (alreadyPlayingMapMusic != null) {
+                        alreadyPlayingMapMusic.isChecked = true
+                    } else {
+                        buttonGroup.buttons.random().isChecked = true
+                    }
+
                     buttonGroup.setMinCheckCount(1)
                     scrollFocus = mapList.scrollPane
                 }

@@ -1,5 +1,7 @@
 package com.github.catomon.moemarathon.mainmenu
 
+import com.badlogic.gdx.graphics.Color
+import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
 import com.github.catomon.moemarathon.difficulties.PlaySets.EasyDiff
@@ -28,6 +30,14 @@ class DifficultySelectStage() :
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
     init {
+        createTable().apply {
+            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Const.APP_VER).apply {
+                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
+            }).bottom().padLeft(6f).padBottom(6f)
+            center().top()
+        }
+
         val userSave = GamePref.userSave
         createTable().apply {
             difficulties.forEach { diff ->

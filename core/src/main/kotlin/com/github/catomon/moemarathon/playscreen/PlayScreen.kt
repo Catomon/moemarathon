@@ -97,7 +97,7 @@ class PlayScreen(
                 AudioManager.playMapMusic()
         }
     var autoPlay = false
-    var skinName = "komugi" // "default"
+    var skinName = "default" // "komugi"
     var noHoldNotes = true
     var isDone = false
     var debug = false

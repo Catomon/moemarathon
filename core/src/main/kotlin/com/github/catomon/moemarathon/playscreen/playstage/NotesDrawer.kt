@@ -18,7 +18,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteSpawnTime get() = playScreen.noteSpawnTime
     private val noteRadius get() = playScreen.noteRadius
 
-    private val noteName = "note2"
+    private val noteName = "note" //"bun"
     private val noteOuterTex = assets.mainAtlas.findRegion(noteName + "_outer")
     private val noteInnerTex = assets.mainAtlas.findRegion(noteName + "_inner")
     private val noteTraceTex = assets.mainAtlas.findRegion(noteName + "_trace")

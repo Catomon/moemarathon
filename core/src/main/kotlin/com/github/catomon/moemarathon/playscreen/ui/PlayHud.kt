@@ -15,11 +15,13 @@ import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisTable
+import com.kotcrab.vis.ui.widget.VisTextButton
 
 class PlayHud(private val playScreen: PlayScreen) :
     Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })), NoteListener {
@@ -41,6 +43,7 @@ class PlayHud(private val playScreen: PlayScreen) :
         add(newLabel("Game paused")).colspan(3).padBottom(32f)
         row()
         add(newTextButton("<End").addChangeListener {
+            playScreen.paused = false
             game.menuScreen.changeStage(MenuStage())
             game.screen = game.menuScreen
         })
@@ -65,6 +68,11 @@ class PlayHud(private val playScreen: PlayScreen) :
 
         playScreen.noteListeners.add(comboLabel)
         playScreen.noteListeners.add(scoreLabel)
+
+        createTable(VisTextButton("Pause").addChangeListener {
+            playScreen.paused = true
+            showMenu()
+        }).left().top()
     }
 
     fun showMenu() {

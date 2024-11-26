@@ -1,9 +1,9 @@
 package com.github.catomon.moemarathon.difficulties
 
 const val DEFAULT = "Default"
-const val EASY = "Easy"
-const val NORMAL = "Normal"
-const val HARD = "Hard"
+const val EASY = "Normal"
+const val NORMAL = "Hard"
+const val HARD = "Insane"
 
 data class PlaySettings(
     val name: String,
