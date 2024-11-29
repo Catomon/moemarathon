@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.github.catomon.moemarathon.Skins
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
@@ -13,6 +14,8 @@ import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.scene2d.actions.AccelAction
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.copyAndScale
+import com.github.catomon.moemarathon.utils.createTable
+import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.random.Random
 
 
@@ -32,11 +35,15 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     }
 
     val background = BackgroundActor(Sprite(bgTexture))
-    val centerActor: Actor = if (playScreen.skinName == "komugi") CenterAniDirActor(playScreen) else BekkyDancingActor(playScreen)
+    val centerActor: Actor = when (playScreen.skin.centerType) {
+        Skins.ANI_DIR_CENTER -> AniDirCenter(playScreen)
+        Skins.ANIMATED_CENTER -> AnimatedCenter(playScreen, playScreen.skin.center, playScreen.skin.timingsCircle)
+        else -> JustCircleCenter(playScreen, playScreen.skin.timingsCircle)
+    }
     val notesDrawer = NotesDrawer(playScreen)
 
-    private val noteMiss = assets.mainAtlas.findRegion("note2")
-    private val noteHit = assets.mainAtlas.findRegion("note2")
+    private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
+    private val noteHit = assets.mainAtlas.findRegion(playScreen.skin.pop)
 
     init {
         addActor(background)

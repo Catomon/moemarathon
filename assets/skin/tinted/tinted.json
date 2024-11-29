@@ -1,6 +1,6 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	default-font: {file: ark-pixel-10px-monospaced-ja.fnt },
+	default-font: {file: DokiDokiMono-Regular.fnt },
 	small-font: {file: font-small.fnt }
 },
 com.badlogic.gdx.graphics.Color: {

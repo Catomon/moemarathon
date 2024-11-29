@@ -10,6 +10,7 @@ data class PlaySettings(
     val maps: List<String>,
     val noteSpawnTime: Float,
     val noHoldNotes: Boolean = true,
+    val noAim: Boolean = false,
     val ranks: MutableMap<String, String> = mutableMapOf(),
 ) {
     override fun equals(other: Any?): Boolean {
@@ -34,6 +35,12 @@ object PlaySets {
         noteSpawnTime = 1f,
     )
 
+    val nonStop = PlaySettings(
+        "Non-Stop",
+        listOf("91214 Lucky Star no Minna - Kumikyoku 'Lucky Star Douga'"),
+        3f
+    )
+
     val EasyDiff = PlaySettings(
         EASY,
         listOf(
@@ -43,7 +50,8 @@ object PlaySets {
             "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Easy].osu",
             "solfa feat. Chata - Colorful precious life (Natsu) [Xinely's Easy].osu",
             "Yousei Teikoku - Torikago (Furawa) [Easy].osu",
-            "Ichijo - Roulette Roulette (ztrot) [Easy].osu"
+            "Yousei Teikoku - Senketsu no Chikai (Saten) [Weez's Easy].osu",
+            "Ichijo - Roulette Roulette (ztrot) [Easy].osu",
         ),
         3f
     )
@@ -59,6 +67,7 @@ object PlaySets {
             "U - the first the last (Phyrearms) [Normal].osu",
             "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Normal].osu",
             "Yousei Teikoku - Torikago (Furawa) [yoru].osu",
+            "Yousei Teikoku - Senketsu no Chikai (Saten) [Nekoo's Normal].osu",
             "Ichijo - Roulette Roulette (ztrot) [Azure's Normal].osu",
         ),
         2f
@@ -75,9 +84,9 @@ object PlaySets {
             "U - the first the last (Phyrearms) [Hard].osu",
             "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Hard].osu",
             "Yousei Teikoku - Torikago (Furawa) [Alazy].osu",
+            "Yousei Teikoku - Senketsu no Chikai (Saten) [Mafia].osu",
             "Ichijo - Roulette Roulette (ztrot) [Hard].osu",
         ),
         1f
     )
-
 }

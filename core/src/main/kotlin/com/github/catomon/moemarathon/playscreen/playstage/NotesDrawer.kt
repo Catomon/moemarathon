@@ -18,11 +18,11 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteSpawnTime get() = playScreen.noteSpawnTime
     private val noteRadius get() = playScreen.noteRadius
 
-    private val noteName = "note" //"bun"
-    private val noteOuterTex = assets.mainAtlas.findRegion(noteName + "_outer")
-    private val noteInnerTex = assets.mainAtlas.findRegion(noteName + "_inner")
-    private val noteTraceTex = assets.mainAtlas.findRegion(noteName + "_trace")
-    private val pointerTraceTex = assets.mainAtlas.findRegion(noteName + "_pointer_trace")
+    private val noteName = playScreen.skin.note
+    private val noteOuterTex = if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_outer")
+    private val noteInnerTex = if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_inner")
+    private val noteTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNote + "_trace")
+    private val pointerTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNotePointer + "_pointer_trace")
 
     private val enemy0 = assets.mainAtlas.findRegion("note_enemy0")
     private val enemy1 = assets.mainAtlas.findRegion("note_enemy1")
@@ -180,12 +180,12 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
             noteTraceSprite.rotation = degrees(notePos.x, notePos.y, traceToNote.x, traceToNote.y)
             noteTraceSprite.setAlpha(a)
             noteTraceSprite.draw(batch)
+            noteOuterSprite.draw(batch)
         } else {
+            noteOuterSprite.draw(batch)
             noteInnerSprite.draw(batch)
         }
-
-        noteOuterSprite.draw(batch)
     }
 
-    fun Note.calcPosition(vector2: Vector2): Vector2 = playScreen.calcNotePosition(this, vector2)
+    private fun Note.calcPosition(vector2: Vector2): Vector2 = playScreen.calcNotePosition(this, vector2)
 }

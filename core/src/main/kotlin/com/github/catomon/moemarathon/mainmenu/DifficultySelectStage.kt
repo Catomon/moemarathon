@@ -26,6 +26,7 @@ class DifficultySelectStage() :
     )
 
     private var holdNotesOn = false
+    private var noAimOn = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
@@ -71,17 +72,45 @@ class DifficultySelectStage() :
             left().bottom()
         }
 
-        createTable(VisTextButton("Hold Notes Off (Easier)").apply {
-            label.setFontScale(0.75f)
-            addChangeListener {
-                holdNotesOn = !holdNotesOn
-                if (holdNotesOn) {
-                    it.setText("Hold Notes On (Harder)")
-                } else {
-                    it.setText("Hold Notes Off (Easier)")
-                }
+        createTable().apply {
+            val scoreLabel = newLabel("")
+            scoreLabel.setFontScale(0.5f)
+            fun updateScoreLabel() {
+                var scoreValue = 0
+                if (holdNotesOn) scoreValue += 10
+                if (noAimOn) scoreValue -= 15
+                scoreLabel.setText(if (scoreValue == 0) "" else (if (scoreValue > 0) "+" else "") + "$scoreValue% score")
+                scoreLabel.color = if (scoreValue > 0) Color.GREEN else Color.RED
             }
-        }).apply {
+            add(scoreLabel)
+            row()
+            add(VisTextButton("No-Aim Off").apply {
+                label.setFontScale(0.75f)
+                addChangeListener {
+                    noAimOn = !noAimOn
+                    if (noAimOn) {
+                        it.setText("No-Aim On (Easier)")
+                    } else {
+                        it.setText("No-Aim Off")
+                    }
+
+                    updateScoreLabel()
+                }
+            })
+            row()
+            add(VisTextButton("Hold Notes Off").apply {
+                label.setFontScale(0.75f)
+                addChangeListener {
+                    holdNotesOn = !holdNotesOn
+                    if (holdNotesOn) {
+                        it.setText("Hold Notes On (Harder)")
+                    } else {
+                        it.setText("Hold Notes Off")
+                    }
+
+                    updateScoreLabel()
+                }
+            })
             center().bottom()
         }
     }
@@ -89,7 +118,10 @@ class DifficultySelectStage() :
     private fun chooseDiff(diff: PlaySettings) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
             game.screen =
-                PlayScreen(GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }), diff.copy(noHoldNotes = !holdNotesOn))
+                PlayScreen(
+                    GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),
+                    diff.copy(noHoldNotes = !holdNotesOn, noAim = noAimOn)
+                )
         }
 
         //menuScreen.changeStage(MapSelectStage(diff))

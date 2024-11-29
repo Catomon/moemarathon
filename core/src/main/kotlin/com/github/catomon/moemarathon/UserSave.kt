@@ -12,4 +12,15 @@ data class UserSave(
     var easyRank: Int = 0,
     var normalRank: Int = 0,
     var hardRank: Int = 0,
+    var unlocks: MutableList<String> = mutableListOf(),
+    var notify: MutableList<String> = mutableListOf(),
+    var skin: String = Skins.default.name,
+    var unlockedAllMaps: Int = 0
 )
+
+fun newUserSave(name: String) : UserSave {
+    return UserSave(
+        name = name,
+        notify = mutableListOf("tutorial"),
+    )
+}

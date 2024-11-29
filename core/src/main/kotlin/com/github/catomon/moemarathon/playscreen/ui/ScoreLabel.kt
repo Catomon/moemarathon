@@ -12,7 +12,7 @@ class ScoreLabel(private val stats: Stats) : VisLabel("0"), NoteListener {
     private var curScore = 0
 
     init {
-        setFontScale(2f)
+        //setFontScale(1.75f)
         val delay = 0.005f
         addAction(DelayRepeatAction(delay) {
             if (curScore != stats.score) {

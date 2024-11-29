@@ -12,13 +12,14 @@ class ComboLabel(private val stats: Stats) : VisLabel("x0"), NoteListener {
     private val scaleUp = 0.175f
 
     init {
-        setFontScale(2f)
+       // setFontScale(1.75f)
     }
 
     override fun scaleChanged() {
         super.scaleChanged()
 
-        setFontScale(scaleX * 2, scaleY * 2)
+        setFontScale(scaleX, scaleY)
+        //setFontScale(scaleX * 2, scaleY * 2)
     }
 
     override fun onNoteEvent(id: Int, note: Note) {

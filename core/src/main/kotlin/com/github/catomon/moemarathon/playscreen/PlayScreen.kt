@@ -12,20 +12,24 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
-import com.github.catomon.moemarathon.AudioManager
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_TRACE
 import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
 import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
 import com.github.catomon.moemarathon.difficulties.PlaySettings
-import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.StatsStage
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
+import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.removeCover
+import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.github.catomon.moemarathon.widgets.newTextButton
+import com.kotcrab.vis.ui.widget.VisImage
+import com.kotcrab.vis.ui.widget.VisWindow
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -75,9 +79,14 @@ class PlayScreen(
     private val tempVec3 = Vector3()
     fun getPointer(): Vector3 {
         return tempVec3.apply {
-            x = Gdx.input.x.toFloat()
-            y = Gdx.input.y.toFloat()
-            camera.unproject(tempVec3)
+            if (noAim) {
+                x = camera.position.x
+                y = camera.position.y
+            } else {
+                x = Gdx.input.x.toFloat()
+                y = Gdx.input.y.toFloat()
+                camera.unproject(tempVec3)
+            }
         }
     }
 
@@ -91,13 +100,17 @@ class PlayScreen(
     var paused = false
         set(value) {
             field = value
-            if (value)
-                AudioManager.pauseMapMusic()
-            else
-                AudioManager.playMapMusic()
+
+            if (action == null) {
+                if (value)
+                    AudioManager.pauseMapMusic()
+                else
+                    AudioManager.playMapMusic()
+            }
         }
     var autoPlay = false
-    var skinName = "default" // "komugi"
+    var noAim = playSets.noAim
+    var skin: Skin = Skins.getSkin(GamePref.userSave.skin) ?: Skins.default
     var noHoldNotes = true
     var isDone = false
     var debug = false
@@ -131,11 +144,39 @@ class PlayScreen(
             }
         }
 
-        if (skinName != "komugi") {
+        if (skin.noteEnemy.isEmpty()) {
             noteMap.chunks.forEach { chunk ->
                 chunk.notes.forEach { note ->
                     note.visual = -1
                 }
+            }
+        }
+
+        GamePref.userSave.let { userSave ->
+            var needSave = false
+            userSave.notify.removeIf {
+                if (it == "tutorial") {
+                    paused = true
+                    playHud.addCover()
+                    playHud.addActor(VisWindow("Click circles:").also { window ->
+                        window.centerWindow()
+                        window.add(VisImage(assets.mainAtlas.findRegion("tutor"))).size(400f, 400f)
+                        window.row()
+                        window.add(newTextButton("OK!").addChangeListener {
+                            window.remove()
+                            playHud.removeCover()
+                            paused = false
+                        })
+                        window.pack()
+                    })
+                    needSave = true
+                    true
+                } else false
+            }
+
+            if (needSave) {
+                GamePref.userSave = userSave
+                GamePref.save()
             }
         }
 
@@ -166,7 +207,6 @@ class PlayScreen(
         updateNotes()
 
         playStage.act()
-        playHud.act()
     }
 
     private fun updateNotes() {
@@ -204,7 +244,7 @@ class PlayScreen(
 
     fun onDone() {
         if (isDone) return
-        playStage.addAction(Actions.sequence(Actions.delay(if (Const.IS_RELEASE) 2.5f else 0f), Actions.run {
+        playStage.addAction(Actions.sequence(Actions.delay(if (Const.IS_RELEASE) 2f else 0f), Actions.run {
             game.screen = game.menuScreen
             game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
             game.menuScreen.changeStage(StatsStage(this))
@@ -299,7 +339,7 @@ class PlayScreen(
         val clickerPos = calcClickerPos(Vector2())
         val clickerToNoteDst = Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
         val curPointerRad = pointerSize * (mapSize / 2)
-        val isPointerNear = clickerToNoteDst <= curPointerRad * 2
+        val isPointerNear = (clickerToNoteDst <= curPointerRad * 2) || noAim
         if (isInTiming && isPointerNear) {
             noteMap.chunks.last().notes.removeLast()
 

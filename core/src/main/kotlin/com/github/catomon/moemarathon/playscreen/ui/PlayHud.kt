@@ -13,6 +13,7 @@ import com.github.catomon.moemarathon.mainmenu.MenuStage
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.scene2d.actions.OneAction
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.addCover
 import com.github.catomon.moemarathon.utils.createTable
@@ -29,23 +30,28 @@ class PlayHud(private val playScreen: PlayScreen) :
     private val scoreLabel = ScoreLabel(playScreen.stats)
     private val comboLabel = ComboLabel(playScreen.stats)
 
-    private val hitGreat = assets.mainAtlas.findRegion("hit_great")
-    private val hitOk = assets.mainAtlas.findRegion("hit_ok")
-    private val hitMiss = assets.mainAtlas.findRegion("hit_miss")
-    private val hitTooEarly = assets.mainAtlas.findRegion("too_early")
-    private val hitTooFar = assets.mainAtlas.findRegion("too_far")
+    private val skin =  playScreen.skin
+    private val hitGreat = assets.mainAtlas.findRegion(skin.hit + "hit_great")
+    private val hitOk = assets.mainAtlas.findRegion(skin.hit + "hit_ok")
+    private val hitMiss = assets.mainAtlas.findRegion(skin.hit + "hit_miss")
+    private val hitTooEarly = assets.mainAtlas.findRegion(skin.hit + "too_early")
+    private val hitTooFar = assets.mainAtlas.findRegion(skin.hit + "too_far")
     private val hitQuestion = assets.mainAtlas.findRegion("question")
 
     private val menuTable = VisTable().apply {
         setFillParent(true)
         center()
 
+        add(newLabel(playScreen.gameMap.file.nameWithoutExtension()).apply { setFontScale(0.5f) }).colspan(3).top()
+        row()
         add(newLabel("Game paused")).colspan(3).padBottom(32f)
         row()
         add(newTextButton("<End").addChangeListener {
             playScreen.paused = false
-            game.menuScreen.changeStage(MenuStage())
-            game.screen = game.menuScreen
+            addAction(OneAction {
+                game.menuScreen.changeStage(MenuStage())
+                game.screen = game.menuScreen
+            })
         })
         add().width(100f)
         add(newTextButton("Resume>").addChangeListener {
@@ -126,55 +132,5 @@ class PlayHud(private val playScreen: PlayScreen) :
                 )
             }
         )
-
-//        addActor(
-//            VisLabel(
-//                when (id) {
-//                    0 -> "Miss!"
-//                    1 -> {
-//                        //if (noteIsGreat) "Great!" else "Ok!"
-//
-////                        (if (note.tracingPrev) SCORE_GAIN_TRACE
-////                        else if (noteIsGreat) SCORE_GAIN_GREAT
-////                        else SCORE_GAIN_OK).toString()
-//
-//                        //if (note.tracingPrev) "九百"
-//                        //                        else
-//                        if (noteIsGreat) "三百"
-//                        else "\t\t二百"
-//                    }
-//
-//                    7 -> "九百"
-//
-//                    2 -> "Early"
-//                    3 -> "Late"
-//                    4 -> "Too early!"
-//                    5 -> "Too far!"
-//                    else -> ""
-//                }
-//            ).apply {
-//                color = when (id) {
-//                    0 -> Color.RED
-//                    1 -> {
-//                        //if (noteIsGreat) Color.GREEN else Color.YELLOW
-//                        if (note.tracingPrev) Color.YELLOW
-//                        else if (noteIsGreat) Color.YELLOW
-//                        else Color.GREEN
-//                    }
-//                    7 -> {
-//                        Color.YELLOW
-//                    }
-//                    2 -> Color.ORANGE
-//                    3 -> Color.BLUE
-//                    4 -> Color.ORANGE
-//                    5 -> Color.BLUE
-//                    else -> Color.RED
-//                }
-//                setFontScale(0.75f)
-//                pack()
-//                setPosition(noteToStagePos.x - width / 2, noteToStagePos.y - height / 2)
-//                addAction(Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)))
-//            }
-//        )
     }
 }
