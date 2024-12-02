@@ -104,7 +104,7 @@ class AchievementsStage() :
                     }
                     add(VisTable().apply {
                         background = VisUI.getSkin().getDrawable("button-over")
-                        add("Achievements: ")
+                        add("Goals: ")
                     })
                     Achievements.list.forEach { achievement ->
                         row()

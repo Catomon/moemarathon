@@ -8,10 +8,10 @@ import com.github.catomon.moemarathon.mainmenu.StatsStage
 object Achievements {
 
     val list = listOf(
-        Achievement("b_any_map", "Get B rank on any map", Achievement.Type.MapComplete) {
+        Achievement("b_any_map", "Get rank B on any map", Achievement.Type.MapComplete) {
             (it.statsStage?.mapResult ?: 0) >= RankUtil.getRankInt("B")
         },
-        Achievement("a_any_map", "Get A rank on any map (unlocks 'komugi' skin)", Achievement.Type.MapComplete) {
+        Achievement("a_any_map", "Get rank A on any map (unlocks 'komugi' skin)", Achievement.Type.MapComplete) {
             if ((it.statsStage?.mapResult ?: 0) >= RankUtil.getRankInt("A")) {
                 unlockSkin(Skins.komugi)
                 true
@@ -45,8 +45,28 @@ object Achievements {
             else false
         },
         Achievement(
+            "complete_normal_marathon_b",
+            "Complete Normal Marathon with rank of B",
+            Achievement.Type.PlaySetsComplete
+        ) {
+            if (it.statsStage == null) return@Achievement false
+            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
+            else false
+        },
+        Achievement(
+            "complete_normal_marathon_a",
+            "Complete Normal Marathon with rank of A",
+            Achievement.Type.PlaySetsComplete
+        ) {
+            if (it.statsStage == null) return@Achievement false
+            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
+            else false
+        },
+        Achievement(
             "complete_normal_marathon_s",
-            "Complete Normal Marathon with a rank of >= S (unlocks Non-Stop map)",
+            "Complete Normal Marathon with rank of S",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
@@ -56,37 +76,77 @@ object Achievements {
         },
         Achievement(
             "complete_hard_marathon_b",
-            "Complete Hard Marathon with a rank >= B (unlocks Non-Stop map)",
+            "Complete Hard Marathon with rank B",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+            if (it.statsStage.playSets == PlaySets.HardMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
             else false
         },
         Achievement(
-            "complete_insane_marathon_c",
-            "Complete Insane Marathon with a rank >= C (unlocks Non-Stop map)",
+            "complete_hard_marathon_a",
+            "Complete Hard Marathon with rank A (unlocks Non-Stop map)",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NormalMarathon)
-                (it.statsStage.mapResult) >= RankUtil.getRankInt("C")
+            if (it.statsStage.playSets == PlaySets.HardMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
             else false
         },
         Achievement(
-            "complete_insane_nonstop_c",
-            "Complete Non-Stop with a rank of >= C",
+            "complete_hard_marathon_s",
+            "Complete Hard Marathon with rank S",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NonStop)
-                (it.statsStage.mapResult) >= RankUtil.getRankInt("C")
+            if (it.statsStage.playSets == PlaySets.HardMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
             else false
         },
+        Achievement(
+            "complete_insane_marathon_b",
+            "Complete Insane Marathon with rank B (unlocks Non-Stop map)",
+            Achievement.Type.PlaySetsComplete
+        ) {
+            if (it.statsStage == null) return@Achievement false
+            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
+            else false
+        },
+        Achievement(
+            "complete_insane_marathon_a",
+            "Complete Insane Marathon with rank A",
+            Achievement.Type.PlaySetsComplete
+        ) {
+            if (it.statsStage == null) return@Achievement false
+            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
+            else false
+        },
+        Achievement(
+            "complete_insane_marathon_s",
+            "Complete Insane Marathon with rank S",
+            Achievement.Type.PlaySetsComplete
+        ) {
+            if (it.statsStage == null) return@Achievement false
+            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+                (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
+            else false
+        },
+//        Achievement(
+//            "complete_insane_nonstop_c",
+//            "Complete Non-Stop with rank C",
+//            Achievement.Type.PlaySetsComplete
+//        ) {
+//            if (it.statsStage == null) return@Achievement false
+//            if (it.statsStage.playSets == PlaySets.NonStop)
+//                (it.statsStage.mapResult) >= RankUtil.getRankInt("C")
+//            else false
+//        },
         Achievement(
             "complete_insane_nonstop_b",
-            "Complete Non-Stop with a rank of >= B",
+            "Complete Non-Stop with rank B",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
@@ -96,7 +156,7 @@ object Achievements {
         },
         Achievement(
             "complete_insane_nonstop_a",
-            "Complete Non-Stop with a rank of >= A",
+            "Complete Non-Stop with rank A",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
@@ -106,7 +166,7 @@ object Achievements {
         },
         Achievement(
             "complete_insane_nonstop_s",
-            "Complete Non-Stop with a rank of >= S",
+            "Complete Non-Stop with rank S",
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
