@@ -1,6 +1,7 @@
 package com.github.catomon.moemarathon.widgets
 
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -16,7 +17,9 @@ import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.BorderOwner
 import com.kotcrab.vis.ui.widget.*
 
-// widgets creation functions
+fun newLabel(text: String = "text", color: Color): VisLabel {
+    return VisLabel(text, color)
+}
 
 fun newLabel(text: String = "text", style: String? = null): VisLabel {
     return if (style == null) VisLabel(text) else VisLabel(text, style)

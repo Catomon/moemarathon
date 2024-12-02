@@ -3,11 +3,9 @@ package com.github.catomon.moemarathon.mainmenu
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.github.catomon.moemarathon.AudioManager
-import com.github.catomon.moemarathon.Const
-import com.github.catomon.moemarathon.GamePref
+import com.github.catomon.moemarathon.*
+import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
-import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.scene2d.actions.OneAction
@@ -15,6 +13,7 @@ import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
+import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.kotcrab.vis.ui.widget.VisWindow
 import kotlin.concurrent.thread
@@ -44,11 +43,23 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         }
 
         createTable().apply {
-            add(VisTextButton("Settings")).center()
+            add(VisTextButton("Settings").apply {
+                label.setFontScale(0.5f)
+                addChangeListener {
+                    menuScreen.changeStage(SettingsStage())
+                }
+            }).center()
+            row()
+            add(VisTextButton("Credits").apply {
+                label.setFontScale(0.5f)
+                addChangeListener {
+                    menuScreen.changeStage(SettingsStage())
+                }
+            }).center()
             row()
             add(VisTextButton("Exit").addChangeListener {
                 Gdx.app.exit()
-            })
+            }.apply { label.setFontScale(0.5f) })
             bottom().right()
         }
 
@@ -66,20 +77,17 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 menuScreen.changeStage(DifficultySelectStage())
             })
             row()
-            add(VisTextButton("Non-stop").addChangeListener {
-                menuScreen.changeStage(DifficultySelectStage())
-            })
-            row()
             add(VisTextButton("Maps").addChangeListener {
                 menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets))
             })
             row()
-            if (!Const.IS_RELEASE || userSave.easyRank != 0 || userSave.normalRank != 0 || userSave.hardRank != 0) {
+            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 addAction(OneAction {
                     if (userSave.unlockedAllMaps == 0) {
-                        addActor(VisWindow("All Maps unlocked!").also { window ->
+                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
                             window.centerWindow()
-                            window.add("Custom maps can be added\nin the maps folder.")
+                            window.add("You can add other maps to\nthe maps folder\n" +
+                                "and they will appear here.")
                             window.row()
                             window.add(newTextButton("OK!").addChangeListener {
                                 window.remove()
@@ -91,13 +99,20 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                         GamePref.save()
                     }
                 })
-                add(VisTextButton("All Maps").addChangeListener {
+                add(VisTextButton("Other Maps").addChangeListener {
                     menuScreen.changeStage(MapSelectStage())
                 }).center()
+                row()
+            } else {
+                add(VisTextButton("Other Maps").also { it.add(VisImage("locked")).size(48f) }).center()
                 row()
             }
             add(VisTextButton("Skins").addChangeListener {
                 menuScreen.changeStage(SkinsStage())
+            })
+            row()
+            add(VisTextButton("Achievements").addChangeListener {
+                menuScreen.changeStage(AchievementsStage())
             })
         }
 
@@ -112,21 +127,44 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         }
 
         userSave.notify.removeIf {
-            if (it.startsWith("skin:")) {
-                addActor(VisWindow("${it.removePrefix("skin:")} skin unlocked!").also { window ->
-                    window.centerWindow()
-                    window.add("See it in the Skins menu.")
-                    window.row()
-                    window.add(newTextButton("OK!").addChangeListener {
-                        window.remove()
+            when {
+                it.startsWith("skin:") -> {
+                    addActor(VisWindow("${it.removePrefix("skin:")} skin unlocked!").also { window ->
+                        window.centerWindow()
+                        window.add("See it in the Skins menu.")
+                        window.row()
+                        window.add(newTextButton("OK!").addChangeListener {
+                            window.remove()
+                        })
+                        window.pack()
                     })
-                    window.pack()
-                })
 
-                return@removeIf true
+                    return@removeIf true
+                }
+
+                it == PlaySets.NonStop.name -> {
+                    addActor(VisWindow("Non-Stop map unlocked!").also { window ->
+                        window.centerWindow()
+                        window.add("Navigate to 'Start' to see.")
+                        window.row()
+                        window.add(newTextButton("OK!").addChangeListener {
+                            window.remove()
+                        })
+                        window.pack()
+                    })
+
+                    return@removeIf true
+                }
+                else -> return@removeIf false
             }
+        }
 
-            return@removeIf false
+        Achievements.list.forEach {
+            if (it.type == Achievement.Type.MainMenu) {
+                if (!userSave.achievements.contains(it.id))
+                    if (it.condition(AchieveParam(this)))
+                        userSave.achievements.add(it.id)
+            }
         }
 
         GamePref.userSave = userSave

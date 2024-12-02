@@ -22,8 +22,14 @@ import kotlin.math.max
 
 class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
-    private val stats = playScreen.stats
-    private val playSets = playScreen.playSets
+    val stats = playScreen.stats
+    val playSets = playScreen.playSets
+    var mapResult: Int = -1
+        private set
+    var playSetsResult: Int = -1
+        private set
+
+    val isMarathon get() = playSets != PlaySets.DefaultPlaySets && playSets != PlaySets.UnlockedOnlyPlaySets
 
     init {
         val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap).size
@@ -43,6 +49,8 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             pGreats >= 0.4f && pMisses <= 0.20f -> "D"
             else -> "F"
         }
+
+        mapResult = RankUtil.getRankInt(rank)
 
         saveScore(rank)
 
@@ -67,7 +75,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             }).width(480f)
         }
 
-        Achievements.checkMapPassAchievement(playScreen, rank)
+        checkAchieveMapComplete()
 
         //navigation buttons
         if (playSets.name == DEFAULT || playSets.name == PlaySets.UnlockedOnlyPlaySets.name) {
@@ -135,6 +143,32 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         }
     }
 
+    private fun checkAchieveMapComplete() {
+        val userSave: UserSave = GamePref.userSave
+        Achievements.list.forEach {
+            if (it.type == Achievement.Type.MapComplete) {
+                if (!userSave.achievements.contains(it.id))
+                    if (it.condition(AchieveParam(statsStage = this)))
+                        userSave.achievements.add(it.id)
+            }
+        }
+        GamePref.userSave = userSave
+        GamePref.save()
+    }
+
+    private fun checkAchievePlaySetsComplete(resultRankInt: Int) {
+        val userSave: UserSave = GamePref.userSave
+        Achievements.list.forEach {
+            if (it.type == Achievement.Type.PlaySetsComplete) {
+                if (!userSave.achievements.contains(it.id))
+                    if (it.condition(AchieveParam(statsStage = this, playSetsResult = resultRankInt)))
+                        userSave.achievements.add(it.id)
+            }
+        }
+        GamePref.userSave = userSave
+        GamePref.save()
+    }
+
     private fun saveScore(rank: String) {
         val rankInt = RankUtil.getRankInt(rank)
         val userSave = GamePref.userSave
@@ -151,42 +185,45 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     private fun continueMarathon() {
         val nextMapIndex = playSets.maps.indexOf(playScreen.gameMap.file.name())
         val nextMap = playSets.maps.getOrNull(if (nextMapIndex < 0) -1 else nextMapIndex + 1)
-        val marathonResultWindow = VisWindow("Congrats!").also { window ->
-            window.setCenterOnAdd(true)
-            window.add("You completed ${playSets.name} mode!")
-            window.row()
-            window.add(VisTable().also { table ->
-                playSets.ranks.forEach { itRank ->
-                    table.add(newLabel(itRank.value + " ").also {
-                        it.color = RankUtil.getRankColor(itRank.value)
-                    })
-                    if (playSets.ranks.keys.indexOf(itRank.key) + 1 % 10 == 0)
-                        table.row()
-                }
-            })
-            window.row()
-            window.add(VisTable().also { table ->
-                table.add("Result: ")
-                var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
-                    .toFloatArray().average().toFloat()
-                if (avg < RankUtil.getRankInt("S") + 0.5f)
-                    avg += 0.5f
-                val resultRankInt = avg.toInt()
-                val resultRank = RankUtil.getRankChar(avg.toInt())
-                table.add(newLabel(resultRank).also {
-                    it.color = RankUtil.getRankColor(resultRank); it.setFontScale(1.50f)
-                })
-
-                saveMarathonResult(resultRankInt)
-            })
-            window.row()
-            window.add(VisTextButton("OK!").addChangeListener {
-                window.stage.removeCover()
-                window.remove()
-            })
-            window.pack()
-        }
         if (nextMap == null) {
+            val marathonResultWindow = VisWindow("Congrats!").also { window ->
+                window.setCenterOnAdd(true)
+                window.add("You completed ${playSets.name} mode!")
+                window.row()
+                window.add(VisTable().also { table ->
+                    playSets.ranks.forEach { itRank ->
+                        table.add(newLabel(itRank.value + " ").also {
+                            it.color = RankUtil.getRankColor(itRank.value)
+                        })
+                        if (playSets.ranks.keys.indexOf(itRank.key) + 1 % 10 == 0)
+                            table.row()
+                    }
+                })
+                window.row()
+                window.add(VisTable().also { table ->
+                    table.add("Result: ")
+                    var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
+                        .toFloatArray().average().toFloat()
+                    if (avg < RankUtil.getRankInt("S") + 0.5f)
+                        avg += 0.5f
+                    val resultRankInt = avg.toInt()
+                    val resultRank = RankUtil.getRankChar(avg.toInt())
+                    table.add(newLabel(resultRank).also {
+                        it.color = RankUtil.getRankColor(resultRank); it.setFontScale(1.50f)
+                    })
+
+                    playSetsResult = resultRankInt
+                    checkAchievePlaySetsComplete(resultRankInt)
+
+                    saveMarathonResult(resultRankInt)
+                })
+                window.row()
+                window.add(VisTextButton("OK!").addChangeListener {
+                    window.stage.removeCover()
+                    window.remove()
+                })
+                window.pack()
+            }
             game.menuScreen.changeStage(MenuStage().also { menuStage ->
                 menuStage.addCover()
                 menuStage.addActor(marathonResultWindow)
@@ -203,19 +240,33 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
     private fun saveMarathonResult(resultRankInt: Int) {
         GamePref.userSave.also { userSave ->
-            when (playSets.name) {
-                EASY -> if (userSave.easyRank < resultRankInt) {
-                    userSave.easyRank = resultRankInt
-                    GamePref.userSave = userSave; GamePref.save()
+            if (!userSave.unlocks.contains(PlaySets.NonStop.name)) {
+                if ((playSets.name == PlaySets.NormalMarathon.name && resultRankInt >= RankUtil.getRankInt(
+                        "S"
+                    )) || (playSets.name == PlaySets.HardMarathon.name && resultRankInt >= RankUtil.getRankInt(
+                        "B"
+                    )) || (playSets.name == PlaySets.InsaneMarathon.name && resultRankInt >= RankUtil.getRankInt(
+                        "C"
+                    ))
+                ) {
+                    userSave.unlocks.add(PlaySets.NonStop.name)
+                    userSave.notify.add(PlaySets.NonStop.name)
                 }
+            }
 
-                NORMAL -> if (userSave.normalRank < resultRankInt) {
+            when (playSets.name) {
+                EASY -> if (userSave.normalRank < resultRankInt) {
                     userSave.normalRank = resultRankInt
                     GamePref.userSave = userSave; GamePref.save()
                 }
 
-                HARD -> if (userSave.hardRank < resultRankInt) {
+                NORMAL -> if (userSave.hardRank < resultRankInt) {
                     userSave.hardRank = resultRankInt
+                    GamePref.userSave = userSave; GamePref.save()
+                }
+
+                HARD -> if (userSave.insaneRank < resultRankInt) {
+                    userSave.insaneRank = resultRankInt
                     GamePref.userSave = userSave; GamePref.save()
                 }
             }

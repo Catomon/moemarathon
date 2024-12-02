@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.removeActor
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.assets
@@ -30,7 +29,7 @@ class PlayHud(private val playScreen: PlayScreen) :
     private val scoreLabel = ScoreLabel(playScreen.stats)
     private val comboLabel = ComboLabel(playScreen.stats)
 
-    private val skin =  playScreen.skin
+    private val skin = playScreen.skin
     private val hitGreat = assets.mainAtlas.findRegion(skin.hit + "hit_great")
     private val hitOk = assets.mainAtlas.findRegion(skin.hit + "hit_ok")
     private val hitMiss = assets.mainAtlas.findRegion(skin.hit + "hit_miss")
@@ -98,7 +97,7 @@ class PlayHud(private val playScreen: PlayScreen) :
 
         when (id) {
             1, 2, 3, NoteListener.HIT_TRACE, NoteListener.NOTE_TRACE_START -> {
-                AudioManager.hitSound.play()
+                AudioManager.playSound(AudioManager.hitSound)
             }
         }
 

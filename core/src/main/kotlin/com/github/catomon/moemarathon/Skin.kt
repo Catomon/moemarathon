@@ -27,24 +27,27 @@ object Skins {
         noteEnemy = "",
         center = "def_note_outer",
         centerType = "",
-        timingsCircle = "def_timings_circle", //"timings_circle2",
-        holdNote = "note",
-        holdNotePointer = "note",
+        timingsCircle = "def_timings_circle",
+        holdNote = "def_note",
+        holdNotePointer = "def_note",
         hit = "", //$hit_
         pop = "pop",
         miss = "miss",
     )
-//
-//    val default = Skin(
-//        name = "default",
-//        note = "note",
-//        noteEnemy = "",
-//        center = "note_inner",
-//        centerType = "",
-//        timingsCircle = "def_timings_circle", //"timings_circle2",
-//        holdNote = "note",
-//        holdNotePointer = "note",
-//    )
+
+    val defaultCat = Skin(
+        name = "def. cat",
+        note = "def_cat_note",
+        noteEnemy = "",
+        center = "def_cat_note_outer",
+        centerType = "",
+        timingsCircle = "def_timings_circle",
+        holdNote = "def_note",
+        holdNotePointer = "def_note",
+        hit = "", //$hit_
+        pop = "cat_pop",
+        miss = "cat_miss",
+    )
 
     val bekky = Skin(
         name = "bekky",
@@ -52,12 +55,12 @@ object Skins {
         noteEnemy = "",
         center = "bekkydancing/frame",
         centerType = ANIMATED_CENTER,
-        timingsCircle = "bekky_timings_circle2",
+        timingsCircle = "bekky_timings_circle",
         holdNote = "bun",
         holdNotePointer = "bun",
-        hit = "pix_",
-        pop = "pix_miss_pop",
-        miss = "pix_miss_pop",
+        hit = "",
+        pop = "bun_pop",
+        miss = "bun_miss",
     )
 
     val komugi = Skin(
@@ -75,7 +78,7 @@ object Skins {
     )
 
     val skins: List<Skin> = listOf(
-        default, komugi, bekky
+        default, defaultCat, komugi, bekky
     )
 
     fun getSkin(name: String) : Skin? {

@@ -28,7 +28,7 @@ object RunTexturePacker {
 
         process(settings, "assets/textures/", "./assets", "textures")
 
-//        process(settings, "assets/textures/skin/tinted/tinted-raw", "./assets/skin/tinted", "tinted")
+        process(settings, "assets/skin/tinted-raw/", "./assets/skin/tinted", "tinted")
     }
 
     private fun process(settings: TexturePacker.Settings, input: String, output: String, packFileName: String) {

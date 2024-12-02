@@ -120,6 +120,10 @@ object AudioManager {
         }
     }
 
+    fun playSound(sound: Sound) {
+        sound.play(soundVolume)
+    }
+
     @Synchronized
     fun loadMapMusic(name: String): Music {
         return loadMapMusic(Gdx.files.internal("maps/$name"))

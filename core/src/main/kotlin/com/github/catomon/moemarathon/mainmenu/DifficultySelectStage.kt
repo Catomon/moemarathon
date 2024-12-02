@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
-import com.github.catomon.moemarathon.difficulties.PlaySets.EasyDiff
-import com.github.catomon.moemarathon.difficulties.PlaySets.HardDiff
-import com.github.catomon.moemarathon.difficulties.PlaySets.NormalDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.HardMarathon
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -16,13 +16,14 @@ import com.github.catomon.moemarathon.utils.fadeInAndThen
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
+import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisTextButton
 
 class DifficultySelectStage() :
     BgStage() {
 
     private val difficulties: List<PlaySettings> = listOf(
-        EasyDiff, NormalDiff, HardDiff
+        NormalMarathon, HardMarathon, InsaneMarathon
     )
 
     private var holdNotesOn = false
@@ -41,13 +42,19 @@ class DifficultySelectStage() :
 
         val userSave = GamePref.userSave
         createTable().apply {
+//            if (userSave.unlocks.contains(PlaySets.nonStop.name)) {
+                add(newLabel("Marathon").apply { setFontScale(0.5f) }).colspan(3).padTop(20f)
+                row()
+//            }
+
+            val rankLabelWidth = 60f
             difficulties.forEach { diff ->
                 val rankLabelText = when (diff.name) {
-                    EASY -> RankUtil.getRankChar(userSave.easyRank)
+                    EASY -> RankUtil.getRankChar(userSave.normalRank)
 
-                    NORMAL -> RankUtil.getRankChar(userSave.normalRank)
+                    NORMAL -> RankUtil.getRankChar(userSave.hardRank)
 
-                    HARD -> RankUtil.getRankChar(userSave.hardRank)
+                    HARD -> RankUtil.getRankChar(userSave.insaneRank)
 
                     else -> ""
                 }
@@ -55,14 +62,35 @@ class DifficultySelectStage() :
                     rankLabelText
                 ).also {
                     it.color = RankUtil.getRankColor(rankLabelText)
-                })
+                }).width(rankLabelWidth)
                 add(newTextButton(diff.name).also { button ->
-                    button.userObject = button
                     button.addChangeListener {
                         chooseDiff(diff)
                     }
                 })
+                add().width(rankLabelWidth)
                 row()
+            }
+
+            if (userSave.unlocks.contains(PlaySets.NonStop.name)) {
+                add(newLabel("Non-Stop").apply { setFontScale(0.5f) }).colspan(3).padTop(30f)
+                row()
+                val rankChar = userSave.mapRanks[PlaySets.NonStop.maps.first()]?.id?.let { RankUtil.getRankChar(it) } ?: ""
+                add(newLabel(
+                    rankChar
+                ).also {
+                    it.color = RankUtil.getRankColor(rankChar)
+                }).width(rankLabelWidth)
+                add(newTextButton("Insane").addChangeListener {
+                    chooseDiff(PlaySets.NonStop)
+                })
+                add().width(rankLabelWidth)
+            } else {
+                add(newLabel("Non-Stop").apply { setFontScale(0.5f) }).colspan(3).padTop(20f)
+                row()
+                add(newLabel("")).width(rankLabelWidth)
+                add(newTextButton("Insane").also { it.add(VisImage("locked")).size(48f) })
+                add().width(rankLabelWidth)
             }
         }
 
@@ -123,7 +151,5 @@ class DifficultySelectStage() :
                     diff.copy(noHoldNotes = !holdNotesOn, noAim = noAimOn)
                 )
         }
-
-        //menuScreen.changeStage(MapSelectStage(diff))
     }
 }

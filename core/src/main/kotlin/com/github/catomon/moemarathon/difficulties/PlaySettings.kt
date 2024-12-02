@@ -35,13 +35,13 @@ object PlaySets {
         noteSpawnTime = 1f,
     )
 
-    val nonStop = PlaySettings(
+    val NonStop = PlaySettings(
         "Non-Stop",
-        listOf("91214 Lucky Star no Minna - Kumikyoku 'Lucky Star Douga'"),
-        3f
+        listOf("Lucky Star no Minna - Kumikyoku 'Lucky Star Douga' (Andrea) [Marathon].osu"),
+        1f
     )
 
-    val EasyDiff = PlaySettings(
+    val NormalMarathon = PlaySettings(
         EASY,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Easy].osu",
@@ -56,7 +56,7 @@ object PlaySets {
         3f
     )
 
-    val NormalDiff = PlaySettings(
+    val HardMarathon = PlaySettings(
         NORMAL,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Normal].osu",
@@ -73,7 +73,7 @@ object PlaySets {
         2f
     )
 
-    val HardDiff = PlaySettings(
+    val InsaneMarathon = PlaySettings(
         HARD,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Laurier's Hard].osu",

@@ -9,11 +9,12 @@ data class UserSave(
     var xp: Int = 0,
     var progress: Int = 0,
     var mapRanks: MutableMap<String, Rank> = mutableMapOf(),
-    var easyRank: Int = 0,
     var normalRank: Int = 0,
     var hardRank: Int = 0,
+    var insaneRank: Int = 0,
     var unlocks: MutableList<String> = mutableListOf(),
     var notify: MutableList<String> = mutableListOf(),
+    var achievements: MutableList<String> = mutableListOf(),
     var skin: String = Skins.default.name,
     var unlockedAllMaps: Int = 0
 )

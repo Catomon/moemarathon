@@ -11,10 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.DefaultPlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySets.EasyDiff
-import com.github.catomon.moemarathon.difficulties.PlaySets.HardDiff
-import com.github.catomon.moemarathon.difficulties.PlaySets.NormalDiff
+import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.HardMarathon
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySettings
 import com.github.catomon.moemarathon.difficulties.RankUtil
@@ -68,6 +69,8 @@ class MapSelectStage(
             try {
                 addCover()
                 isLoading = true
+                val marathonMaps =
+                    PlaySets.NormalMarathon.maps + PlaySets.HardMarathon.maps + PlaySets.InsaneMarathon.maps + PlaySets.NonStop.maps
                 loadedItems =
                     (if (mapFileNames.isEmpty()) {
                         if (playSets == UnlockedOnlyPlaySets) {
@@ -76,6 +79,9 @@ class MapSelectStage(
                                 .filter { userSaveMapRanks.contains(it.file.name()) }
                         } else {
                             MapsManager.collectMapFiles().map { GameMap(it) }
+                                .filter { !(marathonMaps.contains(it.file.name()) || it.file.parent().parent().name() == "marathon") && !it.file.name().contains("Taiko") }
+                            // .filter { !marathonMaps.contains(it.file.name()) && !it.file.name().contains("Taiko") }
+                            //!(marathonMaps.contains(it.file.name()) || it.file.parent().parent().name() == "marathon")
                         }
                     } else
                         MapsManager.collectMapFiles().map { GameMap(it) }
@@ -119,16 +125,16 @@ class MapSelectStage(
                                         var playSets = playSets
                                         if (playSets == UnlockedOnlyPlaySets) {
                                             when {
-                                                EasyDiff.maps.contains(newMapListItem.map.file.name()) -> {
-                                                    playSets = playSets.copy(noteSpawnTime = EasyDiff.noteSpawnTime)
+                                                NormalMarathon.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = NormalMarathon.noteSpawnTime)
                                                 }
 
-                                                NormalDiff.maps.contains(newMapListItem.map.file.name()) -> {
-                                                    playSets = playSets.copy(noteSpawnTime = NormalDiff.noteSpawnTime)
+                                                HardMarathon.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = HardMarathon.noteSpawnTime)
                                                 }
 
-                                                HardDiff.maps.contains(newMapListItem.map.file.name()) -> {
-                                                    playSets = playSets.copy(noteSpawnTime = HardDiff.noteSpawnTime)
+                                                InsaneMarathon.maps.contains(newMapListItem.map.file.name()) -> {
+                                                    playSets = playSets.copy(noteSpawnTime = InsaneMarathon.noteSpawnTime)
                                                 }
                                             }
                                         }
@@ -147,13 +153,25 @@ class MapSelectStage(
                     listView.header = Actor().also { it.setSize(50f, 50f) }
                 }
 
-                createTable().apply {
-                    if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
-                        add("Unlock new maps by playing marathon!")
-                        center()
-                    } else {
-                        add(newLabel("Unlock new maps by playing marathon!").also { it.setFontScale(0.6f) })
-                        center().top()
+                if (playSets == PlaySets.DefaultPlaySets) {
+                    createTable().apply {
+                        if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
+                            add("Here will be your maps\nfrom the 'other maps' folder")
+                            center()
+                        } else {
+                            add(newLabel("Maps from the 'other maps' folder").also { it.setFontScale(0.6f) })
+                            center().top()
+                        }
+                    }
+                } else {
+                    createTable().apply {
+                        if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
+                            add("Unlock new maps by playing marathon!")
+                            center()
+                        } else {
+                            add(newLabel("Unlock new maps by playing marathon!").also { it.setFontScale(0.6f) })
+                            center().top()
+                        }
                     }
                 }
 
@@ -184,7 +202,8 @@ class MapSelectStage(
                             textureBgCache.put(it.file.name(), it.newBackgroundTexture())
                     }
 
-                    val alreadyPlayingMapMusic = buttonGroup.buttons.firstOrNull { it.map.file.name() == AudioManager.lastMapMusic?.file?.name() }
+                    val alreadyPlayingMapMusic =
+                        buttonGroup.buttons.firstOrNull { it.map.file.name() == AudioManager.lastMapMusic?.file?.name() }
                     if (alreadyPlayingMapMusic != null) {
                         alreadyPlayingMapMusic.isChecked = true
                     } else {

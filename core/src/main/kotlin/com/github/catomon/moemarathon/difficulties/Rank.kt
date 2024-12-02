@@ -1,6 +1,7 @@
 package com.github.catomon.moemarathon.difficulties
 
 import com.badlogic.gdx.graphics.Color
+import com.kotcrab.vis.ui.widget.VisLabel
 
 data class Rank(
     val id: Int = 0,
@@ -12,6 +13,10 @@ data class Rank(
 )
 
 object RankUtil {
+
+    fun newRankLabel(rank: String) = VisLabel(rank, getRankColor(rank))
+
+    fun newRankLabel(rank: Int) = VisLabel(getRankChar(rank), getRankColor(getRankChar(rank)))
 
     fun getRankChar(i: Int): String {
         return when (i) {

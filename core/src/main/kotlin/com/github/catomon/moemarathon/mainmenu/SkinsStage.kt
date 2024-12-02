@@ -40,7 +40,7 @@ class SkinsStage() :
             name = "skins"
             skins.forEachIndexed { i, skin ->
                 add(Button(null, null, VisUI.getSkin().getDrawable("button-down-50")).apply {
-                    val unlocked = skin.name == Skins.default.name || userSave.unlocks.contains("skin:" + skin.name)
+                    val unlocked = skin.name == Skins.default.name || userSave.unlocks.contains("skin:" + skin.name) || skin.name == Skins.defaultCat.name
                     val frames = RegionAnimation(0.4f, assets.mainAtlas.findRegions(skin.center).let { if (it.isEmpty) assets.mainAtlas.findRegions("question") else it })
                     val sprite = Sprite(frames.currentFrame)
                     if (!unlocked) {

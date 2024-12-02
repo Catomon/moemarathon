@@ -5,9 +5,10 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.utils.ScreenUtils
+import com.github.catomon.moemarathon.difficulties.PlaySets
+import com.github.catomon.moemarathon.difficulties.Rank
 import com.github.catomon.moemarathon.mainmenu.MenuScreen
 import com.github.catomon.moemarathon.mainmenu.MenuStage
-import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.utils.setMouseCursor
 
@@ -60,9 +61,24 @@ open class GameMain : Game() {
             menuScreen.changeStage(MenuStage())
         }
 
+        if (!Const.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
+            GamePref.userSave = UserSave(
+                "DEBUG_PLAYER",
+                999999999,
+                9999999,
+                999999,
+                999999,
+                mutableMapOf(PlaySets.NonStop.maps.first() to Rank(7, 999999, 999999, 99999)),
+                7,
+                7,
+                7,
+                unlocks = mutableListOf("Non-Stop")
+            )
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11))
             if (Gdx.graphics.isFullscreen)
-                Gdx.graphics.setWindowedMode(Gdx.graphics.width, Gdx.graphics.height)
+                Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
             else
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
     }
