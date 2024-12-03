@@ -53,7 +53,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             add(VisTextButton("Credits").apply {
                 label.setFontScale(0.5f)
                 addChangeListener {
-                    menuScreen.changeStage(SettingsStage())
+                    menuScreen.changeStage(CreditsStage())
                 }
             }).center()
             row()
@@ -116,15 +116,15 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             })
         }
 
-        createTable().apply {
-            add(VisTextButton("monscout.itch.io").apply {
-                label.setFontScale(0.5f)
-                addChangeListener {
-                    Gdx.app.net.openURI("https://monscout.itch.io/")
-                }
-            })
-            center().bottom()
-        }
+//        createTable().apply {
+//            add(VisTextButton("monscout.itch.io").apply {
+//                label.setFontScale(0.5f)
+//                addChangeListener {
+//                    Gdx.app.net.openURI("https://monscout.itch.io/")
+//                }
+//            })
+//            center().bottom()
+//        }
 
         userSave.notify.removeIf {
             when {

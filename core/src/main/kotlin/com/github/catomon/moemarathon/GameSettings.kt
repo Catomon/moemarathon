@@ -61,7 +61,7 @@ object GamePref {
         }
 
     var fullscreen: Boolean
-        get() = prefs.getBoolean("fullscreen", true)
+        get() = prefs.getBoolean("fullscreen", false)
         set(value) {
             prefs.putBoolean("fullscreen", value)
         }

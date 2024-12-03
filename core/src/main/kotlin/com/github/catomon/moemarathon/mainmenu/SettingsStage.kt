@@ -20,6 +20,7 @@ class SettingsStage() :
     private val userSave = GamePref.userSave
     private var musicVolume = 0f
     private var soundVolume = 0f
+    private var fullscreen = false
 
     init {
         createTable().apply {
@@ -31,6 +32,20 @@ class SettingsStage() :
         }
 
         createTable().apply {
+            add(VisTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
+                addChangeListener {
+                    if (Gdx.graphics.isFullscreen) {
+                        Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
+                        button.setText("(F11) Fullscreen")
+                        fullscreen = false
+                    } else {
+                        Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+                        button.setText("(F11) Windowed")
+                        fullscreen = true
+                    }
+                }
+            })
+            row()
             add("Music volume")
             row()
             add(VisSlider(0f, 100f, 5f, false).also {
@@ -69,6 +84,7 @@ class SettingsStage() :
         createTable(VisTextButton("<Menu").addChangeListener {
             GamePref.musicVolume = musicVolume
             GamePref.soundVolume = soundVolume
+            GamePref.fullscreen = fullscreen
             //GamePref.userSave = userSave
             GamePref.save()
             menuScreen.changeStage(MenuStage(menuScreen))

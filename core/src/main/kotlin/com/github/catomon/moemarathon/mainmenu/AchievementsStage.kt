@@ -25,8 +25,9 @@ class AchievementsStage() :
             VisTable().apply {
 //                setFillParent(true)
                 width = 1000f
+                val completionLabel = newLabel("Completion: 0%")
                 defaults().pad(8f).left()
-                add("Game completion: 0%").padTop(80f)
+                add(completionLabel).padTop(80f)
                 row()
                 add(VisTable().apply {
                     add(VisTable().apply {
@@ -54,7 +55,7 @@ class AchievementsStage() :
                             if (userSave.unlocks.contains(PlaySets.NonStop.name)) {
                                 add("Non-Stop: ")
                                 val nonStopRank = userSave.mapRanks[PlaySets.NonStop.maps.first()]?.id ?: 0
-                                add(RankUtil.newRankLabel(nonStopRank).apply { setFontScale(1.5f) }).left()
+                                add(RankUtil.newRankLabel(nonStopRank)).left()
                             } else {
                                 add("Non-Stop: ")
                             }
@@ -74,6 +75,17 @@ class AchievementsStage() :
                         avg += 0.5f
                     val resultRankInt = if (ranks.any { it == 0 }) 0 else avg.toInt()
                     val resultRank = RankUtil.getRankChar(resultRankInt)
+                    val compl = when (avg.toInt()) {
+                        7 -> "over9000"
+                        6 -> "1000"
+                        5 -> if (ranks.any { it < 6 }) "80" else "100"
+                        4 -> "70"
+                        3 -> "50"
+                        2 -> "30"
+                        1 -> "10%"
+                        else -> "0"
+                    }
+                    completionLabel.setText("Completion: $compl%")
                     //
                     add(VisTable().apply {
                         add("Total\nRank:").right()

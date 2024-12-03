@@ -74,9 +74,12 @@ class PlayHud(private val playScreen: PlayScreen) :
         playScreen.noteListeners.add(comboLabel)
         playScreen.noteListeners.add(scoreLabel)
 
-        createTable(VisTextButton("Pause").addChangeListener {
-            playScreen.paused = true
-            showMenu()
+        createTable(VisTextButton("Pause").apply {
+            addChangeListener {
+                playScreen.paused = true
+                showMenu()
+            }
+            label.setFontScale(0.75f)
         }).left().top()
     }
 

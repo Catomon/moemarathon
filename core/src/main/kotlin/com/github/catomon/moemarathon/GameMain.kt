@@ -1,9 +1,6 @@
 package com.github.catomon.moemarathon
 
-import com.badlogic.gdx.Game
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.Screen
+import com.badlogic.gdx.*
 import com.badlogic.gdx.utils.ScreenUtils
 import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.Rank
@@ -36,6 +33,16 @@ open class GameMain : Game() {
         assets.loadUI()
 
         game = this
+
+        if (Gdx.app.type == Application.ApplicationType.Desktop) {
+            if (System.getProperty("os.name").lowercase().contains("win")) {
+                if (!GamePref.fullscreen) {
+                    Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
+                } else {
+                    Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+                }
+            }
+        }
 
         setScreen(LoadingScreen(this))
     }
