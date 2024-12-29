@@ -145,7 +145,7 @@ fun newNotifyWindow(
 fun <T : Actor> T.addChangeListener(listener: (actor: T) -> Unit): T {
     addListener(object : ChangeListener() {
         override fun changed(event: ChangeEvent?, actor: Actor?) {
-            listener(actor as T)
+            listener(this@addChangeListener)
         }
     })
 

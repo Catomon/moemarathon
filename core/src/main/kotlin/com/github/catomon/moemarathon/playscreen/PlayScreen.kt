@@ -110,7 +110,7 @@ class PlayScreen(
         }
     var autoPlay = false
     var noAim = playSets.noAim
-    var skin: Skin = Skins.getSkin(GamePref.userSave.skin) ?: Skins.default
+    var skin: Skin = Skins.getSkin(GamePref.userSave.skin) ?: Skins.lucky
     var noHoldNotes = true
     var isDone = false
     var debug = false

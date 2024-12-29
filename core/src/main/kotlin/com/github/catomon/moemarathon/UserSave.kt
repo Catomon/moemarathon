@@ -15,7 +15,7 @@ data class UserSave(
     var unlocks: MutableList<String> = mutableListOf(),
     var notify: MutableList<String> = mutableListOf(),
     var achievements: MutableList<String> = mutableListOf(),
-    var skin: String = Skins.default.name,
+    var skin: String = Skins.lucky.name,
     var unlockedAllMaps: Int = 0
 )
 

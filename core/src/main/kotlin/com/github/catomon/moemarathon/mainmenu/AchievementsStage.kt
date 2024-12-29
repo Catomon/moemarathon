@@ -135,10 +135,10 @@ class AchievementsStage() :
             center().top()
         }
 
-        createTable(VisTextButton("<Menu").addChangeListener {
+        createTable(newBackButton().addChangeListener {
             menuScreen.changeStage(MenuStage(menuScreen))
         }).apply {
-            left().top()
+            left().bottom()
         }
     }
 }

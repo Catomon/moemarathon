@@ -94,7 +94,7 @@ class DifficultySelectStage() :
             }
         }
 
-        createTable(VisTextButton("<Menu").addChangeListener {
+        createTable(newBackButton().addChangeListener {
             menuScreen.changeStage(MenuStage(menuScreen))
         }).apply {
             left().bottom()

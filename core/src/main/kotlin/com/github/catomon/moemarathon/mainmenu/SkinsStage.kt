@@ -14,8 +14,6 @@ import com.github.catomon.moemarathon.widgets.newLabel
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisTable
-import com.kotcrab.vis.ui.widget.VisTextButton
-import kotlin.concurrent.thread
 
 class SkinsStage() :
     BgStage() {
@@ -40,8 +38,16 @@ class SkinsStage() :
             name = "skins"
             skins.forEachIndexed { i, skin ->
                 add(Button(null, null, VisUI.getSkin().getDrawable("button-down-50")).apply {
-                    val unlocked = skin.name == Skins.default.name || userSave.unlocks.contains("skin:" + skin.name) || skin.name == Skins.defaultCat.name
-                    val frames = RegionAnimation(0.4f, assets.mainAtlas.findRegions(skin.center).let { if (it.isEmpty) assets.mainAtlas.findRegions("question") else it })
+                    val unlocked =
+                        !Const.IS_RELEASE
+                            || skin.name == Skins.lucky.name
+                            || skin.name == Skins.saberStrike.name
+                            || skin.name == Skins.saberBald.name
+                            || userSave.unlocks.contains("skin:" + skin.name)
+                    val frames = RegionAnimation(
+                        0.4f,
+                        assets.mainAtlas.findRegions(skin.center)
+                            .let { if (it.isEmpty) assets.mainAtlas.findRegions("question") else it })
                     val sprite = Sprite(frames.currentFrame)
                     if (!unlocked) {
                         color.a = 0.5f
@@ -80,7 +86,7 @@ class SkinsStage() :
             }
         }
 
-        createTable(VisTextButton("<Menu").addChangeListener {
+        createTable(newBackButton().addChangeListener {
             GamePref.userSave = userSave
             GamePref.save()
             menuScreen.changeStage(MenuStage(menuScreen))

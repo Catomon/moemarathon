@@ -87,7 +87,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             }
         } else {
             // when marathon
-            createTable(VisTextButton("<End").addChangeListener {
+            createTable(newEndButton().addChangeListener {
                 game.menuScreen.changeStage(MenuStage())
             }).apply {
                 left().bottom()
@@ -113,19 +113,21 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 }
             } else {
                 var timeBeforeContinue = 0f
-                createTable(VisTextButton("Continue>").also { button ->
+                createTable(newContinueButton().also { button ->
                     this@StatsStage.addListener(object : InputListener() {
                         override fun keyDown(event: InputEvent?, keycode: Int): Boolean {
                             if (keycode == Input.Keys.ESCAPE) {
                                 button.clearActions()
-                                button.setText("Continue>")
+                                if (button is VisTextButton)
+                                    button.setText("Continue>")
                             }
                             return super.keyDown(event, keycode)
                         }
                     })
                     button.addAction(UpdateAction({
                         timeBeforeContinue += it
-                        button.setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue>")
+                        if (button is VisTextButton)
+                            button.setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue>")
                         if (timeBeforeContinue >= 5) {
                             continueMarathon()
                             true

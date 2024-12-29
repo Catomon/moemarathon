@@ -21,11 +21,25 @@ object Skins {
     const val ANIMATED_CENTER = "animation"
     const val ANI_DIR_CENTER = "directional_animation"
 
-    val default = Skin(
-        name = "default",
+    val lucky = Skin(
+        name = "lucky",
+        note = "lucky_note",
+        noteEnemy = "",
+        center = "lucky_note_inner",
+        centerType = "",
+        timingsCircle = "lucky_timings_circle",
+        holdNote = "lucky_note",
+        holdNotePointer = "lucky_note",
+        hit = "lucky_",
+        pop = "lucky_pop",
+        miss = "lucky_miss",
+    )
+
+    val saberBald = Skin(
+        name = "saber bald",
         note = "def_note",
         noteEnemy = "",
-        center = "def_note_outer",
+        center = "def_note_outer", //center is also used as a preview of a skin
         centerType = "",
         timingsCircle = "def_timings_circle",
         holdNote = "def_note",
@@ -35,8 +49,8 @@ object Skins {
         miss = "miss",
     )
 
-    val defaultCat = Skin(
-        name = "def. cat",
+    val saberStrike = Skin(
+        name = "saber strike",
         note = "def_cat_note",
         noteEnemy = "",
         center = "def_cat_note_outer",
@@ -78,10 +92,10 @@ object Skins {
     )
 
     val skins: List<Skin> = listOf(
-        default, defaultCat, komugi, bekky
+        lucky, saberBald, saberStrike, komugi, bekky
     )
 
-    fun getSkin(name: String) : Skin? {
+    fun getSkin(name: String): Skin? {
         val skin = skins.firstOrNull { it.name == name }
         if (skin == null) logErr("Skin not found: $name")
         return skin

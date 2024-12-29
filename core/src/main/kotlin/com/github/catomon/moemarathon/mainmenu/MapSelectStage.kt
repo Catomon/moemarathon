@@ -183,7 +183,7 @@ class MapSelectStage(
                     }
                 }
 
-                createTable(VisTextButton("<Menu").addChangeListener {
+                createTable(newBackButton().addChangeListener {
                     game.menuScreen.changeStage(MenuStage())
                 }).apply {
                     left().bottom()

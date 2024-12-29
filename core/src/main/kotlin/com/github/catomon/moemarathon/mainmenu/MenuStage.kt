@@ -23,6 +23,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
     private val userSave = GamePref.userSave
 
     init {
+        background.color.a = 0.75f
         if (AudioManager.mapMusic?.isPlaying == true) {
             createTable().apply {
                 add(VisTextButton("Pause").apply {
@@ -73,11 +74,11 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
 
         createTable().apply {
             center()
-            add(VisTextButton("Start").addChangeListener {
+            add(newButton("start").addChangeListener {
                 menuScreen.changeStage(DifficultySelectStage())
             })
             row()
-            add(VisTextButton("Maps").addChangeListener {
+            add(newButton("song-select").addChangeListener {
                 menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets))
             })
             row()
@@ -99,19 +100,19 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                         GamePref.save()
                     }
                 })
-                add(VisTextButton("Other Maps").addChangeListener {
+                add(newButton("other-songs").addChangeListener {
                     menuScreen.changeStage(MapSelectStage())
                 }).center()
                 row()
             } else {
-                add(VisTextButton("Other Maps").also { it.add(VisImage("locked")).size(48f) }).center()
+                add(newButton("other-songs-locked").also { it.add(VisImage("locked")).size(48f) }).center()
                 row()
             }
-            add(VisTextButton("Skins").addChangeListener {
+            add(newButton("skins").addChangeListener {
                 menuScreen.changeStage(SkinsStage())
             })
             row()
-            add(VisTextButton("Achievements").addChangeListener {
+            add(newButton("achievements").addChangeListener {
                 menuScreen.changeStage(AchievementsStage())
             })
         }

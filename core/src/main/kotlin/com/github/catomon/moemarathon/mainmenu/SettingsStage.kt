@@ -33,7 +33,7 @@ class SettingsStage() :
 
         createTable().apply {
             add(VisTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
-                addChangeListener {
+                button.addChangeListener {
                     if (Gdx.graphics.isFullscreen) {
                         Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
                         button.setText("(F11) Fullscreen")
@@ -81,7 +81,7 @@ class SettingsStage() :
             }
         }
 
-        createTable(VisTextButton("<Menu").addChangeListener {
+        createTable(newBackButton().addChangeListener {
             GamePref.musicVolume = musicVolume
             GamePref.soundVolume = soundVolume
             GamePref.fullscreen = fullscreen

@@ -10,19 +10,16 @@ import com.github.catomon.moemarathon.utils.worldCenterY
 class BackgroundActor(pSprite: Sprite? = null) : Actor() {
 
     var sprite: Sprite? = pSprite
-        set(value) {
-            field = value
-            field?.setAlpha(0.25f)
-        }
 
     init {
-        sprite?.setAlpha(0.25f)
+        color.a = 0.5f
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         val sprite = sprite
         if (sprite == null || sprite.texture == null) return
 
+        sprite.setAlpha(color.a)
         if (stage.width < stage.height) {
             if (sprite.height != stage.height) {
                 val ratio = stage.height / sprite.texture.height
@@ -38,4 +35,6 @@ class BackgroundActor(pSprite: Sprite? = null) : Actor() {
         sprite.setPositionByCenter(stage.worldCenterX, stage.worldCenterY)
         sprite.draw(batch)
     }
+
+
 }

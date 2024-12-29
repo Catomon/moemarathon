@@ -9,6 +9,8 @@ import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.MenuStage
+import com.github.catomon.moemarathon.mainmenu.newContinueButton
+import com.github.catomon.moemarathon.mainmenu.newEndButton
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
@@ -45,7 +47,7 @@ class PlayHud(private val playScreen: PlayScreen) :
         row()
         add(newLabel("Game paused")).colspan(3).padBottom(32f)
         row()
-        add(newTextButton("<End").addChangeListener {
+        add(newEndButton().addChangeListener {
             playScreen.paused = false
             addAction(OneAction {
                 game.menuScreen.changeStage(MenuStage())
@@ -53,7 +55,7 @@ class PlayHud(private val playScreen: PlayScreen) :
             })
         })
         add().width(100f)
-        add(newTextButton("Resume>").addChangeListener {
+        add(newContinueButton().addChangeListener {
             playScreen.paused = false
             hideMenu()
         })

@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx
 
 object Const {
     const val APP_NAME = "Moe Marathon"
-    const val APP_VER = "0.1"
-    const val IS_RELEASE = false
+    const val APP_VER = "0.2"
+    const val IS_RELEASE = true
     const val WINDOW_WIDTH = 1000
     const val WINDOW_HEIGHT = 600
     const val DEBUG = false
