@@ -58,7 +58,7 @@ configure(subprojects - project(':android')) {
 }
 
 subprojects {
-  version = '0.1'
+  version = '0.2'
   ext.appName = 'moemarathon'
   repositories {
     mavenCentral()
