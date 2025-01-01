@@ -1,4 +1,4 @@
-package com.github.catomon.moemarathon.scene2d.actions
+package com.github.catomon.moemarathon.ui.actions
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction

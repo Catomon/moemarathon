@@ -14,7 +14,7 @@ import com.github.catomon.moemarathon.mainmenu.newEndButton
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
-import com.github.catomon.moemarathon.scene2d.actions.OneAction
+import com.github.catomon.moemarathon.ui.actions.OneAction
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.addCover
 import com.github.catomon.moemarathon.utils.createTable
@@ -76,7 +76,7 @@ class PlayHud(private val playScreen: PlayScreen) :
         playScreen.noteListeners.add(comboLabel)
         playScreen.noteListeners.add(scoreLabel)
 
-        createTable(VisTextButton("Pause").apply {
+        createTable(newTextButton("Pause").apply {
             addChangeListener {
                 playScreen.paused = true
                 showMenu()

@@ -3,7 +3,7 @@ package com.github.catomon.moemarathon.playscreen.ui
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.Stats
-import com.github.catomon.moemarathon.scene2d.actions.DelayRepeatAction
+import com.github.catomon.moemarathon.ui.actions.DelayRepeatAction
 import com.kotcrab.vis.ui.widget.VisLabel
 import kotlin.math.max
 

@@ -10,13 +10,14 @@ import com.github.catomon.moemarathon.difficulties.*
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.PlayScreen
-import com.github.catomon.moemarathon.scene2d.actions.UpdateAction
+import com.github.catomon.moemarathon.ui.actions.UpdateAction
 import com.github.catomon.moemarathon.utils.addCover
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.utils.fadeInAndThen
 import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
+import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.*
 import kotlin.math.max
 
@@ -80,7 +81,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         //navigation buttons
         if (playSets.name == DEFAULT || playSets.name == PlaySets.UnlockedOnlyPlaySets.name) {
             //when maps browse
-            createTable(VisTextButton("<Maps").addChangeListener {
+            createTable(newTextButton("<Maps").addChangeListener {
                 game.menuScreen.changeStage(MapSelectStage(playSets))
             }).apply {
                 left().bottom()
@@ -97,7 +98,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
             val minRank = "C"
             if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank)) {
-                createTable(VisTextButton("Restart>").addChangeListener {
+                createTable(newTextButton("Restart>").addChangeListener {
                     this@StatsStage.fadeInAndThen(1f) {
                         game.screen = PlayScreen(playScreen.gameMap, playSets)
                     }
@@ -146,14 +147,17 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     }
 
     private fun checkAchieveMapComplete() {
-        val userSave: UserSave = GamePref.userSave
+        val newAchievements = mutableListOf<String>()
+        val alreadyUnlocked = GamePref.userSave.achievements
         Achievements.list.forEach {
             if (it.type == Achievement.Type.MapComplete) {
-                if (!userSave.achievements.contains(it.id))
+                if (!alreadyUnlocked.contains(it.id))
                     if (it.condition(AchieveParam(statsStage = this)))
-                        userSave.achievements.add(it.id)
+                        newAchievements.add(it.id)
             }
         }
+        val userSave: UserSave = GamePref.userSave
+        userSave.achievements.addAll(newAchievements)
         GamePref.userSave = userSave
         GamePref.save()
     }
@@ -220,7 +224,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                     saveMarathonResult(resultRankInt)
                 })
                 window.row()
-                window.add(VisTextButton("OK!").addChangeListener {
+                window.add(newTextButton("OK!").addChangeListener {
                     window.stage.removeCover()
                     window.remove()
                 })

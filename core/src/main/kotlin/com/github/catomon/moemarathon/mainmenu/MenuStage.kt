@@ -8,7 +8,7 @@ import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
-import com.github.catomon.moemarathon.scene2d.actions.OneAction
+import com.github.catomon.moemarathon.ui.actions.OneAction
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
@@ -26,7 +26,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         background.color.a = 0.75f
         if (AudioManager.mapMusic?.isPlaying == true) {
             createTable().apply {
-                add(VisTextButton("Pause").apply {
+                add(newTextButton("Pause").apply {
                     label.setFontScale(0.5f)
                     addChangeListener {
                         if (AudioManager.mapMusic != null)
@@ -44,21 +44,21 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         }
 
         createTable().apply {
-            add(VisTextButton("Settings").apply {
+            add(newTextButton("Settings").apply {
                 label.setFontScale(0.5f)
                 addChangeListener {
                     menuScreen.changeStage(SettingsStage())
                 }
             }).center()
             row()
-            add(VisTextButton("Credits").apply {
+            add(newTextButton("Credits").apply {
                 label.setFontScale(0.5f)
                 addChangeListener {
                     menuScreen.changeStage(CreditsStage())
                 }
             }).center()
             row()
-            add(VisTextButton("Exit").addChangeListener {
+            add(newTextButton("Exit").addChangeListener {
                 Gdx.app.exit()
             }.apply { label.setFontScale(0.5f) })
             bottom().right()
@@ -69,16 +69,22 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             add(newLabel(Const.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
+            row()
+            add(VisImage("logo")).prefSize(128f).colspan(2)
+
             center().top()
         }
 
         createTable().apply {
             center()
-            add(newButton("start").addChangeListener {
+            add(newBigButton("Start").addChangeListener {
                 menuScreen.changeStage(DifficultySelectStage())
             })
+//            add(newButton("start").addChangeListener {
+//                menuScreen.changeStage(DifficultySelectStage())
+//            })
             row()
-            add(newButton("song-select").addChangeListener {
+            add(newBigButton("Song Select").addChangeListener {
                 menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets))
             })
             row()
@@ -100,19 +106,19 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                         GamePref.save()
                     }
                 })
-                add(newButton("other-songs").addChangeListener {
+                add(newBigButton("Other Songs").addChangeListener {
                     menuScreen.changeStage(MapSelectStage())
                 }).center()
                 row()
             } else {
-                add(newButton("other-songs-locked").also { it.add(VisImage("locked")).size(48f) }).center()
+                add(newBigButton("Other Songs").also { it.add(VisImage("locked")).size(48f) }).center()
                 row()
             }
-            add(newButton("skins").addChangeListener {
+            add(newBigButton("Skins").addChangeListener {
                 menuScreen.changeStage(SkinsStage())
             })
             row()
-            add(newButton("achievements").addChangeListener {
+            add(newBigButton("Achievements").addChangeListener {
                 menuScreen.changeStage(AchievementsStage())
             })
         }

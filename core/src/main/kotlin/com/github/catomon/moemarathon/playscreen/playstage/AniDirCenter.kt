@@ -8,7 +8,7 @@ import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
-import com.github.catomon.moemarathon.scene2d.AnimationActor
+import com.github.catomon.moemarathon.ui.AnimationActor
 import com.github.catomon.moemarathon.utils.*
 import kotlin.random.Random
 

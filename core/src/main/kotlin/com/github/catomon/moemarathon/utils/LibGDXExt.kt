@@ -8,9 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.github.catomon.moemarathon.scene2d.actions.OneAction
+import com.github.catomon.moemarathon.ui.actions.OneAction
 import com.kotcrab.vis.ui.widget.VisTable
-import com.github.catomon.moemarathon.scene2d.StageCover
+import com.github.catomon.moemarathon.ui.StageCover
 import kotlin.math.atan2
 
 fun Texture.copyAndScale(scale: Float): Texture {

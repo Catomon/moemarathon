@@ -29,6 +29,10 @@ fun newLabel(text: String = "text", scale: Float): VisLabel {
     return VisLabel(text).apply { setFontScale(scale) }
 }
 
+fun newLabel(text: String = "text", style: String? = null, scale: Float): VisLabel {
+    return newLabel(text, style).apply { setFontScale(scale) }
+}
+
 /** A button that has drawable and styled button frame */
 fun newImageButton(drawableName: String): Button {
     return VisImageButton(VisUI.getSkin().newDrawable(drawableName)).addClickSound().addFocusBorder()
@@ -43,7 +47,7 @@ fun newIconButton(styleName: String): VisImageButton {
     return VisImageButton(styleName).addClickSound().addFocusBorder()
 }
 
-fun newTextButton(text: String = "text", styleName: String? = null): VisTextButton {
+fun newTextButton(text: String = "text", styleName: String? = "normal"): VisTextButton {
     val button = if (styleName == null) VisTextButton(text) else VisTextButton(text, styleName)
 
     button.addClickSound()

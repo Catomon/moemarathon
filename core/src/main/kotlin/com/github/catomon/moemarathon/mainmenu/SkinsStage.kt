@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.*
-import com.github.catomon.moemarathon.scene2d.actions.UpdateAction
+import com.github.catomon.moemarathon.ui.actions.UpdateAction
 import com.github.catomon.moemarathon.utils.RegionAnimation
 import com.github.catomon.moemarathon.utils.addClickListener
 import com.github.catomon.moemarathon.utils.createTable

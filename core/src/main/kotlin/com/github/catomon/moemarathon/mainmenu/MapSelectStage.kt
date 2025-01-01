@@ -13,9 +13,9 @@ import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.DefaultPlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
 import com.github.catomon.moemarathon.difficulties.PlaySets.HardMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySettings
 import com.github.catomon.moemarathon.difficulties.RankUtil
@@ -28,7 +28,10 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
-import com.kotcrab.vis.ui.widget.*
+import com.kotcrab.vis.ui.widget.ListView
+import com.kotcrab.vis.ui.widget.VisImage
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisTable
 import kotlin.concurrent.thread
 
 class MapSelectStage(
@@ -76,10 +79,14 @@ class MapSelectStage(
                         if (playSets == UnlockedOnlyPlaySets) {
                             val userSaveMapRanks = GamePref.userSave.mapRanks
                             MapsManager.collectMapFiles().map { GameMap(it) }
-                                .filter { userSaveMapRanks.contains(it.file.name()) }
+                                .filter { userSaveMapRanks.contains(it.file.name()) && (marathonMaps.contains(it.file.name()) || it.file.parent().parent()
+                                    .name() == "marathon") }
                         } else {
                             MapsManager.collectMapFiles().map { GameMap(it) }
-                                .filter { !(marathonMaps.contains(it.file.name()) || it.file.parent().parent().name() == "marathon") && !it.file.name().contains("Taiko") }
+                                .filter {
+                                    !(marathonMaps.contains(it.file.name()) || it.file.parent().parent()
+                                        .name() == "marathon") && !it.file.name().contains("Taiko")
+                                }
                             // .filter { !marathonMaps.contains(it.file.name()) && !it.file.name().contains("Taiko") }
                             //!(marathonMaps.contains(it.file.name()) || it.file.parent().parent().name() == "marathon")
                         }
@@ -126,7 +133,8 @@ class MapSelectStage(
                                         if (playSets == UnlockedOnlyPlaySets) {
                                             when {
                                                 NormalMarathon.maps.contains(newMapListItem.map.file.name()) -> {
-                                                    playSets = playSets.copy(noteSpawnTime = NormalMarathon.noteSpawnTime)
+                                                    playSets =
+                                                        playSets.copy(noteSpawnTime = NormalMarathon.noteSpawnTime)
                                                 }
 
                                                 HardMarathon.maps.contains(newMapListItem.map.file.name()) -> {
@@ -134,7 +142,8 @@ class MapSelectStage(
                                                 }
 
                                                 InsaneMarathon.maps.contains(newMapListItem.map.file.name()) -> {
-                                                    playSets = playSets.copy(noteSpawnTime = InsaneMarathon.noteSpawnTime)
+                                                    playSets =
+                                                        playSets.copy(noteSpawnTime = InsaneMarathon.noteSpawnTime)
                                                 }
                                             }
                                         }

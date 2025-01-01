@@ -78,7 +78,7 @@ class CreditsStage() :
             row()
             addLinkLabel("logo, komugi skin, bekky skin by carroteater9000", "")
             row()
-            add("Other stuff:").padTop(50f)
+            add("The game by mon scout:").padTop(50f)
             row()
             addLinkLabel("monscout.itch.io", "https://monscout.itch.io/")
         }

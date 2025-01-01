@@ -11,11 +11,9 @@ import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
-import com.github.catomon.moemarathon.scene2d.actions.AccelAction
+import com.github.catomon.moemarathon.ui.actions.AccelAction
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.copyAndScale
-import com.github.catomon.moemarathon.utils.createTable
-import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.random.Random
 
 

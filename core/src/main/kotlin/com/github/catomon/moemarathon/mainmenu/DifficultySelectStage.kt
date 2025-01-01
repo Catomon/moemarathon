@@ -112,7 +112,7 @@ class DifficultySelectStage() :
             }
             add(scoreLabel)
             row()
-            add(VisTextButton("No-Aim Off").apply {
+            add(newTextButton("No-Aim Off").apply {
                 label.setFontScale(0.75f)
                 addChangeListener {
                     noAimOn = !noAimOn
@@ -126,7 +126,7 @@ class DifficultySelectStage() :
                 }
             })
             row()
-            add(VisTextButton("Hold Notes Off").apply {
+            add(newTextButton("Hold Notes Off").apply {
                 label.setFontScale(0.75f)
                 addChangeListener {
                     holdNotesOn = !holdNotesOn

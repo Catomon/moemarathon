@@ -1,4 +1,4 @@
-package com.github.catomon.moemarathon.scene2d
+package com.github.catomon.moemarathon.ui
 
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch

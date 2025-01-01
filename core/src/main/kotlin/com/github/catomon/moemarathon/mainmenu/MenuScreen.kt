@@ -1,6 +1,6 @@
 package com.github.catomon.moemarathon.mainmenu
 
-import com.github.catomon.moemarathon.scene2d.StageScreen
+import com.github.catomon.moemarathon.ui.StageScreen
 import com.github.catomon.moemarathon.utils.logMsg
 
 class MenuScreen(initialStage: (() -> BgStage)? = null) :

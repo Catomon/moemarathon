@@ -9,6 +9,7 @@ import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
+import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisSlider
 import com.kotcrab.vis.ui.widget.VisTextButton
 import java.awt.Desktop
@@ -32,7 +33,7 @@ class SettingsStage() :
         }
 
         createTable().apply {
-            add(VisTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
+            add(newTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
                 button.addChangeListener {
                     if (Gdx.graphics.isFullscreen) {
                         Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
@@ -69,7 +70,7 @@ class SettingsStage() :
             }).width(250f)
             row()
             if (Const.IS_DESKTOP && !Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
-                add(VisTextButton("Open other maps folder").addChangeListener {
+                add(newTextButton("Open other maps folder").addChangeListener {
                     try {
                         Desktop.getDesktop().open(Gdx.files.local("maps/other maps/").file().also { it.mkdirs() })
 
