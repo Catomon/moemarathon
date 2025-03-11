@@ -7,10 +7,10 @@ import com.badlogic.gdx.utils.Queue
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.map.osu.OsuBeatmap
 import com.github.catomon.moemarathon.map.osu.OsuParser
+import com.github.catomon.moemarathon.map.osu.hitObjectToNotePosition
 import com.github.catomon.moemarathon.map.osu.toNote
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteMap
-import com.github.catomon.moemarathon.utils.calculateDegrees
 import kotlin.math.abs
 
 object MapsManager {
@@ -103,7 +103,7 @@ object MapsManager {
                 val sliderEndNote =
                     Note(
                         (hit.time + sliderEndTime * slides) / 1000f,
-                        calculateDegrees(256f, 193f, sliderEndXY[0].toFloat(), sliderEndXY[1].toFloat()) / 360,
+                        hitObjectToNotePosition(sliderEndXY[0], sliderEndXY[1]),
                         tracingPrev = true
                     )
                 chunk.notes.addFirst(sliderEndNote)

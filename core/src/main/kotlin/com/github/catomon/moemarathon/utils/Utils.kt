@@ -20,5 +20,6 @@ fun createCursor(cursorFileName: String = "cursor.png"): Cursor {
 }
 
 fun calculateDegrees(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-    return atan2(y2 - y1, x2 - x1) * 180 / MathUtils.PI
+    val degrees = atan2(y2 - y1, x2 - x1) * 180 / MathUtils.PI
+    return if (degrees < 0) degrees + 360 else degrees
 }

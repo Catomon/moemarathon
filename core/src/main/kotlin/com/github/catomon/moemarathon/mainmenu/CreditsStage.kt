@@ -80,7 +80,7 @@ class CreditsStage() :
             row()
             add("The game by Sera Scout:").padTop(50f)
             row()
-            addLinkLabel("serascout.itch.io", "https://monscout.itch.io/")
+            addLinkLabel("serascout.itch.io", "https://serascout.itch.io/")
         }
 
         addActor(VisScrollPane(contentTable).apply {

@@ -33,11 +33,12 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     }
 
     val background = BackgroundActor(Sprite(bgTexture))
-    val centerActor: Actor = when (playScreen.skin.centerType) {
+    private val centerActor: Actor = when (playScreen.skin.centerType) {
         Skins.ANI_DIR_CENTER -> AniDirCenter(playScreen)
         Skins.ANIMATED_CENTER -> AnimatedCenter(playScreen, playScreen.skin.center, playScreen.skin.timingsCircle)
         else -> JustCircleCenter(playScreen, playScreen.skin.timingsCircle)
     }
+    private val perfectAreaDrawer = PerfectAreaDrawer(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
@@ -46,6 +47,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     init {
         addActor(background)
         addActor(centerActor)
+        addActor(perfectAreaDrawer)
         addActor(notesDrawer)
     }
 

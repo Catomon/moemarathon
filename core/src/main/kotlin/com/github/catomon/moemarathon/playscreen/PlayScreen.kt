@@ -1,6 +1,8 @@
 package com.github.catomon.moemarathon.playscreen
 
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -25,6 +27,7 @@ import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.logMsg
 import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
@@ -38,6 +41,19 @@ class PlayScreen(
     val gameMap: GameMap,
     val playSets: PlaySettings,
 ) : ScreenAdapter() {
+
+    object Config {
+        var gameplay = Gameplay.BOTH
+
+        //amount of thing where notes should land idk
+        var circleParts = 6
+
+//        var layout = 0
+    }
+
+    enum class Gameplay {
+        POINTER, KEYBOARD, BOTH
+    }
 
     val camera = OrthographicCamera().apply {
         setToOrtho(false)
@@ -337,9 +353,9 @@ class PlayScreen(
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
         val clickerPos = calcClickerPos(Vector2())
-        val clickerToNoteDst = Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
+        val clickerToNoteDst = if (Config.gameplay == Gameplay.POINTER) Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y) else 0f
         val curPointerRad = pointerSize * (mapSize / 2)
-        val isPointerNear = (clickerToNoteDst <= curPointerRad * 2) || noAim
+        val isPointerNear = isNotePlaceClicked(clickerToNoteDst, curPointerRad, note, button)
         if (isInTiming && isPointerNear) {
             noteMap.chunks.last().notes.removeLast()
 
@@ -347,7 +363,6 @@ class PlayScreen(
                 isTracing = true
                 tracingButton = button
 
-//                onNoteEvent(NoteListener.NOTE_TRACE_START, note)
                 onNoteEvent(NoteListener.HIT, note)
             } else {
                 if (isTracing) {
@@ -362,18 +377,73 @@ class PlayScreen(
             if (isTracing) {
                 isTracing = false
 
-                //noteMap.chunks.last().notes.removeLast()
                 onNoteEvent(NoteListener.MISS, note)
             } else {
                 if (note.timing - time > noteSpawnTime / 4f) {
                     onNoteEvent(NoteListener.TOO_EARLY, note)
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
-                        //noteMap.chunks.last().notes.removeLast()
                         onNoteEvent(NoteListener.MISS, note)
                     } else {
                         onNoteEvent(NoteListener.TOO_FAR, note)
                     }
+                }
+            }
+        }
+    }
+
+    private fun isNotePlaceClicked(
+        clickerToNoteDst: Float,
+        curPointerRad: Float,
+        note: Note,
+        button: Int
+    ): Boolean {
+        fun isKeyPlacePressed(): Boolean {
+            val place = ((Config.circleParts + 1) * note.initialPosition).toInt() + 1
+//            logMsg("Key pressed: place=$place; key=$button.")
+            return when (button) {
+                Input.Keys.F -> {
+                    place == 3
+                }
+
+                Input.Keys.D -> {
+                    place == 4
+                }
+
+                Input.Keys.S -> {
+                    place == 5
+                }
+
+                Input.Keys.J -> {
+                    place == 2
+                }
+
+                Input.Keys.K -> {
+                    place == 1
+                }
+
+                Input.Keys.L -> {
+                    place == 6
+                }
+
+                else -> false
+            }
+        }
+
+        return when (Config.gameplay) {
+            Gameplay.POINTER -> {
+                (clickerToNoteDst <= curPointerRad * 2) || noAim
+            }
+
+            Gameplay.KEYBOARD -> {
+                isKeyPlacePressed()
+            }
+
+            Gameplay.BOTH -> {
+                if (button in 0..1) {
+                    (clickerToNoteDst <= curPointerRad * 2) || noAim
+                } else {
+                    isKeyPlacePressed()
                 }
             }
         }
@@ -391,4 +461,3 @@ class PlayScreen(
         playStage.viewport.update(width, height, true)
     }
 }
-
