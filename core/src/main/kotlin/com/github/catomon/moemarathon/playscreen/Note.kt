@@ -10,4 +10,3 @@ data class Note(
     var visual: Int = Random.nextInt(0, 3),
     var color: Int = 0,
 )
-

@@ -12,6 +12,7 @@ data class PlaySettings(
     val noHoldNotes: Boolean = true,
     val noAim: Boolean = false,
     val ranks: MutableMap<String, String> = mutableMapOf(),
+    val notePlaces: Int = 6
 ) {
     override fun equals(other: Any?): Boolean {
         return other is PlaySettings && name == other.name
@@ -87,6 +88,7 @@ object PlaySets {
             "Yousei Teikoku - Senketsu no Chikai (Saten) [Mafia].osu",
             "Ichijo - Roulette Roulette (ztrot) [Hard].osu",
         ),
-        1f
+        1f,
+        notePlaces = 12,
     )
 }

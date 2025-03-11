@@ -1,6 +1,5 @@
 package com.github.catomon.moemarathon.playscreen
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
@@ -27,7 +26,6 @@ import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import com.github.catomon.moemarathon.utils.addCover
-import com.github.catomon.moemarathon.utils.logMsg
 import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
@@ -46,7 +44,7 @@ class PlayScreen(
         var gameplay = Gameplay.BOTH
 
         //amount of thing where notes should land idk
-        var circleParts = 6
+        var notePlaces = 6
 
 //        var layout = 0
     }
@@ -135,6 +133,8 @@ class PlayScreen(
     val playHud = PlayHud(this)
 
     init {
+        Config.notePlaces = playSets.notePlaces
+
         Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
 
         noteListeners.add(playStage)
@@ -348,12 +348,19 @@ class PlayScreen(
         noteListeners.forEach { it.onNoteEvent(id, note) }
     }
 
-    fun clickNote(button: Int) {
+    fun processButtonDown(button: Int) {
+        playStage.noteClickPlaceDrawer.onPlaceClicked(placeByButton(button))
+
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
         val clickerPos = calcClickerPos(Vector2())
-        val clickerToNoteDst = if (Config.gameplay == Gameplay.POINTER) Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y) else 0f
+        val clickerToNoteDst = if (Config.gameplay == Gameplay.POINTER) Vector2.dst(
+            clickerPos.x,
+            clickerPos.y,
+            notePos.x,
+            notePos.y
+        ) else 0f
         val curPointerRad = pointerSize * (mapSize / 2)
         val isPointerNear = isNotePlaceClicked(clickerToNoteDst, curPointerRad, note, button)
         if (isInTiming && isPointerNear) {
@@ -392,6 +399,21 @@ class PlayScreen(
         }
     }
 
+    fun getNotePlace(note: Note) = ((Config.notePlaces + 1) * note.initialPosition).toInt() + 1
+
+    fun placeByButton(button: Int): Int {
+        //todo if placeAmount 6
+        return when (button) {
+            Input.Keys.F -> 3
+            Input.Keys.D -> 4
+            Input.Keys.S -> 5
+            Input.Keys.J -> 2
+            Input.Keys.K -> 1
+            Input.Keys.L -> 6
+            else -> -1
+        }
+    }
+
     private fun isNotePlaceClicked(
         clickerToNoteDst: Float,
         curPointerRad: Float,
@@ -399,7 +421,7 @@ class PlayScreen(
         button: Int
     ): Boolean {
         fun isKeyPlacePressed(): Boolean {
-            val place = ((Config.circleParts + 1) * note.initialPosition).toInt() + 1
+            val place = getNotePlace(note)
 //            logMsg("Key pressed: place=$place; key=$button.")
             return when (button) {
                 Input.Keys.F -> {
@@ -440,7 +462,7 @@ class PlayScreen(
             }
 
             Gameplay.BOTH -> {
-                if (button in 0..1) {
+                if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
                     (clickerToNoteDst <= curPointerRad * 2) || noAim
                 } else {
                     isKeyPlacePressed()

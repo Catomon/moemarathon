@@ -3,8 +3,6 @@ package com.github.catomon.moemarathon.playscreen
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.github.catomon.moemarathon.Const
-import com.github.catomon.moemarathon.utils.addCover
-import com.github.catomon.moemarathon.utils.removeCover
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
@@ -21,7 +19,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
             else -> {
                 if (!playScreen.paused) {
-                    playScreen.clickNote(keycode)
+                    playScreen.processButtonDown(keycode)
                 }
             }
         }
@@ -77,7 +75,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
     override fun keyUp(keycode: Int): Boolean {
         if (!playScreen.paused) {
             if (playScreen.isTracing && playScreen.tracingButton == keycode) {
-                playScreen.clickNote(keycode)
+                playScreen.processButtonDown(keycode)
             }
         }
 
@@ -86,7 +84,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!playScreen.paused) {
-            playScreen.clickNote(button)
+            playScreen.processButtonDown(button)
         }
 
         return super.touchDown(screenX, screenY, pointer, button)
@@ -95,7 +93,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!playScreen.paused) {
             if (playScreen.isTracing && playScreen.tracingButton == button) {
-                playScreen.clickNote(button)
+                playScreen.processButtonDown(button)
             }
         }
 
