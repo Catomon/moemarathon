@@ -3,6 +3,8 @@ package com.github.catomon.moemarathon.mainmenu
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
@@ -14,34 +16,51 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
-import com.kotcrab.vis.ui.widget.VisTextButton
 import com.kotcrab.vis.ui.widget.VisWindow
-import kotlin.concurrent.thread
 
 class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage() {
 
     private val userSave = GamePref.userSave
 
-    init {
-        background.color.a = 0.75f
-        if (AudioManager.mapMusic?.isPlaying == true) {
-            createTable().apply {
-                add(newTextButton("Pause").apply {
-                    label.setFontScale(0.5f)
-                    addChangeListener {
-                        if (AudioManager.mapMusic != null)
-                            if (AudioManager.mapMusic?.isPlaying == true) {
-                                AudioManager.pauseMapMusic()
-                                setText("Resume")
-                            } else {
-                                AudioManager.playMapMusic()
-                                setText("Pause")
-                            }
-                    }
-                })
-                top().right()
+    private val pauseBgMusicButton = newTextButton("Pause").apply {
+        label.setFontScale(0.5f)
+        addChangeListener {
+            if (AudioManager.mapMusic != null)
+                if (AudioManager.mapMusic?.isPlaying == true) {
+                    AudioManager.pauseMapMusic()
+                    setText("Resume")
+                } else {
+                    AudioManager.playMapMusic()
+                    setText("Pause")
+                }
+        }
+    }
+
+    private val pauseButtonVisibilityAction
+        get() = RunnableAction().apply {
+            setRunnable {
+                pauseBgMusicButton.isVisible = AudioManager.mapMusic?.isPlaying == true
             }
         }
+
+    init {
+        background.color.a = 0.75f
+
+        createTable().apply {
+            add(pauseBgMusicButton)
+            top().right()
+        }
+
+        //cuz the music is resumed with a delay when we are coming to the menu stage through the game pause
+        addAction(
+            Actions.sequence(
+                pauseButtonVisibilityAction,
+                Actions.delay(0.25f),
+                pauseButtonVisibilityAction,
+                Actions.delay(0.75f),
+                pauseButtonVisibilityAction
+            )
+        )
 
         createTable().apply {
             add(newTextButton("Settings").apply {
@@ -93,8 +112,10 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                     if (userSave.unlockedAllMaps == 0) {
                         addActor(VisWindow("'Other Maps' unlocked!").also { window ->
                             window.centerWindow()
-                            window.add("You can add other maps to\nthe maps folder\n" +
-                                "and they will appear here.")
+                            window.add(
+                                "You can add other maps to\nthe maps folder\n" +
+                                    "and they will appear here."
+                            )
                             window.row()
                             window.add(newTextButton("OK!").addChangeListener {
                                 window.remove()
@@ -162,6 +183,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
 
                     return@removeIf true
                 }
+
                 else -> return@removeIf false
             }
         }
@@ -179,13 +201,13 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
     }
 
     fun setRandomBg() {
-        thread(true) {
+        Thread {
             val map = GameMap(MapsManager.collectMapFiles().random())
             Gdx.app.postRunnable {
                 root.addActorAt(
                     0,
                     background.also { if (it.sprite == null) it.sprite = Sprite(map.newBackgroundTexture()) })
             }
-        }
+        }.start()
     }
 }

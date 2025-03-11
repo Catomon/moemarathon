@@ -163,3 +163,4 @@ Thumbs.db
 **/resource-config.json
 /assets/textures.png
 /assets/textures.atlas
+*.sai2

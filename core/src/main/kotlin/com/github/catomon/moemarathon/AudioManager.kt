@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.files.FileHandle
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.utils.logMsg
-import kotlin.concurrent.thread
 
 object AudioManager {
 
@@ -19,7 +18,6 @@ object AudioManager {
             music?.volume = value
         }
 
-    @set:Synchronized
     @get:Synchronized
     var mapMusic: Music? = null
         private set
@@ -35,7 +33,6 @@ object AudioManager {
     var mapMusicStop = false
         private set
 
-    @set:Synchronized
     @get:Synchronized
     var music: Music? = null
         private set
@@ -105,11 +102,11 @@ object AudioManager {
             }
         }
 
-        thread(true, isDaemon = true) {
+        Thread {
             while (true) {
                 if (playback?.isAlive != true) {
                     try {
-                        playback = thread(true, block = playbackRun, isDaemon = true)
+                        playback = Thread(playbackRun).apply { isDaemon = true; start() }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -117,7 +114,7 @@ object AudioManager {
 
                 Thread.sleep(1000)
             }
-        }
+        }.apply { isDaemon = true; start() }
     }
 
     fun playSound(sound: Sound) {

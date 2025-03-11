@@ -2,17 +2,12 @@ package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.github.catomon.moemarathon.AudioManager
-import com.github.catomon.moemarathon.Const
-import com.github.catomon.moemarathon.GamePref
-import com.github.catomon.moemarathon.game
+import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisSlider
-import com.kotcrab.vis.ui.widget.VisTextButton
-import java.awt.Desktop
 
 class SettingsStage() :
     BgStage() {
@@ -72,8 +67,7 @@ class SettingsStage() :
             if (Const.IS_DESKTOP && !Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 add(newTextButton("Open other maps folder").addChangeListener {
                     try {
-                        Desktop.getDesktop().open(Gdx.files.local("maps/other maps/").file().also { it.mkdirs() })
-
+                        platformSpecific?.desktopOpenMapsFolder()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

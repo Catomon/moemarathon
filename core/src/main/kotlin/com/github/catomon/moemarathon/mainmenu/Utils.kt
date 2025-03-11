@@ -7,7 +7,7 @@ import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.VisUI
 
-private val skin = GamePref.userSave.skin
+private val skin = "lucky"
 
 fun newBigButton(text: String) = newTextButton(text, "big")
 

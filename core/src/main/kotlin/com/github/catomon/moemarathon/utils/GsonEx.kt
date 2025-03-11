@@ -2,7 +2,9 @@ package com.github.catomon.moemarathon.utils
 
 import com.badlogic.gdx.utils.Json
 
-val gson: Json = Json()
+val gson: Json = Json().apply {
+    ignoreUnknownFields = true
+}
 
 fun <T> fromGson(json: String, clazz: Class<T>) : T? {
     return gson.fromJson(clazz, json)

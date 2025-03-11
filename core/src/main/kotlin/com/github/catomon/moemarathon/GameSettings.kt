@@ -28,9 +28,13 @@ object GamePref {
             }
 
             else -> {
-                Gdx.files.external("Documents/$APP_NAME/saves/")
-                    .apply { mkdirs() }
+                Gdx.files.local("saves/")
             }
+
+//            else -> {
+//                Gdx.files.external("Documents/$APP_NAME/saves/")
+//                    .apply { mkdirs() }
+//            }
         }
 
     val clientId: String =

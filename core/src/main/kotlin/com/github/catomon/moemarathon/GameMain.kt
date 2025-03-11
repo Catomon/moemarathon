@@ -13,7 +13,7 @@ lateinit var assets: Assets
 
 lateinit var game: GameMain
 
-open class GameMain : Game() {
+class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
 
     lateinit var menuScreen: MenuScreen
 
@@ -43,6 +43,8 @@ open class GameMain : Game() {
                 }
             }
         }
+
+        onCreate?.invoke()
 
         setScreen(LoadingScreen(this))
     }
@@ -83,11 +85,15 @@ open class GameMain : Game() {
             )
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F11))
+        if (if (Gdx.app.type == Application.ApplicationType.WebGL) Gdx.input.isKeyJustPressed(Input.Keys.F10) else Gdx.input.isKeyJustPressed(
+                Input.Keys.F11
+            )
+        ) {
             if (Gdx.graphics.isFullscreen)
                 Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
             else
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+        }
     }
 
     override fun resize(width: Int, height: Int) {

@@ -27,7 +27,7 @@ class DifficultySelectStage() :
     )
 
     private var holdNotesOn = false
-    private var noAimOn = false
+    private var noAimOn = if (Const.IS_MOBILE) true else false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
@@ -106,7 +106,7 @@ class DifficultySelectStage() :
             fun updateScoreLabel() {
                 var scoreValue = 0
                 if (holdNotesOn) scoreValue += 10
-                if (noAimOn) scoreValue -= 15
+                if (noAimOn) scoreValue -= if (Const.IS_MOBILE) 0 else 15
                 scoreLabel.setText(if (scoreValue == 0) "" else (if (scoreValue > 0) "+" else "") + "$scoreValue% score")
                 scoreLabel.color = if (scoreValue > 0) Color.GREEN else Color.RED
             }

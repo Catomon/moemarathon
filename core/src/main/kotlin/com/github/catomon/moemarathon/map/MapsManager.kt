@@ -1,5 +1,6 @@
 package com.github.catomon.moemarathon.map
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Queue
@@ -14,20 +15,34 @@ import kotlin.math.abs
 
 object MapsManager {
     fun collectMapFiles(): List<FileHandle> {
-        return if (Const.IS_MOBILE) {
-            collectOsuFilesFromFolder(
-                Gdx.files.internal("maps/")
-            ) + collectOsuFilesFromFolder(Gdx.files.local("maps/"))
-        } else {
-            if (Const.IS_RELEASE)
-                collectOsuFilesFromFolder(Gdx.files.local("maps/"))
-            else
+        return when (Gdx.app.type) {
+            Application.ApplicationType.Android -> {
+                collectOsuFilesFromFolder(
+                    Gdx.files.internal("maps/")
+                ) + collectOsuFilesFromFolder(Gdx.files.local("maps/"))
+            }
+
+            Application.ApplicationType.Desktop -> {
+                if (Const.IS_RELEASE)
+                    collectOsuFilesFromFolder(Gdx.files.local("maps/"))
+                else
+                    collectOsuFilesFromFolder(Gdx.files.internal("maps/"))
+            }
+
+            Application.ApplicationType.WebGL -> {
                 collectOsuFilesFromFolder(Gdx.files.internal("maps/"))
+            }
+
+            else -> {
+                collectOsuFilesFromFolder(
+                    Gdx.files.internal("maps/")
+                ) + collectOsuFilesFromFolder(Gdx.files.local("maps/"))
+            }
         }
     }
 
-    fun getInternalMapFile(name: String) : FileHandle {
-     return  Gdx.files.internal("maps/$name")
+    fun getInternalMapFile(name: String): FileHandle {
+        return Gdx.files.internal("maps/$name")
     }
 
     fun collectOsuFilesFromFolder(

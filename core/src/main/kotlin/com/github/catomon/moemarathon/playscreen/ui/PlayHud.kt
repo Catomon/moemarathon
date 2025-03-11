@@ -2,8 +2,12 @@ package com.github.catomon.moemarathon.playscreen.ui
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.assets
@@ -82,7 +86,23 @@ class PlayHud(private val playScreen: PlayScreen) :
                 showMenu()
             }
             label.setFontScale(0.75f)
-        }).left().top()
+        }).apply {
+            addAction(Actions.alpha(0f, 1f))
+            val table = this
+            left().top()
+            setSize(180f, 180f)
+            addListener(object : InputListener() {
+                override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+                    table.actions.clear()
+                    table.addAction(Actions.alpha(1f, 0.4f))
+                }
+
+                override fun exit(event: InputEvent, x: Float, y: Float, pointer: Int, toActor: Actor?) {
+                    table.actions.clear()
+                    table.addAction(Actions.alpha(0f, 0.4f))
+                }
+            })
+        }
     }
 
     fun showMenu() {

@@ -32,7 +32,6 @@ import com.kotcrab.vis.ui.widget.ListView
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
-import kotlin.concurrent.thread
 
 class MapSelectStage(
     val playSets: PlaySettings = DefaultPlaySets,
@@ -51,6 +50,8 @@ class MapSelectStage(
 
     private val textureBgCache = mutableMapOf<String, Texture>()
 
+    private val loadingTable = createTable(newLabel("Collecting maps..."))
+
     init {
         addActor(background)
         loadMaps()
@@ -67,7 +68,7 @@ class MapSelectStage(
     fun loadMaps() {
         if (isLoading) return
 
-        thread {
+        Thread {
             val buttonGroup = ButtonGroup<MapListItem>()
             try {
                 addCover()
@@ -162,6 +163,8 @@ class MapSelectStage(
                     listView.header = Actor().also { it.setSize(50f, 50f) }
                 }
 
+                loadingTable.remove()
+
                 if (playSets == PlaySets.DefaultPlaySets) {
                     createTable().apply {
                         if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
@@ -222,7 +225,7 @@ class MapSelectStage(
                     buttonGroup.setMinCheckCount(1)
                     scrollFocus = mapList.scrollPane
                 }
-        }
+        }.start()
     }
 
     override fun dispose() {

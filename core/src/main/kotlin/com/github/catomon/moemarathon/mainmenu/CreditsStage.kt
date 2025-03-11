@@ -78,9 +78,9 @@ class CreditsStage() :
             row()
             addLinkLabel("logo, komugi skin, bekky skin by carroteater9000", "")
             row()
-            add("The game by mon scout:").padTop(50f)
+            add("The game by Sera Scout:").padTop(50f)
             row()
-            addLinkLabel("monscout.itch.io", "https://monscout.itch.io/")
+            addLinkLabel("serascout.itch.io", "https://monscout.itch.io/")
         }
 
         addActor(VisScrollPane(contentTable).apply {
