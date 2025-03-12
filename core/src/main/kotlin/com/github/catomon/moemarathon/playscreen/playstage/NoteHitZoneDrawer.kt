@@ -14,19 +14,19 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class NoteClickPlaceDrawer(private val playScreen: PlayScreen) : Actor() {
+class NoteHitZoneDrawer(private val playScreen: PlayScreen) : Actor() {
 
     private val noteRadius get() = playScreen.noteRadius
-    private val notePlaceTexture = Sprite(assets.mainAtlas.findRegion("note_place"))
+    private val hitZoneTexture = Sprite(assets.mainAtlas.findRegion("hit_zone"))
     private val keyName = newLabel("?")
 
-    private val placeStates = mutableMapOf<Int, Float>()
+    private val hitZonesStates = mutableMapOf<Int, Float>()
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         val circleRadius = playScreen.circleRadius
-        val angleBetweenParts = 360f / PlayScreen.Config.notePlaces
+        val angleBetweenParts = 360f / PlayScreen.Config.hitZonesAmount
 
-        for (i in 0 until PlayScreen.Config.notePlaces) {
+        for (i in 0 until PlayScreen.Config.hitZonesAmount) {
             val angle = i * angleBetweenParts
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
@@ -36,21 +36,21 @@ class NoteClickPlaceDrawer(private val playScreen: PlayScreen) : Actor() {
             val cameraX = playScreen.camera.position.x
             val cameraY = playScreen.camera.position.y
 
-            val placeVal = placeStates[i]
-            if (placeVal != null && placeVal > 0f) {
-                placeStates[i] = placeVal - Gdx.graphics.deltaTime * 4
-                notePlaceTexture.setSize(
-                    spriteWidth + placeVal * (spriteWidth * 0.20f),
-                    spriteHeight + placeVal * (spriteHeight * 0.20f)
+            val hitZoneStateVal = hitZonesStates[i]
+            if (hitZoneStateVal != null && hitZoneStateVal > 0f) {
+                hitZonesStates[i] = hitZoneStateVal - Gdx.graphics.deltaTime * 4
+                hitZoneTexture.setSize(
+                    spriteWidth + hitZoneStateVal * (spriteWidth * 0.20f),
+                    spriteHeight + hitZoneStateVal * (spriteHeight * 0.20f)
                 )
-                if (placeStates[i]!! < 0f) placeStates[i] = 0f
+                if (hitZonesStates[i]!! < 0f) hitZonesStates[i] = 0f
             } else {
-                notePlaceTexture.setSize(spriteWidth, spriteHeight)
+                hitZoneTexture.setSize(spriteWidth, spriteHeight)
             }
 
-            notePlaceTexture.setOriginCenter()
-            notePlaceTexture.setPositionByCenter(cameraX + x, cameraY + y)
-            notePlaceTexture.draw(batch)
+            hitZoneTexture.setOriginCenter()
+            hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
+            hitZoneTexture.draw(batch)
 
             keyName.setText(
                 when (i) {
@@ -69,10 +69,8 @@ class NoteClickPlaceDrawer(private val playScreen: PlayScreen) : Actor() {
         }
     }
 
-    fun onPlaceClicked(place: Int) {
-//        val notePlace = playScreen.getNotePlace(note)
-
-        placeStates[place - 1] = 1f
+    fun onHitZoneActivated(hitZoneId: Int) {
+        hitZonesStates[hitZoneId - 1] = 1f
 
         val camera = playScreen.camera
         playScreen.playStage.addActor(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {

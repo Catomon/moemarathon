@@ -44,7 +44,7 @@ class PlayScreen(
         var gameplay = Gameplay.BOTH
 
         //amount of thing where notes should land idk
-        var notePlaces = 6
+        var hitZonesAmount = 6
 
 //        var layout = 0
     }
@@ -133,7 +133,7 @@ class PlayScreen(
     val playHud = PlayHud(this)
 
     init {
-        Config.notePlaces = playSets.notePlaces
+        Config.hitZonesAmount = playSets.hitZonesAmount
 
         Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
 
@@ -349,7 +349,7 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int) {
-        playStage.noteClickPlaceDrawer.onPlaceClicked(placeByButton(button))
+        playStage.noteHitZoneDrawer.onHitZoneActivated(hitZoneByButton(button))
 
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
@@ -362,8 +362,8 @@ class PlayScreen(
             notePos.y
         ) else 0f
         val curPointerRad = pointerSize * (mapSize / 2)
-        val isPointerNear = isNotePlaceClicked(clickerToNoteDst, curPointerRad, note, button)
-        if (isInTiming && isPointerNear) {
+        val isHitZoneActivated = isHitZoneActivated(clickerToNoteDst, curPointerRad, note, button)
+        if (isInTiming && isHitZoneActivated) {
             noteMap.chunks.last().notes.removeLast()
 
             if (note.tracingNext) {
@@ -399,10 +399,10 @@ class PlayScreen(
         }
     }
 
-    fun getNotePlace(note: Note) = ((Config.notePlaces + 1) * note.initialPosition).toInt() + 1
+    fun getHitZone(note: Note) = ((Config.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
 
-    fun placeByButton(button: Int): Int {
-        //todo if placeAmount 6
+    fun hitZoneByButton(button: Int): Int {
+        //todo different hitZoneAmount
         return when (button) {
             Input.Keys.F -> 3
             Input.Keys.D -> 4
@@ -414,38 +414,38 @@ class PlayScreen(
         }
     }
 
-    private fun isNotePlaceClicked(
+    private fun isHitZoneActivated(
         clickerToNoteDst: Float,
         curPointerRad: Float,
         note: Note,
         button: Int
     ): Boolean {
-        fun isKeyPlacePressed(): Boolean {
-            val place = getNotePlace(note)
-//            logMsg("Key pressed: place=$place; key=$button.")
+        fun isKeyHitZonePressed(): Boolean {
+            val hitZone = getHitZone(note)
+//            logMsg("Key pressed: hitZone=$hitZone; key=$button.")
             return when (button) {
                 Input.Keys.F -> {
-                    place == 3
+                    hitZone == 3
                 }
 
                 Input.Keys.D -> {
-                    place == 4
+                    hitZone == 4
                 }
 
                 Input.Keys.S -> {
-                    place == 5
+                    hitZone == 5
                 }
 
                 Input.Keys.J -> {
-                    place == 2
+                    hitZone == 2
                 }
 
                 Input.Keys.K -> {
-                    place == 1
+                    hitZone == 1
                 }
 
                 Input.Keys.L -> {
-                    place == 6
+                    hitZone == 6
                 }
 
                 else -> false
@@ -458,14 +458,14 @@ class PlayScreen(
             }
 
             Gameplay.KEYBOARD -> {
-                isKeyPlacePressed()
+                isKeyHitZonePressed()
             }
 
             Gameplay.BOTH -> {
                 if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
                     (clickerToNoteDst <= curPointerRad * 2) || noAim
                 } else {
-                    isKeyPlacePressed()
+                    isKeyHitZonePressed()
                 }
             }
         }

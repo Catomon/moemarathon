@@ -38,7 +38,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         Skins.ANIMATED_CENTER -> AnimatedCenter(playScreen, playScreen.skin.center, playScreen.skin.timingsCircle)
         else -> JustCircleCenter(playScreen, playScreen.skin.timingsCircle)
     }
-    val noteClickPlaceDrawer = NoteClickPlaceDrawer(playScreen)
+    val noteHitZoneDrawer = NoteHitZoneDrawer(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
@@ -47,7 +47,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     init {
         addActor(background)
         addActor(centerActor)
-        addActor(noteClickPlaceDrawer)
+        addActor(noteHitZoneDrawer)
         addActor(notesDrawer)
     }
 
