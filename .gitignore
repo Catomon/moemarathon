@@ -164,3 +164,5 @@ Thumbs.db
 /assets/textures.png
 /assets/textures.atlas
 *.sai2
+/assets/skin/tinted/tinted.atlas
+/assets/skin/tinted/tinted.png
