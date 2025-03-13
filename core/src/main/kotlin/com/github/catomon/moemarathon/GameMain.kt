@@ -1,6 +1,7 @@
 package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.*
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.utils.ScreenUtils
 import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.Rank
@@ -16,6 +17,15 @@ lateinit var game: GameMain
 class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
 
     lateinit var menuScreen: MenuScreen
+
+    private val cursorParticle by lazy {
+        ParticleEffect().apply {
+            load(
+                Gdx.files.internal("particles/cursor_particle.p"),
+                Gdx.files.internal("particles/")
+            )
+        }
+    }
 
     companion object {
         var screenWidth = -1
@@ -93,6 +103,21 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
                 Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
             else
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+        }
+
+        if (!Const.IS_MOBILE) {
+            val batch = when (val screen = screen) {
+                is MenuScreen -> screen.stage?.batch
+                is PlayScreen -> screen.batch
+                else -> null
+            }
+            if (batch != null) {
+                cursorParticle.setPosition(Gdx.input.x.toFloat(), Gdx.graphics.height - Gdx.input.y.toFloat())
+                cursorParticle.update(Gdx.graphics.deltaTime)
+                batch.begin()
+                cursorParticle.draw(batch)
+                batch.end()
+            }
         }
     }
 

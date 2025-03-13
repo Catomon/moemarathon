@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.MathUtils.atan2
 
-fun setMouseCursor(cursorFileName: String = "cursor.png") {
-    Gdx.graphics.setCursor(createCursor(cursorFileName))
+val defaultCursor by lazy { createCursor("cursor.png") }
+
+fun setMouseCursor(cursor: Cursor = defaultCursor) {
+    Gdx.graphics.setCursor(cursor)
 }
 
 fun createCursor(cursorFileName: String = "cursor.png"): Cursor {

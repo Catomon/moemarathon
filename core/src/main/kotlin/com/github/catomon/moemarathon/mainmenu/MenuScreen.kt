@@ -1,7 +1,9 @@
 package com.github.catomon.moemarathon.mainmenu
 
+import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.ui.StageScreen
 import com.github.catomon.moemarathon.utils.logMsg
+import com.github.catomon.moemarathon.utils.setMouseCursor
 
 class MenuScreen(initialStage: (() -> BgStage)? = null) :
     StageScreen<BgStage>() {
@@ -15,6 +17,9 @@ class MenuScreen(initialStage: (() -> BgStage)? = null) :
     }
 
     override fun changeStage(newStage: BgStage) {
+        if (Const.IS_DESKTOP)
+            setMouseCursor()
+
         if (newStage is MenuStage) {
             if (stage == null) newStage.setRandomBg()
             else {
