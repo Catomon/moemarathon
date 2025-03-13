@@ -52,38 +52,42 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
             hitZoneTexture.draw(batch)
 
-            when (PlayScreen.Config.hitZonesAmount) {
-                6 -> {
-                    keyName.setText(
-                        when (i) {
-                            0 -> "K"
-                            1 -> "J"
-                            2 -> "F"
-                            3 -> "D"
-                            4 -> "S"
-                            5 -> "L"
-                            else -> "?"
-                        }
-                    )
-                }
+            if (PlayScreen.Config.gameplay == PlayScreen.Gameplay.POINTER) {
+                keyName.setText("*")
+            } else {
+                when (PlayScreen.Config.hitZonesAmount) {
+                    6 -> {
+                        keyName.setText(
+                            when (i) {
+                                0 -> "K"
+                                1 -> "J"
+                                2 -> "F"
+                                3 -> "D"
+                                4 -> "S"
+                                5 -> "L"
+                                else -> "?"
+                            }
+                        )
+                    }
 
-                8 -> {
-                    //todo
-                    keyName.setText(
-                        when (i) {
-                            0 -> "K"
-                            1 -> "J"
-                            2 -> "F"
-                            3 -> "D"
-                            4 -> "S"
-                            5 -> "L"
-                            else -> "?"
-                        }
-                    )
-                }
+                    8 -> {
+                        //todo
+                        keyName.setText(
+                            when (i) {
+                                0 -> "K"
+                                1 -> "J"
+                                2 -> "F"
+                                3 -> "D"
+                                4 -> "S"
+                                5 -> "L"
+                                else -> "?"
+                            }
+                        )
+                    }
 
-                12 -> {
-                    keyName.setText("*")
+                    12 -> {
+                        keyName.setText("*")
+                    }
                 }
             }
 

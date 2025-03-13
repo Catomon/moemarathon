@@ -19,8 +19,10 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteRadius get() = playScreen.noteRadius
 
     private val noteName = playScreen.skin.note
-    private val noteOuterTex = if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_outer")
-    private val noteInnerTex = if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_inner")
+    private val noteOuterTex =
+        if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_outer")
+    private val noteInnerTex =
+        if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_inner")
     private val noteTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNote + "_trace")
     private val pointerTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNotePointer + "_pointer_trace")
 

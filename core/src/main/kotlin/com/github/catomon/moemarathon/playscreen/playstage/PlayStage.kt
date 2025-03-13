@@ -1,10 +1,15 @@
 package com.github.catomon.moemarathon.playscreen.playstage
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.Skins
 import com.github.catomon.moemarathon.assets
@@ -44,6 +49,14 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
     private val noteHit = assets.mainAtlas.findRegion(playScreen.skin.pop)
 
+    private val particlePool = ParticleEffectPool(ParticleEffect().apply {
+        load(
+            Gdx.files.internal("particles/note_pop.p"),
+            assets.mainAtlas
+        )
+    }, 24, 32)
+    private val effects = Array<PooledEffect>(32)
+
     init {
         addActor(background)
         addActor(centerActor)
@@ -61,13 +74,23 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         batch.projectionMatrix = camera.combined
         batch.begin()
         root.draw(batch, 1f)
+
+        effects.forEachIndexed { i, e ->
+            e.update(Gdx.graphics.deltaTime)
+            e.draw(batch)
+            if (e.isComplete) {
+                e.free()
+                effects.removeIndex(i)
+            }
+        }
+
         batch.end()
     }
 
     override fun onNoteEvent(id: Int, note: Note) {
         val notePos = with(playScreen) { note.calcPosition() }
         when (id) {
-            0 -> {
+            NoteListener.MISS -> {
                 addActor(SpriteActor(Sprite(noteMiss)).apply {
                     setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
                     setPosition(notePos.x, notePos.y)
@@ -94,6 +117,10 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
                         )
                     )
                 })
+
+                val popEffect = particlePool.obtain()
+                popEffect.setPosition(notePos.x, notePos.y)
+                effects.add(popEffect)
 
                 if (note.visual >= 0 && !note.tracingNext) {
                     addActorBeforeNotes(SpriteActor(Sprite(notesDrawer.getNoteTexture(note.visual))).apply {

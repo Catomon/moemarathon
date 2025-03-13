@@ -28,6 +28,7 @@ class DifficultySelectStage() :
 
     private var holdNotesOn = false
     private var noAimOn = if (Const.IS_MOBILE) true else false
+    private var pointerGameplay = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
@@ -112,19 +113,33 @@ class DifficultySelectStage() :
             }
             add(scoreLabel)
             row()
-            add(newTextButton("No-Aim Off").apply {
+            fun inputDeviceButtonText() = if (pointerGameplay) {
+                "Keyboard[ ] Mouse[V]"
+            } else {
+                "Keyboard[V] Mouse[ ]"
+            }
+            add(newTextButton(inputDeviceButtonText()).apply {
                 label.setFontScale(0.75f)
                 addChangeListener {
-                    noAimOn = !noAimOn
-                    if (noAimOn) {
-                        it.setText("No-Aim On (Easier)")
-                    } else {
-                        it.setText("No-Aim Off")
-                    }
-
+                    pointerGameplay = !pointerGameplay
+                    it.setText(inputDeviceButtonText())
                     updateScoreLabel()
                 }
             })
+//            row()
+//            add(newTextButton("No-Aim Off").apply {
+//                label.setFontScale(0.75f)
+//                addChangeListener {
+//                    noAimOn = !noAimOn
+//                    if (noAimOn) {
+//                        it.setText("No-Aim On (Easier)")
+//                    } else {
+//                        it.setText("No-Aim Off")
+//                    }
+//
+//                    updateScoreLabel()
+//                }
+//            })
             row()
             add(newTextButton("Hold Notes Off").apply {
                 label.setFontScale(0.75f)
@@ -145,6 +160,7 @@ class DifficultySelectStage() :
 
     private fun chooseDiff(diff: PlaySettings) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
+            PlayScreen.Config.gameplay = if (pointerGameplay) PlayScreen.Gameplay.POINTER else PlayScreen.Config.defaultGameplay
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),

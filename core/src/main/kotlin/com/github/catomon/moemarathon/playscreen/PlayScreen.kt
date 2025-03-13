@@ -42,7 +42,8 @@ class PlayScreen(
 ) : ScreenAdapter() {
 
     object Config {
-        var gameplay = if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
+        val defaultGameplay = if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
+        var gameplay = defaultGameplay
 
         //amount of thing where notes should land idk
         var hitZonesAmount = 6
@@ -52,6 +53,10 @@ class PlayScreen(
 
     enum class Gameplay {
         POINTER, KEYBOARD, BOTH
+    }
+
+    private val initFirst = (0).also {
+        Config.hitZonesAmount = playSets.hitZonesAmount
     }
 
     val camera = OrthographicCamera().apply {
@@ -463,11 +468,11 @@ class PlayScreen(
             }
 
             Gameplay.BOTH -> {
-                if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
-                    (clickerToNoteDst <= curPointerRad * 2) || noAim
-                } else {
+//                if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
+//                    (clickerToNoteDst <= curPointerRad * 2) || noAim
+//                } else {
                     isKeyHitZonePressed()
-                }
+//                }
             }
         }
     }
