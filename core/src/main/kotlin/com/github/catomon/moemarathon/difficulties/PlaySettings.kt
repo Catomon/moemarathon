@@ -39,7 +39,8 @@ object PlaySets {
     val NonStop = PlaySettings(
         "Non-Stop",
         listOf("Lucky Star no Minna - Kumikyoku 'Lucky Star Douga' (Andrea) [Marathon].osu"),
-        1f
+        1f,
+        hitZonesAmount = 12,
     )
 
     val NormalMarathon = PlaySettings(

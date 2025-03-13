@@ -14,7 +14,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class NoteHitZoneDrawer(private val playScreen: PlayScreen) : Actor() {
+class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
     private val noteRadius get() = playScreen.noteRadius
     private val hitZoneTexture = Sprite(assets.mainAtlas.findRegion("hit_zone"))
@@ -52,17 +52,41 @@ class NoteHitZoneDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
             hitZoneTexture.draw(batch)
 
-            keyName.setText(
-                when (i) {
-                    0 -> "K"
-                    1 -> "J"
-                    2 -> "F"
-                    3 -> "D"
-                    4 -> "S"
-                    5 -> "L"
-                    else -> "?"
+            when (PlayScreen.Config.hitZonesAmount) {
+                6 -> {
+                    keyName.setText(
+                        when (i) {
+                            0 -> "K"
+                            1 -> "J"
+                            2 -> "F"
+                            3 -> "D"
+                            4 -> "S"
+                            5 -> "L"
+                            else -> "?"
+                        }
+                    )
                 }
-            )
+
+                8 -> {
+                    //todo
+                    keyName.setText(
+                        when (i) {
+                            0 -> "K"
+                            1 -> "J"
+                            2 -> "F"
+                            3 -> "D"
+                            4 -> "S"
+                            5 -> "L"
+                            else -> "?"
+                        }
+                    )
+                }
+
+                12 -> {
+                    keyName.setText("*")
+                }
+            }
+
             keyName.pack()
             keyName.setPosByCenter(cameraX + x, cameraY + y)
             keyName.draw(batch, 1f)
@@ -70,7 +94,9 @@ class NoteHitZoneDrawer(private val playScreen: PlayScreen) : Actor() {
     }
 
     fun onHitZoneActivated(hitZoneId: Int) {
-        hitZonesStates[hitZoneId - 1] = 1f
+        if (PlayScreen.Config.hitZonesAmount <= 9) {
+            hitZonesStates[hitZoneId - 1] = 1f
+        }
 
         val camera = playScreen.camera
         playScreen.playStage.addActor(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {

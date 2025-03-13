@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.moemarathon.*
+import com.github.catomon.moemarathon.Const.IS_MOBILE
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_TRACE
@@ -41,7 +42,7 @@ class PlayScreen(
 ) : ScreenAdapter() {
 
     object Config {
-        var gameplay = Gameplay.BOTH
+        var gameplay = if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
 
         //amount of thing where notes should land idk
         var hitZonesAmount = 6
@@ -174,7 +175,7 @@ class PlayScreen(
                 if (it == "tutorial") {
                     paused = true
                     playHud.addCover()
-                    playHud.addActor(VisWindow("Click circles:").also { window ->
+                    playHud.addActor(VisWindow("Press corresponding button when a note reaches the hit zone:").also { window ->
                         window.centerWindow()
                         window.add(VisImage(assets.mainAtlas.findRegion("tutor"))).size(400f, 400f)
                         window.row()
@@ -349,7 +350,7 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int) {
-        playStage.noteHitZoneDrawer.onHitZoneActivated(hitZoneByButton(button))
+        playStage.hitZonesDrawer.onHitZoneActivated(hitZoneByButton(button))
 
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
@@ -449,7 +450,7 @@ class PlayScreen(
                 }
 
                 else -> false
-            }
+            } || Config.hitZonesAmount > 9
         }
 
         return when (Config.gameplay) {

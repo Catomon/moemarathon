@@ -7,19 +7,19 @@ import com.github.catomon.moemarathon.ui.actions.DelayRepeatAction
 import com.kotcrab.vis.ui.widget.VisLabel
 import kotlin.math.max
 
-class ScoreLabel(private val stats: Stats) : VisLabel("0"), NoteListener {
+class ScoreLabel(private val stats: Stats) : VisLabel("0", "wborder"), NoteListener {
 
     private var curScore = 0
 
     init {
         //setFontScale(1.75f)
-        val delay = 0.005f
+        val delay = 0.05f
         addAction(DelayRepeatAction(delay) {
             if (curScore != stats.score) {
                 if (curScore < stats.score) {
-                    curScore += max(((stats.score - curScore) * 0.01f).toInt(), 1)
+                    curScore += max(((stats.score - curScore) * 0.5f).toInt(), 1)
                 } else {
-                    curScore -= max(((curScore - stats.score) * 0.01f).toInt(), 1)
+                    curScore -= max(((curScore - stats.score) * 0.5f).toInt(), 1)
                 }
 
                 setText(curScore)

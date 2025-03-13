@@ -2,7 +2,6 @@ package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Container
-import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.VisUI

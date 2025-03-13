@@ -82,7 +82,7 @@ class AchievementsStage() :
                         4 -> "70"
                         3 -> "50"
                         2 -> "30"
-                        1 -> "10%"
+                        1 -> "10"
                         else -> "0"
                     }
                     completionLabel.setText("Completion: $compl%")

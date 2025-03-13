@@ -7,7 +7,7 @@ import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.Stats
 import com.kotcrab.vis.ui.widget.VisLabel
 
-class ComboLabel(private val stats: Stats) : VisLabel("x0"), NoteListener {
+class ComboLabel(private val stats: Stats) : VisLabel("x0", "wborder"), NoteListener {
 
     private val scaleUp = 0.175f
 
