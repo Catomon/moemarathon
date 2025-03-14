@@ -97,10 +97,11 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
         }
     }
 
-    fun onHitZoneActivated(hitZoneId: Int) {
-        if (PlayScreen.Config.hitZonesAmount <= 9) {
+    /* animates a hit zone */
+    fun animateHitZone(hitZoneId: Int) {
+//        if (PlayScreen.Config.hitZonesAmount <= 9) {
             hitZonesStates[hitZoneId - 1] = 1f
-        }
+//        }
 
         val camera = playScreen.camera
         playScreen.playStage.addActor(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {

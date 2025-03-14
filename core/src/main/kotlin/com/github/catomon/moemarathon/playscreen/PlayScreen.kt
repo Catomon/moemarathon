@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.MathUtils.atan2
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -355,8 +356,6 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int) {
-        playStage.hitZonesDrawer.onHitZoneActivated(hitZoneByButton(button))
-
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
@@ -403,11 +402,43 @@ class PlayScreen(
                 }
             }
         }
+
+        if (Config.gameplay == Gameplay.POINTER) {
+            val pointer = getPointer()
+            val hitZoneId = getHitZones().minBy {
+                val zonePos = it.value
+                Vector2.dst(zonePos.x, zonePos.y, pointer.x, pointer.y)
+            }.key
+            playStage.hitZonesDrawer.animateHitZone(hitZoneId)
+        } else {
+            if (Config.hitZonesAmount <= 9) {
+                playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByButton(button))
+            } else {
+                playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
+            }
+        }
     }
 
-    fun getHitZone(note: Note) = ((Config.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
+    fun getHitZoneIdByNote(note: Note): Int = ((Config.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
 
-    fun hitZoneByButton(button: Int): Int {
+    fun getHitZones(): MutableMap<Int, Vector2> {
+        val circleRadius = circleRadius
+        val angleBetweenParts = 360f / Config.hitZonesAmount
+
+        val hitZones = mutableMapOf<Int, Vector2>()
+        for (i in 0 until Config.hitZonesAmount) {
+            val angle = i * angleBetweenParts
+            val x = circleRadius * cos(MathUtils.degRad * angle)
+            val y = circleRadius * sin(MathUtils.degRad * angle)
+            val cameraX = camera.position.x
+            val cameraY = camera.position.y
+            hitZones[i + 1] = Vector2(cameraX + x, cameraY + y)
+        }
+
+        return hitZones
+    }
+
+    fun getHitZoneIdByButton(button: Int): Int {
         //todo different hitZoneAmount
         return when (button) {
             Input.Keys.F -> 3
@@ -427,7 +458,7 @@ class PlayScreen(
         button: Int
     ): Boolean {
         fun isKeyHitZonePressed(): Boolean {
-            val hitZone = getHitZone(note)
+            val hitZone = getHitZoneIdByNote(note)
 //            logMsg("Key pressed: hitZone=$hitZone; key=$button.")
             return when (button) {
                 Input.Keys.F -> {

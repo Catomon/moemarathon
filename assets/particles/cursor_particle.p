@@ -101,8 +101,8 @@ active: false
 active: false
 - Tint - 
 colorsCount: 3
-colors0: 0.91573066
-colors1: 0.0
+colors0: 0.5372549
+colors1: 0.38431373
 colors2: 1.0
 timelineCount: 1
 timeline0: 0.0
