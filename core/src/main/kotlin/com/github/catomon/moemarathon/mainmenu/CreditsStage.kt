@@ -72,8 +72,6 @@ class CreditsStage() :
             row()
             add("Graphics:").padTop(50f)
             row()
-            addLinkLabel("Lucky skin is based on Osu Lucky Star skin by Utena", "https://osu.ppy.sh/community/forums/topics/5498")
-            row()
             addLinkLabel("Osu SaberStrike skin", "https://sbrstrkkdwmdr.github.io/skins/main-skins.html")
             row()
             addLinkLabel("logo, komugi skin, bekky skin by carroteater9000", "")

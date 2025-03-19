@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx
 object Const {
     const val APP_NAME = "Moe Marathon"
     const val APP_VER = "1.5"
-    const val IS_RELEASE = false
+    const val IS_RELEASE = true
     const val WINDOW_WIDTH = 1366
     const val WINDOW_HEIGHT = 768
-    const val DEBUG = true
+    const val DEBUG = false
 
     val IS_DESKTOP = Gdx.app.type == Application.ApplicationType.Desktop
     val IS_MOBILE = Gdx.app.type == Application.ApplicationType.Android

@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
+import com.badlogic.gdx.utils.JsonString
+import com.badlogic.gdx.utils.JsonValue
 import com.github.catomon.moemarathon.UserSave
 import com.github.catomon.moemarathon.difficulties.Rank
 import com.github.catomon.moemarathon.leaderboard.DreamloContainer

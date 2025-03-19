@@ -166,3 +166,4 @@ Thumbs.db
 *.sai2
 /assets/skin/tinted/tinted.atlas
 /assets/skin/tinted/tinted.png
+/core/src/main/kotlin/com/github/catomon/moemarathon/leaderboard/Key.kt
