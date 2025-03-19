@@ -1,9 +1,10 @@
 package com.github.catomon.moemarathon.difficulties
 
 const val DEFAULT = "Default"
-const val EASY = "Normal"
-const val NORMAL = "Hard"
-const val HARD = "Insane"
+const val NORMAL = "Normal"
+const val HARD = "Hard"
+const val INSANE = "Insane"
+const val NON_STOP = "Non-Stop"
 
 data class PlaySettings(
     val name: String,
@@ -12,7 +13,8 @@ data class PlaySettings(
     val noHoldNotes: Boolean = true,
     val noAim: Boolean = false,
     val ranks: MutableMap<String, String> = mutableMapOf(),
-    val hitZonesAmount: Int = 6
+    val hitZonesAmount: Int = 6,
+    val mapScores: MutableMap<String, Int> = mutableMapOf(),
 ) {
     override fun equals(other: Any?): Boolean {
         return other is PlaySettings && name == other.name
@@ -37,14 +39,14 @@ object PlaySets {
     )
 
     val NonStop = PlaySettings(
-        "Non-Stop",
+        NON_STOP,
         listOf("Lucky Star no Minna - Kumikyoku 'Lucky Star Douga' (Andrea) [Marathon].osu"),
         1f,
         hitZonesAmount = 12,
     )
 
     val NormalMarathon = PlaySettings(
-        EASY,
+        NORMAL,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Easy].osu",
             "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Easy].osu",
@@ -59,7 +61,7 @@ object PlaySets {
     )
 
     val HardMarathon = PlaySettings(
-        NORMAL,
+        HARD,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Normal].osu",
             "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Normal].osu",
@@ -76,7 +78,7 @@ object PlaySets {
     )
 
     val InsaneMarathon = PlaySettings(
-        HARD,
+        INSANE,
         listOf(
             "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Laurier's Hard].osu",
             "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Hard].osu",

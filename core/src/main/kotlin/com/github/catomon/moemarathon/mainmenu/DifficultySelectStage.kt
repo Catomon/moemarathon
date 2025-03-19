@@ -17,7 +17,6 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
-import com.kotcrab.vis.ui.widget.VisTextButton
 
 class DifficultySelectStage() :
     BgStage() {
@@ -51,11 +50,11 @@ class DifficultySelectStage() :
             val rankLabelWidth = 60f
             difficulties.forEach { diff ->
                 val rankLabelText = when (diff.name) {
-                    EASY -> RankUtil.getRankChar(userSave.normalRank)
+                    NORMAL -> RankUtil.getRankChar(userSave.normalRank)
 
-                    NORMAL -> RankUtil.getRankChar(userSave.hardRank)
+                    HARD -> RankUtil.getRankChar(userSave.hardRank)
 
-                    HARD -> RankUtil.getRankChar(userSave.insaneRank)
+                    INSANE -> RankUtil.getRankChar(userSave.insaneRank)
 
                     else -> ""
                 }

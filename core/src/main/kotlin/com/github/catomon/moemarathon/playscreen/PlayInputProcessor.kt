@@ -27,7 +27,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
         if (!Const.IS_RELEASE) {
             when (keycode) {
                 Input.Keys.W -> {
-                    playScreen.circleSize += 0.05f
+                    playScreen.hitZoneCircleSize += 0.05f
                     playScreen.mapSize = playScreen.mapSize
                 }
 
@@ -37,7 +37,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
                 }
 
                 Input.Keys.S -> {
-                    playScreen.circleSize -= 0.05f
+                    playScreen.hitZoneCircleSize -= 0.05f
                     playScreen.mapSize = playScreen.mapSize
                 }
 
@@ -74,7 +74,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
     override fun keyUp(keycode: Int): Boolean {
         if (!playScreen.paused) {
-            if (playScreen.isTracing && playScreen.tracingButton == keycode) {
+            if (playScreen.isHoldingNote && playScreen.holdNoteButton == keycode) {
                 playScreen.processButtonDown(keycode)
             }
         }
@@ -92,7 +92,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!playScreen.paused) {
-            if (playScreen.isTracing && playScreen.tracingButton == button) {
+            if (playScreen.isHoldingNote && playScreen.holdNoteButton == button) {
                 playScreen.processButtonDown(button)
             }
         }

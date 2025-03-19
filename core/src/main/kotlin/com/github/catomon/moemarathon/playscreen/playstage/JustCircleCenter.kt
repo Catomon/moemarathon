@@ -21,7 +21,7 @@ class JustCircleCenter(private val playScreen: PlayScreen, timingsCircleName: St
         playScreen.apply {
             val cameraX = camera.position.x
             val cameraY = camera.position.y
-            clickZoneSprite.setSize(circleRadius * 2 + noteRadius * 2, circleRadius * 2 + noteRadius * 2)
+            clickZoneSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             clickZoneSprite.setPosition(cameraX - clickZoneSprite.width / 2, cameraY - clickZoneSprite.height / 2)
             clickZoneSprite.draw(batch)
         }

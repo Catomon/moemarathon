@@ -28,10 +28,10 @@ class DebugRenderer(val playScreen: PlayScreen, val shapes: ShapeRenderer) {
             shapes.rect(cameraX - mapSize / 2, cameraY - mapSize / 2, mapSize, mapSize)
 
             shapes.color = Color.WHITE
-            shapes.circle(cameraX, cameraY, circleRadius)
+            shapes.circle(cameraX, cameraY, hitZoneCircleRadius)
             shapes.color = Color.GRAY
-            shapes.circle(cameraX, cameraY, missClickRad)
-            shapes.circle(cameraX, cameraY, earlyClickRad)
+            shapes.circle(cameraX, cameraY, missRadius)
+            shapes.circle(cameraX, cameraY, earlyRadius)
 
             val clickerPos = calcClickerPos(Vector2())
             shapes.color = Color.LIGHT_GRAY

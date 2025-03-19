@@ -60,12 +60,12 @@ class AniDirCenter(private val playScreen: PlayScreen) : Actor(), NoteListener {
         playScreen.apply {
             val cameraX = camera.position.x
             val cameraY = camera.position.y
-            timingsCircleSprite.setSize(circleRadius * 2 + noteRadius * 2, circleRadius * 2 + noteRadius * 2)
+            timingsCircleSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             timingsCircleSprite.setPosition(cameraX - timingsCircleSprite.width / 2, cameraY - timingsCircleSprite.height / 2)
             timingsCircleSprite.setAlpha(0.5f)
             timingsCircleSprite.draw(batch)
 
-            centerSprite.setSize(circleRadius * 1.5f, circleRadius * 1.5f)
+            centerSprite.setSize(hitZoneCircleRadius * 1.5f, hitZoneCircleRadius * 1.5f)
             centerSprite.setPosition(cameraX - centerSprite.width / 2, cameraY - centerSprite.height / 2)
             centerSprite.draw(batch)
         }
@@ -97,11 +97,11 @@ class AniDirCenter(private val playScreen: PlayScreen) : Actor(), NoteListener {
                 )
 
                 val magicBurst = AnimationActor(RegionAnimation(0.06f, centerMagicRegs))
-                magicBurst.setSize(playScreen.circleRadius * 2, playScreen.circleRadius * 2)
+                magicBurst.setSize(playScreen.hitZoneCircleRadius * 2, playScreen.hitZoneCircleRadius * 2)
                 fun AnimationActor.setPos(x: Float, y: Float) {
                     this.setPosition(
-                        centerSprite.x + x / centerSize * (playScreen.circleRadius * 2),
-                        centerSprite.y + y / centerSize * (playScreen.circleRadius * 2)
+                        centerSprite.x + x / centerSize * (playScreen.hitZoneCircleRadius * 2),
+                        centerSprite.y + y / centerSize * (playScreen.hitZoneCircleRadius * 2)
                     )
                 }
                 when {

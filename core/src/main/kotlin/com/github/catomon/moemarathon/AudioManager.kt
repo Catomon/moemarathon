@@ -5,7 +5,7 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.files.FileHandle
 import com.github.catomon.moemarathon.map.GameMap
-import com.github.catomon.moemarathon.utils.logMsg
+import com.github.catomon.moemarathon.utils.logInf
 
 object AudioManager {
 
@@ -50,7 +50,7 @@ object AudioManager {
                         Gdx.app.postRunnable {
                             oldMusic.stop()
                             oldMusic.dispose()
-                            logMsg("Prev. Map music disposed.")
+                            logInf("Prev. Map music disposed.")
                         }
                         mapMusic = null
                     }
@@ -61,7 +61,7 @@ object AudioManager {
 
                     lastMapMusic = scheduledMapMusic
                     scheduledMapMusic = null
-                    logMsg("Map music loaded.")
+                    logInf("Map music loaded.")
                     continue
                 }
 
@@ -72,7 +72,7 @@ object AudioManager {
                             Gdx.app.postRunnable {
                                 mapMusic!!.pause()
                             }
-                            logMsg("Map music pause.")
+                            logInf("Map music pause.")
                             continue
                         }
                     }
@@ -83,7 +83,7 @@ object AudioManager {
                             Gdx.app.postRunnable {
                                 mapMusic!!.play()
                             }
-                            logMsg("Map music play.")
+                            logInf("Map music play.")
                             continue
                         }
                     }
@@ -93,7 +93,7 @@ object AudioManager {
                         Gdx.app.postRunnable {
                             mapMusic!!.stop()
                         }
-                        logMsg("Map music stop.")
+                        logInf("Map music stop.")
                         continue
                     }
                 }

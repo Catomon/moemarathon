@@ -56,6 +56,7 @@ class PlayScreen(
         POINTER, KEYBOARD, BOTH
     }
 
+    @Suppress("unused")
     private val initFirst = (0).also {
         Config.hitZonesAmount = playSets.hitZonesAmount
     }
@@ -69,33 +70,34 @@ class PlayScreen(
 
     var mapOffset = -1.5f
 
-    var circleSize = 0.20f
+    var hitZoneCircleSize = 0.20f
     var noteSize = 0.05f
 
-    /* Aka perfect click radius */
-    var circleRadius = -1f
+    var hitZoneCircleRadius = -1f
     var noteRadius = -1f
 
     var mapSize = -1f
         set(value) {
             field = value
 
-            circleRadius = (circleSize * (mapSize / 2))
+            hitZoneCircleRadius = (hitZoneCircleSize * (mapSize / 2))
             noteRadius = (noteSize * (mapSize / 2))
         }
 
     var time = -3f
+        private set
 
     val pointerSize = 0.05f
 
     var noteSpawnTime = 1f //1 hard //3.5f
-    val noteClickTimeWindow = 0.200f // actual time window is twice this value
-    val noteClickGreat = 0.075f // actual time window is twice this value
-    val missClickRad get() = circleRadius - circleRadius * 2 * ((noteClickTimeWindow / noteSpawnTime))
-    val earlyClickRad get() = circleRadius + circleRadius * 2 * (noteClickTimeWindow / noteSpawnTime)
+        private set
+    val noteTimingWindow = 0.200f // actual time window is twice this value
+    val noteTimingGreat = 0.075f // actual time window is twice this value
+    val missRadius get() = hitZoneCircleRadius - hitZoneCircleRadius * 2 * ((noteTimingWindow / noteSpawnTime))
+    val earlyRadius get() = hitZoneCircleRadius + hitZoneCircleRadius * 2 * (noteTimingWindow / noteSpawnTime)
 
-    var isTracing = false
-    var tracingButton = -1
+    var isHoldingNote = false
+    var holdNoteButton = -1
 
     private val tempVec3 = Vector3()
     fun getPointer(): Vector3 {
@@ -239,9 +241,9 @@ class PlayScreen(
             val note = notes.lastOrNull()
 
             if (note != null) {
-                if (note.timing < time - noteClickTimeWindow) {
+                if (note.timing < time - noteTimingWindow) {
                     if (note.tracingPrev)
-                        isTracing = false
+                        isHoldingNote = false
 
                     onNoteEvent(NoteListener.MISS, notes.removeLast())
 
@@ -286,18 +288,18 @@ class PlayScreen(
 
     fun calcNoteTimeLeft(note: Note): Float = note.calcTimeLeft()
 
-    fun Note.calcTimeLeft(): Float = timing - time - noteClickTimeWindow
+    fun Note.calcTimeLeft(): Float = timing - time - noteTimingWindow
 
     fun calcNotePosition(note: Note, vector2: Vector2 = Vector2()): Vector2 = note.calcPosition(vector2)
 
-    fun Note.isGreat(): Boolean = time - timing in -noteClickGreat..noteClickGreat
+    fun Note.isGreat(): Boolean = time - timing in -noteTimingGreat..noteTimingGreat
 
     fun Note.calcPosition(vector2: Vector2 = Vector2()): Vector2 {
         val timeLeft = (timing - time) / noteSpawnTime
         val cameraX = camera.position.x
         val cameraY = camera.position.y
         val degree = 360f * initialPosition
-        val distance = circleRadius + (circleRadius * 2 * timeLeft)
+        val distance = hitZoneCircleRadius + (hitZoneCircleRadius * 2 * timeLeft)
         val radian = Math.toRadians(degree.toDouble()).toFloat()
         val noteX = cameraX + distance * cos(radian)
         val noteY = cameraY + distance * sin(radian)
@@ -318,8 +320,8 @@ class PlayScreen(
         val cameraX = camera.position.x
         val cameraY = camera.position.y
         val angle = atan2(cameraY - pointerY, cameraX - pointerX)
-        val clickerX = cameraX + -circleRadius * cos(angle)
-        val clickerY = cameraY + -circleRadius * sin(angle)
+        val clickerX = cameraX + -hitZoneCircleRadius * cos(angle)
+        val clickerY = cameraY + -hitZoneCircleRadius * sin(angle)
 
         return vector2.set(clickerX, clickerY)
     }
@@ -358,7 +360,7 @@ class PlayScreen(
     fun processButtonDown(button: Int) {
         val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
-        val isInTiming = note.timing > time - noteClickTimeWindow && note.timing < time + noteClickTimeWindow
+        val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
         val clickerPos = calcClickerPos(Vector2())
         val clickerToNoteDst = if (Config.gameplay == Gameplay.POINTER) Vector2.dst(
             clickerPos.x,
@@ -372,22 +374,22 @@ class PlayScreen(
             noteMap.chunks.last().notes.removeLast()
 
             if (note.tracingNext) {
-                isTracing = true
-                tracingButton = button
+                isHoldingNote = true
+                holdNoteButton = button
 
                 onNoteEvent(NoteListener.HIT, note)
             } else {
-                if (isTracing) {
-                    isTracing = false
-                    tracingButton = -1
+                if (isHoldingNote) {
+                    isHoldingNote = false
+                    holdNoteButton = -1
                     onNoteEvent(NoteListener.HIT_TRACE, note)
                 } else {
                     onNoteEvent(NoteListener.HIT, note)
                 }
             }
         } else {
-            if (isTracing) {
-                isTracing = false
+            if (isHoldingNote) {
+                isHoldingNote = false
 
                 onNoteEvent(NoteListener.MISS, note)
             } else {
@@ -422,7 +424,7 @@ class PlayScreen(
     fun getHitZoneIdByNote(note: Note): Int = ((Config.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
 
     fun getHitZones(): MutableMap<Int, Vector2> {
-        val circleRadius = circleRadius
+        val circleRadius = hitZoneCircleRadius
         val angleBetweenParts = 360f / Config.hitZonesAmount
 
         val hitZones = mutableMapOf<Int, Vector2>()

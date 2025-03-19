@@ -27,7 +27,7 @@ fun newEndButton(): Button {
 fun newContinueButton(text: String = "Continue"): Button {
     return if (skin == "lucky") Button(VisUI.getSkin().getDrawable("continue")).also {
         it.add(Container(
-            newLabel(text, "wborder", 0.75f)
+            newLabel(text, "wborder", 0.75f).also { it.name = "label" }
         ).also { it.top().padTop(25f).padRight(8f).setFillParent(true) })
     } else newTextButton("Continue>")
 }

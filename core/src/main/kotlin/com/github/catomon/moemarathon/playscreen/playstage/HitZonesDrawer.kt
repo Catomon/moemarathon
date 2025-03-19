@@ -23,7 +23,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val hitZonesStates = mutableMapOf<Int, Float>()
 
     override fun draw(batch: Batch, parentAlpha: Float) {
-        val circleRadius = playScreen.circleRadius
+        val circleRadius = playScreen.hitZoneCircleRadius
         val angleBetweenParts = 360f / PlayScreen.Config.hitZonesAmount
 
         for (i in 0 until PlayScreen.Config.hitZonesAmount) {

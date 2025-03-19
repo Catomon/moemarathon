@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.difficulties.*
+import com.github.catomon.moemarathon.leaderboard.LeaderboardService
+import com.github.catomon.moemarathon.leaderboard.gameModeOrderNumber
+import com.github.catomon.moemarathon.leaderboard.gameModeScoreModifier
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.PlayScreen
@@ -94,7 +97,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 left().bottom()
             }
 
-            playSets.ranks[playScreen.gameMap.file.name()] = rank
+            val mapName = playScreen.gameMap.file.name()
+            playSets.ranks[mapName] = rank
+            playSets.mapScores[mapName] = stats.score
 
             val minRank = "C"
             if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank)) {
@@ -120,7 +125,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                             if (keycode == Input.Keys.ESCAPE) {
                                 button.clearActions()
                                 if (button is VisTextButton)
-                                    button.setText("Continue>")
+                                    button.setText("Continue")
+                                else
+                                    button.findActor<VisLabel>("label").setText("Continue")
                             }
                             return super.keyDown(event, keycode)
                         }
@@ -128,7 +135,10 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                     button.addAction(UpdateAction({
                         timeBeforeContinue += it
                         if (button is VisTextButton)
-                            button.setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue>")
+                            button.setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue")
+                        else
+                            button.findActor<VisLabel>("label")
+                                .setText("(" + max(0f, 6 - timeBeforeContinue).toInt() + ")" + " Continue")
                         if (timeBeforeContinue >= 5) {
                             continueMarathon()
                             true
@@ -191,6 +201,8 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     private fun continueMarathon() {
         val nextMapIndex = playSets.maps.indexOf(playScreen.gameMap.file.name())
         val nextMap = playSets.maps.getOrNull(if (nextMapIndex < 0) -1 else nextMapIndex + 1)
+
+        playSets.maps
         if (nextMap == null) {
             val marathonResultWindow = VisWindow("Congrats!").also { window ->
                 window.setCenterOnAdd(true)
@@ -219,8 +231,14 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                     })
 
                     playSetsResult = resultRankInt
-                    checkAchievePlaySetsComplete(resultRankInt)
 
+                    submitScore(
+                        playSets.name,
+                        GamePref.userSave.name,
+                        (playSets.mapScores.values.sum() * gameModeScoreModifier(playSets.name)).toInt(),
+                        RankUtil.getRankChar(playSetsResult)
+                    )
+                    checkAchievePlaySetsComplete(resultRankInt)
                     saveMarathonResult(resultRankInt)
                 })
                 window.row()
@@ -244,6 +262,15 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         }
     }
 
+    private fun submitScore(modeName: String, playerName: String, score: Int, rank: String) {
+        when (modeName) {
+            NORMAL, HARD, INSANE, NON_STOP -> {}
+            else -> return
+        }
+
+        LeaderboardService.submitScore(modeName.lowercase().replace("-", "_"), playerName, score, rank)
+    }
+
     private fun saveMarathonResult(resultRankInt: Int) {
         GamePref.userSave.also { userSave ->
             if (!userSave.unlocks.contains(PlaySets.NonStop.name)) {
@@ -261,17 +288,17 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             }
 
             when (playSets.name) {
-                EASY -> if (userSave.normalRank < resultRankInt) {
+                NORMAL -> if (userSave.normalRank < resultRankInt) {
                     userSave.normalRank = resultRankInt
                     GamePref.userSave = userSave; GamePref.save()
                 }
 
-                NORMAL -> if (userSave.hardRank < resultRankInt) {
+                HARD -> if (userSave.hardRank < resultRankInt) {
                     userSave.hardRank = resultRankInt
                     GamePref.userSave = userSave; GamePref.save()
                 }
 
-                HARD -> if (userSave.insaneRank < resultRankInt) {
+                INSANE -> if (userSave.insaneRank < resultRankInt) {
                     userSave.insaneRank = resultRankInt
                     GamePref.userSave = userSave; GamePref.save()
                 }

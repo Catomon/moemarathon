@@ -1,9 +1,10 @@
 package com.github.catomon.moemarathon
 
 import com.github.catomon.moemarathon.difficulties.Rank
+import kotlin.random.Random
 
 data class UserSave(
-    var name: String = "Player",
+    var name: String = "Player${Random.nextInt(1000, 9999)}",
     var score: Int = 0,
     var level: Int = 1,
     var xp: Int = 0,

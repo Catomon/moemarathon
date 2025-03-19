@@ -2,10 +2,8 @@ package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
-import com.github.catomon.moemarathon.Const.APP_NAME
 import com.github.catomon.moemarathon.Const.IS_MOBILE
 import com.github.catomon.moemarathon.utils.*
-import com.github.catomon.moemarathon.UserSave
 import java.lang.Exception
 import java.util.*
 
@@ -96,7 +94,7 @@ object GamePref {
         }
 
     fun save() {
-        logMsg("Saving: $userSave")
+        logInf("Saving: $userSave")
 
         prefs.flush()
     }

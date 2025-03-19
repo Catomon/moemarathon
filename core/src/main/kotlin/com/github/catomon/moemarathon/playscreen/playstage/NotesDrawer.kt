@@ -117,7 +117,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                     drawNote(batch, firstNotePos, timeLeft, nextColor)
                 }
             } else {
-                if (playScreen.isTracing) {
+                if (playScreen.isHoldingNote) {
                     val pointer = playScreen.getPointer()
 
                     when {

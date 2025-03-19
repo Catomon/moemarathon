@@ -2,7 +2,7 @@ package com.github.catomon.moemarathon.mainmenu
 
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.ui.StageScreen
-import com.github.catomon.moemarathon.utils.logMsg
+import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.setMouseCursor
 
 class MenuScreen(initialStage: (() -> BgStage)? = null) :
@@ -35,7 +35,7 @@ class MenuScreen(initialStage: (() -> BgStage)? = null) :
             }
         }
 
-        logMsg("Current menu stage: ${newStage::class.simpleName}")
+        logInf("Current menu stage: ${newStage::class.simpleName}")
         super.changeStage(newStage)
     }
 }

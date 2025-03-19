@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.utils.Align
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.difficulties.PlaySets
 import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
@@ -16,6 +18,8 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
+import com.kotcrab.vis.ui.widget.VisTable
+import com.kotcrab.vis.ui.widget.VisTextField
 import com.kotcrab.vis.ui.widget.VisWindow
 
 class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage() {
@@ -63,6 +67,44 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         )
 
         createTable().apply {
+            add(newTextButton("Skins").apply {
+                label.setFontScale(0.5f)
+            }.addChangeListener {
+                menuScreen.changeStage(SkinsStage())
+            })
+            row()
+            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
+                addAction(OneAction {
+                    if (userSave.unlockedAllMaps == 0) {
+                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
+                            window.centerWindow()
+                            window.add(
+                                "You can add other maps to\nthe maps folder\n" +
+                                    "and they will appear here."
+                            )
+                            window.row()
+                            window.add(newTextButton("OK!").addChangeListener {
+                                window.remove()
+                            })
+                            window.pack()
+                        })
+                        userSave.unlockedAllMaps = 1
+                        GamePref.userSave = userSave
+                        GamePref.save()
+                    }
+                })
+                add(newTextButton("Other Songs").apply {
+                    label.setFontScale(0.5f)
+                }.addChangeListener {
+                    menuScreen.changeStage(MapSelectStage())
+                }).center()
+                row()
+            } else {
+                add(newTextButton("Other Songs").also {
+                    it.label.setFontScale(0.5f); it.add(VisImage("locked")).size(48f)
+                }).center()
+                row()
+            }
             add(newTextButton("Settings").apply {
                 label.setFontScale(0.5f)
                 addChangeListener {
@@ -107,41 +149,62 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets))
             })
             row()
-            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
-                addAction(OneAction {
-                    if (userSave.unlockedAllMaps == 0) {
-                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
-                            window.centerWindow()
-                            window.add(
-                                "You can add other maps to\nthe maps folder\n" +
-                                    "and they will appear here."
-                            )
-                            window.row()
-                            window.add(newTextButton("OK!").addChangeListener {
-                                window.remove()
-                            })
-                            window.pack()
-                        })
-                        userSave.unlockedAllMaps = 1
-                        GamePref.userSave = userSave
-                        GamePref.save()
-                    }
-                })
-                add(newBigButton("Other Songs").addChangeListener {
-                    menuScreen.changeStage(MapSelectStage())
-                }).center()
-                row()
-            } else {
-                add(newBigButton("Other Songs").also { it.add(VisImage("locked")).size(48f) }).center()
-                row()
-            }
-            add(newBigButton("Skins").addChangeListener {
-                menuScreen.changeStage(SkinsStage())
-            })
-            row()
+//            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
+//                addAction(OneAction {
+//                    if (userSave.unlockedAllMaps == 0) {
+//                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
+//                            window.centerWindow()
+//                            window.add(
+//                                "You can add other maps to\nthe maps folder\n" +
+//                                    "and they will appear here."
+//                            )
+//                            window.row()
+//                            window.add(newTextButton("OK!").addChangeListener {
+//                                window.remove()
+//                            })
+//                            window.pack()
+//                        })
+//                        userSave.unlockedAllMaps = 1
+//                        GamePref.userSave = userSave
+//                        GamePref.save()
+//                    }
+//                })
+//                add(newBigButton("Other Songs").addChangeListener {
+//                    menuScreen.changeStage(MapSelectStage())
+//                }).center()
+//                row()
+//            } else {
+//                add(newBigButton("Other Songs").also { it.add(VisImage("locked")).size(48f) }).center()
+//                row()
+//            }
+//            add(newBigButton("Skins").addChangeListener {
+//                menuScreen.changeStage(SkinsStage())
+//            })
+//            row()
             add(newBigButton("Achievements").addChangeListener {
                 menuScreen.changeStage(AchievementsStage())
             })
+            row()
+            add(newBigButton("Leaderboard").addChangeListener {
+                menuScreen.changeStage(LeaderboardStage())
+            })
+            row()
+            add(
+                VisTable().also {
+                    val textField = VisTextField(userSave.name, "small")
+                    it.add(textField).width(300f)
+                    it.add(
+                        newTextButton("Save").apply {
+                            label.setFontScale(0.5f)
+                            addChangeListener {
+                                if (textField.isEmpty) return@addChangeListener
+                                GamePref.userSave = GamePref.userSave.copy(name = textField.text.take(24).replace("*", "_").replace(" ", "_"))
+                                GamePref.save()
+                            }
+                        }
+                    )
+                }
+            ).fillX().align(Align.center)
         }
 
 //        createTable().apply {

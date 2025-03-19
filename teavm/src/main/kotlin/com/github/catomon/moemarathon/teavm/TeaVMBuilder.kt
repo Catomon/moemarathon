@@ -6,6 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.github.catomon.moemarathon.UserSave
 import com.github.catomon.moemarathon.difficulties.Rank
+import com.github.catomon.moemarathon.leaderboard.DreamloContainer
+import com.github.catomon.moemarathon.leaderboard.DreamloLeaderboard
+import com.github.catomon.moemarathon.leaderboard.Entry
+import com.github.catomon.moemarathon.leaderboard.Leaderboard
 import com.github.xpenatan.gdx.backends.teavm.config.AssetFileHandle
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuildConfiguration
 import com.github.xpenatan.gdx.backends.teavm.config.TeaBuilder
@@ -86,6 +90,10 @@ object TeaVMBuilder {
         TeaReflectionSupplier.addReflectionClass(SimpleListAdapter.SimpleListAdapterStyle::class.java)
         TeaReflectionSupplier.addReflectionClass(UserSave::class.java)
         TeaReflectionSupplier.addReflectionClass(Rank::class.java)
+        TeaReflectionSupplier.addReflectionClass(Entry::class.java)
+        TeaReflectionSupplier.addReflectionClass(DreamloLeaderboard::class.java)
+        TeaReflectionSupplier.addReflectionClass(DreamloContainer::class.java)
+        TeaReflectionSupplier.addReflectionClass(Leaderboard::class.java)
 
         val tool = TeaBuilder.config(teaBuildConfiguration)
         tool.mainClass = "com.github.catomon.moemarathon.teavm.TeaVMLauncher"

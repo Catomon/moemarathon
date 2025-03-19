@@ -31,12 +31,12 @@ class AnimatedCenter(private val playScreen: PlayScreen, aniName: String = "bekk
         playScreen.apply {
             val cameraX = camera.position.x
             val cameraY = camera.position.y
-            timingsCircleSprite.setSize(circleRadius * 2 + noteRadius * 2, circleRadius * 2 + noteRadius * 2)
+            timingsCircleSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             timingsCircleSprite.setPosition(cameraX - timingsCircleSprite.width / 2, cameraY - timingsCircleSprite.height / 2)
 //            clickZoneSprite.setAlpha(0.5f)
             timingsCircleSprite.draw(batch)
 
-            bekkySprite.setSize((circleRadius + noteRadius) * 0.9f, (circleRadius + noteRadius) * 0.9f)
+            bekkySprite.setSize((hitZoneCircleRadius + noteRadius) * 0.9f, (hitZoneCircleRadius + noteRadius) * 0.9f)
             bekkySprite.setPosition(cameraX - bekkySprite.width / 2, cameraY - bekkySprite.height / 2)
             bekkySprite.setRegion(bekkyAni.currentFrame)
             bekkySprite.draw(batch)
