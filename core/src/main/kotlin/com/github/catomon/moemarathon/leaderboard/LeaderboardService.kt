@@ -1,14 +1,24 @@
 package com.github.catomon.moemarathon.leaderboard
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Net
 import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.JsonValue
 import com.badlogic.gdx.utils.JsonWriter
+import com.github.catomon.moemarathon.platformSpecific
 
 object LeaderboardService {
-    fun fetchLeaderboard(onResult: OnResult) {
+    fun requestLeaderboard(onResult: OnResult) {
+        if (Gdx.app.type == Application.ApplicationType.WebGL) {
+            platformSpecific?.fetchLeaderboard(onResult)
+        } else {
+            fetchLeaderboard(onResult)
+        }
+    }
+
+    private fun fetchLeaderboard(onResult: OnResult) {
         val httpRequest = Net.HttpRequest("GET").apply {
             url = "http://dreamlo.com/lb/67daf22a8f40bbc22497e381/json"
         }
@@ -16,7 +26,7 @@ object LeaderboardService {
         Gdx.net.sendHttpRequest(httpRequest, ResponseListener(onResult))
     }
 
-    private fun parseLeaderboard(jsonString: String): DreamloLeaderboard? {
+    fun parseLeaderboard(jsonString: String): DreamloLeaderboard? {
         val json = Json().apply {
             ignoreUnknownFields = true
         }

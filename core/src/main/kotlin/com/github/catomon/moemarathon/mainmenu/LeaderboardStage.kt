@@ -6,14 +6,13 @@ import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.leaderboard.Entry
-import com.github.catomon.moemarathon.leaderboard.LeaderboardService.fetchLeaderboard
+import com.github.catomon.moemarathon.leaderboard.LeaderboardService.requestLeaderboard
 import com.github.catomon.moemarathon.leaderboard.gameModeOrderNumber
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.utils.logErr
 import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
-import com.kotcrab.vis.ui.widget.Separator
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
@@ -67,19 +66,19 @@ class LeaderboardStage() : BgStage() {
 
         contentTable.add("Getting scores...").colspan(4).align(Align.center)
 
-        fetchLeaderboard { board ->
+        requestLeaderboard() { board ->
             contentTable.clear()
             if (board == null) {
                 logErr("Could not retrieve the leaderboard.")
                 contentTable.add("Oopsie, please try later.").colspan(4).align(Align.center)
-                return@fetchLeaderboard
+                return@requestLeaderboard
             }
 
             val scores = board.dreamlo?.leaderboard?.entry
             if (scores.isNullOrEmpty()) {
                 logInf("Leaderboard is empty.")
                 contentTable.add("Leaderboard is empty.").colspan(4).align(Align.center)
-                return@fetchLeaderboard
+                return@requestLeaderboard
             }
 
             contentTable.add("Leaderboard:").colspan(4).align(Align.left)
@@ -98,7 +97,12 @@ class LeaderboardStage() : BgStage() {
 
             scoresSorted.forEach {
                 val modeNameAndRank = it.text.split("_")
-                contentTable.addScore(modeNameAndRank.firstOrNull() ?: "", it.name, it.score, modeNameAndRank.getOrNull(1) ?: "" )
+                contentTable.addScore(
+                    modeNameAndRank.firstOrNull() ?: "",
+                    it.name,
+                    it.score,
+                    modeNameAndRank.getOrNull(1) ?: ""
+                )
             }
 
             logInf("Leaderboard has ${scoresSorted.size} entries.")

@@ -2,9 +2,12 @@
 
 package com.github.catomon.moemarathon.teavm
 
-import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
-import com.github.xpenatan.gdx.backends.teavm.TeaApplication
 import com.github.catomon.moemarathon.GameMain
+import com.github.catomon.moemarathon.IPlatformSpecific
+import com.github.catomon.moemarathon.leaderboard.LeaderboardService
+import com.github.catomon.moemarathon.platformSpecific
+import com.github.xpenatan.gdx.backends.teavm.TeaApplication
+import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
 
 /** Launches the TeaVM/HTML application. */
 fun main() {
@@ -19,5 +22,22 @@ fun main() {
         width = 0
         height = 0
     }
-    TeaApplication(GameMain(), config)
+
+    val onGameCreate = {
+        platformSpecific = object : IPlatformSpecific {
+            override fun fetchLeaderboard(onResult: LeaderboardService.OnResult) {
+                fetch("http://dreamlo.com/lb/67daf22a8f40bbc22497e381/json", object : FetchCallback {
+                    override fun complete(result: String) {
+                        onResult.onResult(LeaderboardService.parseLeaderboard(result))
+                    }
+
+                    override fun error(message: String) {
+                        onResult.onResult(null)
+                    }
+                })
+            }
+        }
+    }
+
+    TeaApplication(GameMain(onGameCreate), config)
 }
