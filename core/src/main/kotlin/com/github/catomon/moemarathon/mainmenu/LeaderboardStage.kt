@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Align
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
-import com.github.catomon.moemarathon.leaderboard.Entry
+import com.github.catomon.moemarathon.leaderboard.Leaderboard
 import com.github.catomon.moemarathon.leaderboard.LeaderboardService.requestLeaderboard
 import com.github.catomon.moemarathon.leaderboard.gameModeOrderNumber
 import com.github.catomon.moemarathon.utils.createTable
@@ -74,8 +74,8 @@ class LeaderboardStage() : BgStage() {
                 return@requestLeaderboard
             }
 
-            val scores = board.dreamlo?.leaderboard?.entry
-            if (scores.isNullOrEmpty()) {
+            val scores = board.entries
+            if (scores.isEmpty()) {
                 logInf("Leaderboard is empty.")
                 contentTable.add("Leaderboard is empty.").colspan(4).align(Align.center)
                 return@requestLeaderboard
@@ -84,24 +84,25 @@ class LeaderboardStage() : BgStage() {
             contentTable.add("Leaderboard:").colspan(4).align(Align.left)
 
             val scoresGroupedByMode = scores.groupBy {
-                it.text
+                it.modeName
             }.entries.sortedByDescending {
                 gameModeOrderNumber(
-                    it.value.firstOrNull()?.text
+                    it.value.firstOrNull()?.modeName
                 )
             }
-            val scoresSorted = mutableListOf<Entry>()
+            val scoresSorted = mutableListOf<Leaderboard.Entry>()
             scoresGroupedByMode.forEach {
                 scoresSorted.addAll(it.value.sortedByDescending { it.score })
             }
 
             scoresSorted.forEach {
-                val modeNameAndRank = it.text.split("_")
+                val modeName = it.modeName
+                val rank = it.rank
                 contentTable.addScore(
-                    modeNameAndRank.firstOrNull() ?: "",
-                    it.name,
+                    modeName,
+                    it.playerName,
                     it.score,
-                    modeNameAndRank.getOrNull(1) ?: ""
+                    rank
                 )
             }
 

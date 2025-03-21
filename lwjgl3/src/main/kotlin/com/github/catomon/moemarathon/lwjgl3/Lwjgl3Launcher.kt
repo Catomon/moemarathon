@@ -19,7 +19,7 @@ import java.awt.Desktop
 fun main() {
     // This handles macOS support and helps on Windows.
     if (StartupHelper.startNewJvmIfRequired())
-      return
+        return
 
     val onGameCreate = {
         platformSpecific = object : IPlatformSpecific {

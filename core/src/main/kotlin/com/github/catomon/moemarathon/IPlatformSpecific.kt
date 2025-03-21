@@ -1,6 +1,7 @@
 package com.github.catomon.moemarathon
 
-import com.github.catomon.moemarathon.leaderboard.LeaderboardService.OnResult
+import com.github.catomon.moemarathon.leaderboard.Leaderboard
+import com.github.catomon.moemarathon.utils.OnResult
 
 var platformSpecific: IPlatformSpecific? = null
 
@@ -10,7 +11,11 @@ interface IPlatformSpecific {
 
     }
 
-    fun fetchLeaderboard(onResult: OnResult) {
+    fun fetchLeaderboard(onResult: OnResult<Leaderboard?>) {
+
+    }
+
+    fun submitScore(modeName: String, playerName: String, score: Int, rank: String) {
 
     }
 }

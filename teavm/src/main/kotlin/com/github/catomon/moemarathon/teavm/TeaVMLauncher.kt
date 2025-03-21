@@ -2,10 +2,8 @@
 
 package com.github.catomon.moemarathon.teavm
 
+import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.GameMain
-import com.github.catomon.moemarathon.IPlatformSpecific
-import com.github.catomon.moemarathon.leaderboard.LeaderboardService
-import com.github.catomon.moemarathon.platformSpecific
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
 
@@ -23,20 +21,38 @@ fun main() {
         height = 0
     }
 
-    val onGameCreate = {
-        platformSpecific = object : IPlatformSpecific {
-            override fun fetchLeaderboard(onResult: LeaderboardService.OnResult) {
-                fetch("http://dreamlo.com/lb/67daf22a8f40bbc22497e381/json", object : FetchCallback {
-                    override fun complete(result: String) {
-                        onResult.onResult(LeaderboardService.parseLeaderboard(result))
-                    }
+    Const.IS_WEBAPP = true
 
-                    override fun error(message: String) {
-                        onResult.onResult(null)
-                    }
-                })
-            }
-        }
+    val onGameCreate = {
+//        platformSpecific = object : IPlatformSpecific {
+//            override fun fetchLeaderboard(onResult: OnResult) {
+//                fetch("http://dreamlo.com/lb/67daf22a8f40bbc22497e381/json", object : FetchCallback {
+//                    override fun complete(result: String) {
+//                        logInf("fetchLeaderboard complete: $result")
+//                        onResult.onResult(LeaderboardService.parseLeaderboard(result))
+//                    }
+//
+//                    override fun error(message: String) {
+//                        logInf("fetchLeaderboard error: $message")
+//                        onResult.onResult(null)
+//                    }
+//                })
+//            }
+//
+//            override fun submitScore(modeName: String, playerName: String, score: Int, rank: String) {
+//                com.github.catomon.moemarathon.teavm.leaderboard.submitScore(
+//                    "http://dreamlo.com/lb/$key/add/$playerName/$score/-1/${modeName + "_" + rank}",
+//                    object : FetchCallback {
+//                        override fun complete(result: String) {
+//                            logInf("Score submit: $result")
+//                        }
+//
+//                        override fun error(message: String) {
+//                            logErr("Score submit: $message")
+//                        }
+//                    })
+//            }
+//        }
     }
 
     TeaApplication(GameMain(onGameCreate), config)

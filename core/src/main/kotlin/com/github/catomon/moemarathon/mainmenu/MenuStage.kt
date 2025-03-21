@@ -184,10 +184,12 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             add(newBigButton("Achievements").addChangeListener {
                 menuScreen.changeStage(AchievementsStage())
             })
-            row()
-            add(newBigButton("Leaderboard").addChangeListener {
-                menuScreen.changeStage(LeaderboardStage())
-            })
+//            if (!Const.IS_WEBAPP) {
+                row()
+                add(newBigButton("Leaderboard").addChangeListener {
+                    menuScreen.changeStage(LeaderboardStage())
+                })
+//            }
             row()
             add(
                 VisTable().also {

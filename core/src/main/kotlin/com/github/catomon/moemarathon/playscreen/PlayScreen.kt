@@ -18,7 +18,7 @@ import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.Const.IS_MOBILE
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
-import com.github.catomon.moemarathon.Const.SCORE_GAIN_TRACE
+import com.github.catomon.moemarathon.Const.SCORE_GAIN_HOLD_NOTE
 import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
 import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
 import com.github.catomon.moemarathon.difficulties.PlaySettings
@@ -336,7 +336,7 @@ class PlayScreen(
             1, 2, 3 -> {
                 stats.combo++
                 stats.score +=
-                    if (note.tracingPrev) SCORE_GAIN_TRACE
+                    if (note.tracingPrev) SCORE_GAIN_HOLD_NOTE
                     else if (note.isGreat()) SCORE_GAIN_GREAT
                     else SCORE_GAIN_OK
                 if (note.tracingPrev) stats.greats++
@@ -346,7 +346,7 @@ class PlayScreen(
 
             7 -> {
                 stats.combo++
-                stats.score += SCORE_GAIN_TRACE
+                stats.score += SCORE_GAIN_HOLD_NOTE
                 stats.greats++
             }
         }

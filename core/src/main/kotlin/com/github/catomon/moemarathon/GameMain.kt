@@ -35,6 +35,8 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
     }
 
     override fun create() {
+//        Gdx.app.logLevel = Application.LOG_DEBUG
+
         assets = Assets()
 
         if (Const.IS_DESKTOP)

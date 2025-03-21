@@ -14,8 +14,9 @@ object Const {
     val IS_DESKTOP = Gdx.app.type == Application.ApplicationType.Desktop
     val IS_MOBILE = Gdx.app.type == Application.ApplicationType.Android
         || Gdx.app.type == Application.ApplicationType.iOS
+    var IS_WEBAPP = false
 
-    const val SCORE_GAIN_TRACE = 900
+    const val SCORE_GAIN_HOLD_NOTE = 900
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
 }
