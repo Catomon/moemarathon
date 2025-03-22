@@ -140,6 +140,7 @@ object AudioManager {
     fun getMapMusicPosition(): Float = mapMusic?.position ?: 0f
 
     fun playMapMusic() {
+        mapMusic?.volume = musicVolume
         mapMusicPlay = true
         mapMusicPause = false
         mapMusicStop = false

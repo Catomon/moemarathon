@@ -211,6 +211,7 @@ class PlayScreen(
     var action: (() -> Unit)? = {
         AudioManager.playMapMusic()
         time = AudioManager.getMapMusicPosition()
+        AudioManager.mapMusic?.volume = AudioManager.musicVolume
     }
 
     private fun update(delta: Float) {
