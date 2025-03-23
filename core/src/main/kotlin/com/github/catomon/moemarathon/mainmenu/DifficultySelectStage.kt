@@ -26,7 +26,7 @@ class DifficultySelectStage() :
     )
 
     private var holdNotesOn = false
-    private var noAimOn = if (Const.IS_MOBILE) true else false
+    private var noAimOn = false //if (Const.IS_MOBILE) true else false
     private var pointerGameplay = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen

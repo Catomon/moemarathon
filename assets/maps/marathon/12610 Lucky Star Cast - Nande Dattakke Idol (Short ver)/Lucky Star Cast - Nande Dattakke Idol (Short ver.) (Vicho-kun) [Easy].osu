@@ -33,7 +33,6 @@ SliderTickRate:1
 
 [Events]
 //Background and Video events
-Video,0,"Nande Dattakke Idol video.avi"
 0,0,"ls bg.jpg"
 //Break Periods
 2,28198,31090

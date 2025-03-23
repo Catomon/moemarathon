@@ -7,9 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.MenuStage
@@ -27,7 +27,6 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisTable
-import com.kotcrab.vis.ui.widget.VisTextButton
 
 class PlayHud(private val playScreen: PlayScreen) :
     Stage(ScreenViewport(OrthographicCamera().apply { setToOrtho(false) })), NoteListener {
@@ -42,6 +41,7 @@ class PlayHud(private val playScreen: PlayScreen) :
     private val hitTooEarly = assets.mainAtlas.findRegion(skin.hit + "too_early")
     private val hitTooFar = assets.mainAtlas.findRegion(skin.hit + "too_far")
     private val hitQuestion = assets.mainAtlas.findRegion("question")
+    private val mobileButtonsLayout = MobileButtonsLayout(playScreen)
 
     private val menuTable = VisTable().apply {
         setFillParent(true)
@@ -66,6 +66,9 @@ class PlayHud(private val playScreen: PlayScreen) :
     }
 
     init {
+        if (Const.IS_MOBILE)
+            addActor(mobileButtonsLayout)
+
         addActor(VisTable().apply {
             right().top()
             setFillParent(true)

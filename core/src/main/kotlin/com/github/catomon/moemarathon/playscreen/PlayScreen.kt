@@ -43,7 +43,7 @@ class PlayScreen(
 ) : ScreenAdapter() {
 
     object Config {
-        val defaultGameplay = if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
+        val defaultGameplay = Gameplay.BOTH //if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
         var gameplay = defaultGameplay
 
         //amount of thing where notes should land idk
@@ -439,19 +439,6 @@ class PlayScreen(
         }
 
         return hitZones
-    }
-
-    fun getHitZoneIdByButton(button: Int): Int {
-        //todo different hitZoneAmount
-        return when (button) {
-            Input.Keys.F -> 3
-            Input.Keys.D -> 4
-            Input.Keys.S -> 5
-            Input.Keys.J -> 2
-            Input.Keys.K -> 1
-            Input.Keys.L -> 6
-            else -> -1
-        }
     }
 
     private fun isHitZoneActivated(

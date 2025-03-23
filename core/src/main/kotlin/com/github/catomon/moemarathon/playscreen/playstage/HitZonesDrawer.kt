@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.playscreen.getHitZoneKeyById
 import com.github.catomon.moemarathon.utils.*
 import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.math.cos
@@ -58,30 +59,14 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
                 when (PlayScreen.Config.hitZonesAmount) {
                     6 -> {
                         keyName.setText(
-                            when (i) {
-                                0 -> "K"
-                                1 -> "J"
-                                2 -> "F"
-                                3 -> "D"
-                                4 -> "S"
-                                5 -> "L"
-                                else -> "?"
-                            }
+                            getHitZoneKeyById(i)
                         )
                     }
 
                     8 -> {
                         //todo
                         keyName.setText(
-                            when (i) {
-                                0 -> "K"
-                                1 -> "J"
-                                2 -> "F"
-                                3 -> "D"
-                                4 -> "S"
-                                5 -> "L"
-                                else -> "?"
-                            }
+                            getHitZoneKeyById(i)
                         )
                     }
 
