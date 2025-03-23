@@ -1,0 +1,17 @@
+[Events]
+//Background and Video events
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+Sprite,Foreground,Centre,"arrow.png",320,240
+ F,0,56644,56865,0,1
+ M,0,56865,,238,184
+ S,0,56865,57085,0.5968001,0.6992002
+ S,0,57085,57306,0.6992002,0.6160002
+ F,0,56865,57527,1
+ S,0,57306,57527,0.6160002,0.7312002
+ S,0,57527,57747,0.7312002,0.6096002
+ F,0,57527,57857,1,0
+ S,0,57747,57968,0.6096002,0.6928003
+//Storyboard Sound Samples

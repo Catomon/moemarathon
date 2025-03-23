@@ -48,14 +48,14 @@ object PlaySets {
     val NormalMarathon = PlaySettings(
         NORMAL,
         listOf(
-            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Easy].osu",
-            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Easy].osu",
-            "nao - Kirihirake! GracieStar (Tari) [Easy].osu",
-            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Easy].osu",
-            "solfa feat. Chata - Colorful precious life (Natsu) [Xinely's Easy].osu",
-            "Yousei Teikoku - Torikago (Furawa) [Easy].osu",
-            "Yousei Teikoku - Senketsu no Chikai (Saten) [Weez's Easy].osu",
-            "Ichijo - Roulette Roulette (ztrot) [Easy].osu",
+            "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Easy].osu",
+            "Endou Aya - Moe Yousotte nan desu ka (Alice Margatroid) [Easy].osu",
+            "Lucky Star Cast - Nande Dattakke Idol (Short ver.) (Vicho-kun) [Easy].osu",
+            "Hirano Aya - Dondake Fanfare (Krisom) [Easy].osu",
+            "Shimamoto Sumi - Shiawase Negai Kanata Kara (happy30) [Easy Dan].osu",
+            "Shimizu Kaori - Mo, Mousou Machine (Krisom) [Easy].osu",
+            "Sharlo - Ne Ni Ge de Reset! (Zero__wind) [Normal].osu",
+            "Hirano Aya, Katou Emiri, Fukuhara Kaori, Endou Aya - Motteke! Sailor Fuku (TV Size) (Yugu) [Normal].osu",
         ),
         3f
     )
@@ -63,16 +63,15 @@ object PlaySets {
     val HardMarathon = PlaySettings(
         HARD,
         listOf(
-            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Normal].osu",
-            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Normal].osu",
-            "nao - Kirihirake! GracieStar (Tari) [Normal].osu",
-            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Normal].osu",
-            "solfa feat. Chata - Colorful precious life (Natsu) [lfj's Normal].osu",
-            "U - the first the last (Phyrearms) [Normal].osu",
-            "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Normal].osu",
-            "Yousei Teikoku - Torikago (Furawa) [yoru].osu",
-            "Yousei Teikoku - Senketsu no Chikai (Saten) [Nekoo's Normal].osu",
-            "Ichijo - Roulette Roulette (ztrot) [Azure's Normal].osu",
+            "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Normal].osu",
+
+            "Endou Aya - Moe Yousotte nan desu ka (Alice Margatroid) [Normal].osu",
+            "Fukuhara Kaori - Ne Ni Ge de Risetto! (xierbaliti) [Normal].osu",
+            "Lucky Star Cast - Nande Dattakke Idol (Short ver.) (Vicho-kun) [Normal].osu",
+            "Hirano Aya - Dondake Fanfare (Krisom) [Normal].osu",
+            "Shimamoto Sumi - Shiawase Negai Kanata Kara (happy30) [Normal].osu",
+            "Shimizu Kaori - Mo, Mousou Machine (Krisom) [Normal].osu",
+            "Hirano Aya, Katou Emiri, Fukuhara Kaori, Endou Aya - Motteke! Sailor Fuku (TV Size) (Yugu) [Pata-Mon's Hard].osu",
         ),
         2f
     )
@@ -80,16 +79,13 @@ object PlaySets {
     val InsaneMarathon = PlaySettings(
         INSANE,
         listOf(
-            "Katakiri Rekka - (^3^)chu Dere Rhapsody (-Chata-) [vs Laurier's Hard].osu",
-            "iyuna - Emukko Kyun Kyun (cRyo[iceeicee]) [Hard].osu",
-            "nao - Kirihirake! GracieStar (Tari) [Hard].osu",
-            "KOTOKO - Sakuranbo Kiss ~Bakuhatsu Damo~n~ (banvi) [Hard].osu",
-            "solfa feat. Chata - Colorful precious life (Natsu) [Hard].osu",
-            "U - the first the last (Phyrearms) [Hard].osu",
-            "IOSYS - Princess Party ~Seishun Kinshi Rei~ (-Chata-) [Hard].osu",
-            "Yousei Teikoku - Torikago (Furawa) [Alazy].osu",
-            "Yousei Teikoku - Senketsu no Chikai (Saten) [Mafia].osu",
-            "Ichijo - Roulette Roulette (ztrot) [Hard].osu",
+            "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Hard].osu",
+            "Endou Aya - Moe Yousotte nan desu ka (Alice Margatroid) [Hard].osu",
+            "Fukuhara Kaori - Ne Ni Ge de Risetto! (xierbaliti) [Hard].osu",
+            "Lucky Star Cast - Nande Dattakke Idol (Short ver.) (Vicho-kun) [taka's Hard].osu",
+            "Hirano Aya - Dondake Fanfare (Krisom) [Mafiamaster's Hard].osu",
+            "Shimizu Kaori - Mo, Mousou Machine (Krisom) [Andrea's Hard].osu",
+            "Hirano Aya, Katou Emiri, Fukuhara Kaori, Endou Aya - Motteke! Sailor Fuku (TV Size) (Yugu) [Insane].osu",
         ),
         1f,
         hitZonesAmount = 12,
