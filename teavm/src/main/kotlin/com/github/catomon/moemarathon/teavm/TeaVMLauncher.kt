@@ -2,6 +2,8 @@
 
 package com.github.catomon.moemarathon.teavm
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.utils.Logger
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.GameMain
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication
@@ -24,6 +26,9 @@ fun main() {
     Const.IS_WEBAPP = true
 
     val onGameCreate = {
+        if (!Const.IS_RELEASE)
+            Gdx.app.logLevel = Logger.INFO
+
 //        platformSpecific = object : IPlatformSpecific {
 //            override fun fetchLeaderboard(onResult: OnResult) {
 //                fetch("http://dreamlo.com/lb/67daf22a8f40bbc22497e381/json", object : FetchCallback {

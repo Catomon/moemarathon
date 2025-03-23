@@ -94,7 +94,8 @@ object GamePref {
         }
 
     fun save() {
-        logInf("Saving: $userSave")
+//        logInf("Saving: $userSave")
+        logInf("Saving player data: ${userSave.name}")
 
         prefs.flush()
     }

@@ -222,6 +222,8 @@ class PlayScreen(
         if (action != null) {
             time += delta
         } else {
+            if (AudioManager.mapMusic?.volume != AudioManager.musicVolume)
+                AudioManager.mapMusic?.volume = AudioManager.musicVolume
             time = AudioManager.getMapMusicPosition()
         }
 
