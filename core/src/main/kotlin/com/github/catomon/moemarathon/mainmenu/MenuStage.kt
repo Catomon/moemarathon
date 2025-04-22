@@ -209,16 +209,6 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             ).fillX().align(Align.center)
         }
 
-//        createTable().apply {
-//            add(VisTextButton("monscout.itch.io").apply {
-//                label.setFontScale(0.5f)
-//                addChangeListener {
-//                    Gdx.app.net.openURI("https://monscout.itch.io/")
-//                }
-//            })
-//            center().bottom()
-//        }
-
         userSave.notify.removeIf {
             when {
                 it.startsWith("skin:") -> {
