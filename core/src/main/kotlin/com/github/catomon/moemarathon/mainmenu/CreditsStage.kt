@@ -75,6 +75,8 @@ class CreditsStage() :
             add("Me:").padTop(50f)
             row()
             addLinkLabel("ctmn.itch.io", "https://ctmn.itch.io/")
+            row()
+            addLinkLabel("github.com/Catomon", "https://github.com/Catomon/")
         }
 
         addActor(VisScrollPane(contentTable).apply {
