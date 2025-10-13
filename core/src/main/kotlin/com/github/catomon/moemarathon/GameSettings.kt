@@ -83,11 +83,11 @@ object GamePref {
     var userSave: UserSave
         get() {
             return try {
-                fromGson(decryptData(prefs.getString("userSave"), generateSecretKey("moe")), UserSave::class.java) ?: newUserSave("Player")
+                fromGson(decryptData(prefs.getString("userSave"), generateSecretKey("moe")), UserSave::class.java)
             } catch (e: Exception) {
                 e.printStackTrace()
-                UserSave()
-            }
+                null
+            } ?: newUserSave("Player")
         }
         set(value) {
             prefs.putString("userSave", encryptData(value.toGson(), generateSecretKey("moe")))

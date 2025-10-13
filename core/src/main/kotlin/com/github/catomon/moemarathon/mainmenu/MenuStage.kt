@@ -5,11 +5,10 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.utils.Align
 import com.github.catomon.moemarathon.*
-import com.github.catomon.moemarathon.difficulties.PlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.UnlockedOnlyPlaySets
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.ui.actions.OneAction
@@ -225,7 +224,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                     return@removeIf true
                 }
 
-                it == PlaySets.NonStop.name -> {
+                it == DefaultMapSets.NonStop.name -> {
                     addActor(VisWindow("Non-Stop map unlocked!").also { window ->
                         window.centerWindow()
                         window.add("Navigate to 'Start' to see.")

@@ -6,7 +6,7 @@ const val HARD = "Hard"
 const val INSANE = "Insane"
 const val NON_STOP = "Non-Stop"
 
-data class PlaySettings(
+data class GameMapSet(
     val name: String,
     val maps: List<String>,
     val noteSpawnTime: Float,
@@ -17,7 +17,7 @@ data class PlaySettings(
     val mapScores: MutableMap<String, Int> = mutableMapOf(),
 ) {
     override fun equals(other: Any?): Boolean {
-        return other is PlaySettings && name == other.name
+        return other is GameMapSet && name == other.name
     }
 
     override fun hashCode(): Int {
@@ -25,27 +25,27 @@ data class PlaySettings(
     }
 }
 
-object PlaySets {
-    val DefaultPlaySets = PlaySettings(
+object DefaultMapSets {
+    val DefaultPlaySets = GameMapSet(
         DEFAULT,
         emptyList(),
         noteSpawnTime = 1f,
     )
 
-    val UnlockedOnlyPlaySets = PlaySettings(
+    val UnlockedOnlyPlaySets = GameMapSet(
         "UnlockedOnlyPlaySets",
         emptyList(),
         noteSpawnTime = 1f,
     )
 
-    val NonStop = PlaySettings(
+    val NonStop = GameMapSet(
         NON_STOP,
         listOf("Lucky Star no Minna - Kumikyoku 'Lucky Star Douga' (Andrea) [Marathon].osu"),
         1f,
         hitZonesAmount = 12,
     )
 
-    val NormalMarathon = PlaySettings(
+    val NormalMarathon = GameMapSet(
         NORMAL,
         listOf(
             "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Easy].osu",
@@ -60,7 +60,7 @@ object PlaySets {
         3f
     )
 
-    val HardMarathon = PlaySettings(
+    val HardMarathon = GameMapSet(
         HARD,
         listOf(
             "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Normal].osu",
@@ -76,7 +76,7 @@ object PlaySets {
         2f
     )
 
-    val InsaneMarathon = PlaySettings(
+    val InsaneMarathon = GameMapSet(
         INSANE,
         listOf(
             "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Hard].osu",

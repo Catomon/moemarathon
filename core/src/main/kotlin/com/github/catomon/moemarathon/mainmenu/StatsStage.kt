@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.difficulties.*
 import com.github.catomon.moemarathon.leaderboard.LeaderboardService
-import com.github.catomon.moemarathon.leaderboard.gameModeOrderNumber
 import com.github.catomon.moemarathon.leaderboard.gameModeScoreModifier
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -33,7 +32,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     var playSetsResult: Int = -1
         private set
 
-    val isMarathon get() = playSets != PlaySets.DefaultPlaySets && playSets != PlaySets.UnlockedOnlyPlaySets
+    val isMarathon get() = playSets != DefaultMapSets.DefaultPlaySets && playSets != DefaultMapSets.UnlockedOnlyPlaySets
 
     init {
         val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap).size
@@ -82,7 +81,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         checkAchieveMapComplete()
 
         //navigation buttons
-        if (playSets.name == DEFAULT || playSets.name == PlaySets.UnlockedOnlyPlaySets.name) {
+        if (playSets.name == DEFAULT || playSets.name == DefaultMapSets.UnlockedOnlyPlaySets.name) {
             //when maps browse
             createTable(newTextButton("<Maps").addChangeListener {
                 game.menuScreen.changeStage(MapSelectStage(playSets))
@@ -177,7 +176,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         Achievements.list.forEach {
             if (it.type == Achievement.Type.PlaySetsComplete) {
                 if (!userSave.achievements.contains(it.id))
-                    if (it.condition(AchieveParam(statsStage = this, playSetsResult = resultRankInt)))
+                    if (it.condition(AchieveParam(statsStage = this, mapSetResult = resultRankInt)))
                         userSave.achievements.add(it.id)
             }
         }
@@ -273,17 +272,17 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
     private fun saveMarathonResult(resultRankInt: Int) {
         GamePref.userSave.also { userSave ->
-            if (!userSave.unlocks.contains(PlaySets.NonStop.name)) {
-                if ((playSets.name == PlaySets.NormalMarathon.name && resultRankInt >= RankUtil.getRankInt(
+            if (!userSave.unlocks.contains(DefaultMapSets.NonStop.name)) {
+                if ((playSets.name == DefaultMapSets.NormalMarathon.name && resultRankInt >= RankUtil.getRankInt(
                         "S"
-                    )) || (playSets.name == PlaySets.HardMarathon.name && resultRankInt >= RankUtil.getRankInt(
+                    )) || (playSets.name == DefaultMapSets.HardMarathon.name && resultRankInt >= RankUtil.getRankInt(
                         "B"
-                    )) || (playSets.name == PlaySets.InsaneMarathon.name && resultRankInt >= RankUtil.getRankInt(
+                    )) || (playSets.name == DefaultMapSets.InsaneMarathon.name && resultRankInt >= RankUtil.getRankInt(
                         "C"
                     ))
                 ) {
-                    userSave.unlocks.add(PlaySets.NonStop.name)
-                    userSave.notify.add(PlaySets.NonStop.name)
+                    userSave.unlocks.add(DefaultMapSets.NonStop.name)
+                    userSave.notify.add(DefaultMapSets.NonStop.name)
                 }
             }
 

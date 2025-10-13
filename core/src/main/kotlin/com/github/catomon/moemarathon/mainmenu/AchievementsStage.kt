@@ -3,7 +3,7 @@ package com.github.catomon.moemarathon.mainmenu
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.*
-import com.github.catomon.moemarathon.difficulties.PlaySets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
@@ -12,7 +12,6 @@ import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
-import com.kotcrab.vis.ui.widget.VisTextButton
 
 class AchievementsStage() :
     BgStage() {
@@ -52,9 +51,9 @@ class AchievementsStage() :
                         add(VisTable().apply {
                             background = VisUI.getSkin().getDrawable("button-over")
                             defaults().left()
-                            if (userSave.unlocks.contains(PlaySets.NonStop.name)) {
+                            if (userSave.unlocks.contains(DefaultMapSets.NonStop.name)) {
                                 add("Non-Stop: ")
-                                val nonStopRank = userSave.mapRanks[PlaySets.NonStop.maps.first()]?.id ?: 0
+                                val nonStopRank = userSave.mapRanks[DefaultMapSets.NonStop.maps.first()]?.id ?: 0
                                 add(RankUtil.newRankLabel(nonStopRank)).left()
                             } else {
                                 add("Non-Stop: ")
@@ -67,7 +66,7 @@ class AchievementsStage() :
                         userSave.normalRank,
                         userSave.hardRank,
                         userSave.insaneRank,
-                        userSave.mapRanks[PlaySets.NonStop.maps.first()]?.id ?: 0
+                        userSave.mapRanks[DefaultMapSets.NonStop.maps.first()]?.id ?: 0
                     )
                     var avg = ranks.map { it.toFloat() }
                         .toFloatArray().average().toFloat()

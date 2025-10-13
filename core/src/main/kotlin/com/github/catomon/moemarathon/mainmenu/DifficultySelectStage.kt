@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color
 import com.github.catomon.moemarathon.Const
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
-import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.HardMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.HardMarathon
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -21,7 +21,7 @@ import com.kotcrab.vis.ui.widget.VisImage
 class DifficultySelectStage() :
     BgStage() {
 
-    private val difficulties: List<PlaySettings> = listOf(
+    private val difficulties: List<GameMapSet> = listOf(
         NormalMarathon, HardMarathon, InsaneMarathon
     )
 
@@ -42,7 +42,7 @@ class DifficultySelectStage() :
 
         val userSave = GamePref.userSave
         createTable().apply {
-//            if (userSave.unlocks.contains(PlaySets.nonStop.name)) {
+//            if (userSave.unlocks.contains(DefaultMapSets.nonStop.name)) {
                 add(newLabel("Marathon").apply { setFontScale(0.5f) }).colspan(3).padTop(20f)
                 row()
 //            }
@@ -72,17 +72,17 @@ class DifficultySelectStage() :
                 row()
             }
 
-            if (userSave.unlocks.contains(PlaySets.NonStop.name)) {
+            if (userSave.unlocks.contains(DefaultMapSets.NonStop.name)) {
                 add(newLabel("Non-Stop").apply { setFontScale(0.5f) }).colspan(3).padTop(30f)
                 row()
-                val rankChar = userSave.mapRanks[PlaySets.NonStop.maps.first()]?.id?.let { RankUtil.getRankChar(it) } ?: ""
+                val rankChar = userSave.mapRanks[DefaultMapSets.NonStop.maps.first()]?.id?.let { RankUtil.getRankChar(it) } ?: ""
                 add(newLabel(
                     rankChar
                 ).also {
                     it.color = RankUtil.getRankColor(rankChar)
                 }).width(rankLabelWidth)
                 add(newTextButton("Insane").addChangeListener {
-                    chooseDiff(PlaySets.NonStop)
+                    chooseDiff(DefaultMapSets.NonStop)
                 })
                 add().width(rankLabelWidth)
             } else {
@@ -157,7 +157,7 @@ class DifficultySelectStage() :
         }
     }
 
-    private fun chooseDiff(diff: PlaySettings) {
+    private fun chooseDiff(diff: GameMapSet) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
             PlayScreen.Config.gameplay = if (pointerGameplay) PlayScreen.Gameplay.POINTER else PlayScreen.Config.defaultGameplay
             game.screen =

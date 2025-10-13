@@ -1,9 +1,28 @@
 package com.github.catomon.moemarathon
 
-import com.github.catomon.moemarathon.difficulties.PlaySets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.mainmenu.MenuStage
 import com.github.catomon.moemarathon.mainmenu.StatsStage
+
+class AchieveParam(
+    val menuStage: MenuStage? = null,
+    val statsStage: StatsStage? = null,
+    val mapSetResult: Int? = null
+)
+
+class Achievement(
+    val id: String,
+    val text: String,
+    val type: Type,
+    val condition: (param: AchieveParam) -> Boolean,
+) {
+    enum class Type {
+        MainMenu,
+        MapComplete,
+        PlaySetsComplete,
+    }
+}
 
 object Achievements {
 
@@ -50,7 +69,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.NormalMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
             else false
         },
@@ -60,7 +79,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.NormalMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
             else false
         },
@@ -70,7 +89,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NormalMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.NormalMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
             else false
         },
@@ -80,7 +99,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.HardMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.HardMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
             else false
         },
@@ -90,7 +109,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.HardMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.HardMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
             else false
         },
@@ -100,7 +119,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.HardMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.HardMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
             else false
         },
@@ -110,7 +129,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.InsaneMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
             else false
         },
@@ -120,7 +139,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.InsaneMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
             else false
         },
@@ -130,7 +149,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.InsaneMarathon)
+            if (it.statsStage.playSets == DefaultMapSets.InsaneMarathon)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
             else false
         },
@@ -140,7 +159,7 @@ object Achievements {
 //            Achievement.Type.PlaySetsComplete
 //        ) {
 //            if (it.statsStage == null) return@Achievement false
-//            if (it.statsStage.playSets == PlaySets.NonStop)
+//            if (it.statsStage.playSets == DefaultMapSets.NonStop)
 //                (it.statsStage.mapResult) >= RankUtil.getRankInt("C")
 //            else false
 //        },
@@ -150,7 +169,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NonStop)
+            if (it.statsStage.playSets == DefaultMapSets.NonStop)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("B")
             else false
         },
@@ -160,7 +179,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NonStop)
+            if (it.statsStage.playSets == DefaultMapSets.NonStop)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
             else false
         },
@@ -170,7 +189,7 @@ object Achievements {
             Achievement.Type.PlaySetsComplete
         ) {
             if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playSets == PlaySets.NonStop)
+            if (it.statsStage.playSets == DefaultMapSets.NonStop)
                 (it.statsStage.mapResult) >= RankUtil.getRankInt("S")
             else false
         },
@@ -184,26 +203,5 @@ object Achievements {
             GamePref.userSave = userSave
             GamePref.save()
         }
-    }
-}
-
-class AchieveParam(
-    val menuStage: MenuStage? = null,
-    val statsStage: StatsStage? = null,
-    val playSetsResult: Int? = null
-) {
-
-}
-
-class Achievement(
-    val id: String,
-    val text: String,
-    val type: Type,
-    val condition: (param: AchieveParam) -> Boolean,
-) {
-    enum class Type {
-        MainMenu,
-        MapComplete,
-        PlaySetsComplete,
     }
 }

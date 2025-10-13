@@ -11,13 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.assets
-import com.github.catomon.moemarathon.difficulties.PlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySets.DefaultPlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySets.HardMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.InsaneMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.NormalMarathon
-import com.github.catomon.moemarathon.difficulties.PlaySets.UnlockedOnlyPlaySets
-import com.github.catomon.moemarathon.difficulties.PlaySettings
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.DefaultPlaySets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.HardMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.UnlockedOnlyPlaySets
+import com.github.catomon.moemarathon.difficulties.GameMapSet
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
@@ -34,7 +34,7 @@ import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 
 class MapSelectStage(
-    val playSets: PlaySettings = DefaultPlaySets,
+    val playSets: GameMapSet = DefaultPlaySets,
     val mapFileNames: List<String> = playSets.maps,
 ) :
     BgStage() {
@@ -74,7 +74,7 @@ class MapSelectStage(
                 addCover()
                 isLoading = true
                 val marathonMaps =
-                    PlaySets.NormalMarathon.maps + PlaySets.HardMarathon.maps + PlaySets.InsaneMarathon.maps + PlaySets.NonStop.maps
+                    DefaultMapSets.NormalMarathon.maps + DefaultMapSets.HardMarathon.maps + DefaultMapSets.InsaneMarathon.maps + DefaultMapSets.NonStop.maps
                 loadedItems =
                     (if (mapFileNames.isEmpty()) {
                         if (playSets == UnlockedOnlyPlaySets) {
@@ -165,7 +165,7 @@ class MapSelectStage(
 
                 loadingTable.remove()
 
-                if (playSets == PlaySets.DefaultPlaySets) {
+                if (playSets == DefaultMapSets.DefaultPlaySets) {
                     createTable().apply {
                         if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
                             add("Here will be your maps\nfrom the 'other maps' folder")

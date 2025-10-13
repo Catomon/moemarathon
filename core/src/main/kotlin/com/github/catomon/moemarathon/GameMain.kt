@@ -3,7 +3,7 @@ package com.github.catomon.moemarathon
 import com.badlogic.gdx.*
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.utils.ScreenUtils
-import com.github.catomon.moemarathon.difficulties.PlaySets
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets
 import com.github.catomon.moemarathon.difficulties.Rank
 import com.github.catomon.moemarathon.mainmenu.MenuScreen
 import com.github.catomon.moemarathon.mainmenu.MenuStage
@@ -89,7 +89,7 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
                 9999999,
                 999999,
                 999999,
-                mutableMapOf(PlaySets.NonStop.maps.first() to Rank(7, 999999, 999999, 99999)),
+                mutableMapOf(DefaultMapSets.NonStop.maps.first() to Rank(7, 999999, 999999, 99999)),
                 7,
                 7,
                 7,

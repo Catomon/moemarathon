@@ -15,13 +15,12 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.moemarathon.*
-import com.github.catomon.moemarathon.Const.IS_MOBILE
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
 import com.github.catomon.moemarathon.Const.SCORE_GAIN_HOLD_NOTE
 import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
 import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
-import com.github.catomon.moemarathon.difficulties.PlaySettings
+import com.github.catomon.moemarathon.difficulties.GameMapSet
 import com.github.catomon.moemarathon.mainmenu.StatsStage
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -39,7 +38,7 @@ import kotlin.math.sin
 
 class PlayScreen(
     val gameMap: GameMap,
-    val playSets: PlaySettings,
+    val playSets: GameMapSet,
 ) : ScreenAdapter() {
 
     object Config {
