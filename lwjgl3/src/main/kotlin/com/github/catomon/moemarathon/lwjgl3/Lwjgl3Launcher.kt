@@ -6,10 +6,10 @@ import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
-import com.github.catomon.moemarathon.Const.APP_NAME
-import com.github.catomon.moemarathon.Const.APP_VER
-import com.github.catomon.moemarathon.Const.WINDOW_HEIGHT
-import com.github.catomon.moemarathon.Const.WINDOW_WIDTH
+import com.github.catomon.moemarathon.Config.APP_NAME
+import com.github.catomon.moemarathon.Config.APP_VER
+import com.github.catomon.moemarathon.Config.WINDOW_HEIGHT
+import com.github.catomon.moemarathon.Config.WINDOW_WIDTH
 import com.github.catomon.moemarathon.GameMain
 import com.github.catomon.moemarathon.IPlatformSpecific
 import com.github.catomon.moemarathon.platformSpecific

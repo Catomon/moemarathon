@@ -9,4 +9,6 @@ data class Note(
     var tracingPrev: Boolean = false,
     var visual: Int = Random.nextInt(0, 3),
     var color: Int = 0,
+    var isNextColor: Boolean = false,
+    var colorIndex: Int = 0,
 )

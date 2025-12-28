@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.JsonValue
 import com.badlogic.gdx.utils.JsonWriter
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.platformSpecific
 import com.github.catomon.moemarathon.utils.OnResult
 
@@ -14,7 +14,7 @@ typealias MoeLeaderboard = Leaderboard
 
 class DreamloLeaderboardProvider : LeaderboardProvider {
     override fun requestLeaderboard(onResult: OnResult<MoeLeaderboard?>) {
-        if (Const.IS_WEBAPP) {
+        if (Config.IS_WEBAPP) {
             platformSpecific?.fetchLeaderboard(onResult)
         } else {
             fetchLeaderboard(onResult)

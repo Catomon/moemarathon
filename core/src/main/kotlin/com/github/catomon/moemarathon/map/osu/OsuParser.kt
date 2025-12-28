@@ -8,26 +8,51 @@ object OsuParser {
 
     fun parseHitObjects(lines: List<String>): List<HitObject> {
         val hitObjects = mutableListOf<HitObject>()
+        var comboIndex = 0
+
+        val NEW_COMBO = 1 shl 2  // Bit 2
+
         lines.forEach { line ->
             val params = line.split(",")
             when {
                 params.size > 7 -> {
+                    val type = params.getOrNull(3)?.toInt() ?: 0
+                    val isNewCombo = (type and NEW_COMBO) != 0
+
+                    if (isNewCombo) {
+                        comboIndex++;
+                    }
+
                     val hitObject = HitObject(
                         x = params[0].toInt(),
                         y = params[1].toInt(),
                         time = params[2].toInt(),
-                        type = params.getOrNull(3)?.toInt() ?: 0,
-                        objectParams = params //params.getOrNull(5) ?: "",
+                        type = type,
+                        hitSound = params.getOrNull(4)?.toInt() ?: 0,
+                        objectParams = params.drop(5),
+                        hitSample = params.getOrNull(params.size - 1) ?: "",
+                        comboIndex = comboIndex,
+                        isNewCombo = isNewCombo
                     )
                     hitObjects.add(hitObject)
                 }
 
-                params.size > 1 -> {
+                params.size >= 5 -> {
+                    val type = params.getOrNull(3)?.toInt() ?: 0
+                    val isNewCombo = (type and NEW_COMBO) != 0
+
+                    if (isNewCombo) {
+                        comboIndex++;
+                    }
+
                     val hitObject = HitObject(
                         x = params[0].toInt(),
                         y = params[1].toInt(),
                         time = params[2].toInt(),
-                        type = params.getOrNull(3)?.toInt() ?: 0,
+                        type = type,
+                        hitSound = params[4].toInt(),
+                        comboIndex = comboIndex,
+                        isNewCombo = isNewCombo
                     )
                     hitObjects.add(hitObject)
                 }

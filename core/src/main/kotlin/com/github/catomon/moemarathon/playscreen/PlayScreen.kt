@@ -15,9 +15,9 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.github.catomon.moemarathon.*
-import com.github.catomon.moemarathon.Const.SCORE_GAIN_GREAT
-import com.github.catomon.moemarathon.Const.SCORE_GAIN_OK
-import com.github.catomon.moemarathon.Const.SCORE_GAIN_HOLD_NOTE
+import com.github.catomon.moemarathon.Config.SCORE_GAIN_GREAT
+import com.github.catomon.moemarathon.Config.SCORE_GAIN_HOLD_NOTE
+import com.github.catomon.moemarathon.Config.SCORE_GAIN_OK
 import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
 import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
 import com.github.catomon.moemarathon.difficulties.GameMapSet
@@ -26,22 +26,23 @@ import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
-import com.github.catomon.moemarathon.utils.addCover
-import com.github.catomon.moemarathon.utils.removeCover
+import com.github.catomon.moemarathon.utils.*
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisWindow
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
+import kotlin.random.Random
 
 class PlayScreen(
     val gameMap: GameMap,
     val playSets: GameMapSet,
 ) : ScreenAdapter() {
 
-    object Config {
+    object GameplayConfig {
         val defaultGameplay = Gameplay.BOTH //if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
         var gameplay = defaultGameplay
 
@@ -57,7 +58,7 @@ class PlayScreen(
 
     @Suppress("unused")
     private val initFirst = (0).also {
-        Config.hitZonesAmount = playSets.hitZonesAmount
+        GameplayConfig.hitZonesAmount = playSets.hitZonesAmount
     }
 
     val camera = OrthographicCamera().apply {
@@ -88,7 +89,7 @@ class PlayScreen(
 
     val pointerSize = 0.05f
 
-    var noteSpawnTime = 1f //1 hard //3.5f
+    var noteSpawnTime = playSets.noteSpawnTime //1 hard //3.5f
         private set
     val noteTimingWindow = 0.200f // actual time window is twice this value
     val noteTimingGreat = 0.075f // actual time window is twice this value
@@ -133,7 +134,7 @@ class PlayScreen(
     var autoPlay = false
     var noAim = playSets.noAim
     var skin: Skin = Skins.getSkin(GamePref.userSave.skin) ?: Skins.lucky
-    var noHoldNotes = true
+    var noHoldNotes = playSets.noHoldNotes
     var isDone = false
     var debug = false
 
@@ -141,7 +142,7 @@ class PlayScreen(
     val playHud = PlayHud(this)
 
     init {
-        Config.hitZonesAmount = playSets.hitZonesAmount
+        GameplayConfig.hitZonesAmount = playSets.hitZonesAmount
 
         Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
 
@@ -152,9 +153,6 @@ class PlayScreen(
     private var isReady = false
     fun ready() {
         if (isReady) return
-
-        noteSpawnTime = playSets.noteSpawnTime
-        noHoldNotes = playSets.noHoldNotes
 
         ///
 
@@ -213,6 +211,8 @@ class PlayScreen(
         AudioManager.mapMusic?.volume = AudioManager.musicVolume
     }
 
+    private var starEffectTime = 0f;
+
     private fun update(delta: Float) {
         playHud.act()
 
@@ -234,6 +234,14 @@ class PlayScreen(
         updateNotes()
 
         playStage.act()
+
+        starEffectTime += delta
+        val mod = stats.combo / 200f
+        val starPerMs = 1f / min(30f, max(1f, mod * 30f))
+        if (starEffectTime > starPerMs) {
+            playStarEffect()
+            starEffectTime = 0f;
+        }
     }
 
     private fun updateNotes() {
@@ -271,7 +279,7 @@ class PlayScreen(
 
     fun onDone() {
         if (isDone) return
-        playStage.addAction(Actions.sequence(Actions.delay(if (Const.IS_RELEASE) 2f else 0f), Actions.run {
+        playStage.addAction(Actions.sequence(Actions.delay(if (Config.IS_RELEASE) 2f else 0f), Actions.run {
             game.screen = game.menuScreen
             game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
             game.menuScreen.changeStage(StatsStage(this))
@@ -284,7 +292,7 @@ class PlayScreen(
 
         playHud.draw()
 
-        if (Const.DEBUG || debug)
+        if (Config.DEBUG || debug)
             debugRenderer.draw()
     }
 
@@ -364,7 +372,7 @@ class PlayScreen(
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
         val clickerPos = calcClickerPos(Vector2())
-        val clickerToNoteDst = if (Config.gameplay == Gameplay.POINTER) Vector2.dst(
+        val clickerToNoteDst = if (GameplayConfig.gameplay == Gameplay.POINTER) Vector2.dst(
             clickerPos.x,
             clickerPos.y,
             notePos.x,
@@ -407,7 +415,7 @@ class PlayScreen(
             }
         }
 
-        if (Config.gameplay == Gameplay.POINTER) {
+        if (GameplayConfig.gameplay == Gameplay.POINTER) {
             val pointer = getPointer()
             val hitZoneId = getHitZones().minBy {
                 val zonePos = it.value
@@ -415,7 +423,7 @@ class PlayScreen(
             }.key
             playStage.hitZonesDrawer.animateHitZone(hitZoneId)
         } else {
-            if (Config.hitZonesAmount <= 9) {
+            if (GameplayConfig.hitZonesAmount <= 9) {
                 playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByButton(button))
             } else {
                 playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
@@ -423,14 +431,14 @@ class PlayScreen(
         }
     }
 
-    fun getHitZoneIdByNote(note: Note): Int = ((Config.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
+    fun getHitZoneIdByNote(note: Note): Int = ((GameplayConfig.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
 
     fun getHitZones(): MutableMap<Int, Vector2> {
         val circleRadius = hitZoneCircleRadius
-        val angleBetweenParts = 360f / Config.hitZonesAmount
+        val angleBetweenParts = 360f / GameplayConfig.hitZonesAmount
 
         val hitZones = mutableMapOf<Int, Vector2>()
-        for (i in 0 until Config.hitZonesAmount) {
+        for (i in 0 until GameplayConfig.hitZonesAmount) {
             val angle = i * angleBetweenParts
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
@@ -477,10 +485,10 @@ class PlayScreen(
                 }
 
                 else -> false
-            } || Config.hitZonesAmount > 9
+            } || GameplayConfig.hitZonesAmount > 9
         }
 
-        return when (Config.gameplay) {
+        return when (GameplayConfig.gameplay) {
             Gameplay.POINTER -> {
                 (clickerToNoteDst <= curPointerRad * 2) || noAim
             }
@@ -493,7 +501,7 @@ class PlayScreen(
 //                if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
 //                    (clickerToNoteDst <= curPointerRad * 2) || noAim
 //                } else {
-                    isKeyHitZonePressed()
+                isKeyHitZonePressed()
 //                }
             }
         }
@@ -509,5 +517,20 @@ class PlayScreen(
 
         playHud.viewport.update(width, height, true)
         playStage.viewport.update(width, height, true)
+    }
+
+    fun playStarEffect() {
+        val camera = this.camera
+        this.playStage.addActorBeforeNotes(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
+            val size = Random.nextFloat()
+            setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
+            setPosition(camera.cornerX() + Random.nextFloat() * camera.viewportWidth, camera.cornerY() - height / 2)
+            addAction(
+                Actions.sequence(
+                    Actions.parallel(Actions.moveBy(0f, 256f, 1f), Actions.fadeOut(1f), Actions.scaleTo(0f, 0f, 1f)),
+                    Actions.removeActor()
+                )
+            )
+        })
     }
 }

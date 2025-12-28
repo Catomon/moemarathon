@@ -2,7 +2,7 @@ package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.leaderboard.Leaderboard
@@ -29,8 +29,8 @@ class LeaderboardStage() : BgStage() {
 
     init {
         createTable().apply {
-            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Const.APP_VER).apply {
+            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Config.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
             center().top()

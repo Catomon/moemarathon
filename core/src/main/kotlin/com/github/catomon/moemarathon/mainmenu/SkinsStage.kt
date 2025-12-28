@@ -26,8 +26,8 @@ class SkinsStage() :
 
     init {
         createTable().apply {
-            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Const.APP_VER).apply {
+            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Config.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
             center().top()
@@ -39,7 +39,7 @@ class SkinsStage() :
             skins.forEachIndexed { i, skin ->
                 add(Button(null, null, VisUI.getSkin().getDrawable("button-down-50")).apply {
                     val unlocked =
-                        !Const.IS_RELEASE
+                        !Config.IS_RELEASE
                             || skin.name == Skins.lucky.name
                             || skin.name == Skins.saberStrike.name
                             || skin.name == Skins.saberBald.name

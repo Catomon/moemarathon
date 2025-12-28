@@ -3,7 +3,7 @@ package com.github.catomon.moemarathon
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 
-object Const {
+object Config {
     const val APP_NAME = "Moe Marathon"
     const val APP_VER = "1.5"
     const val IS_RELEASE = true

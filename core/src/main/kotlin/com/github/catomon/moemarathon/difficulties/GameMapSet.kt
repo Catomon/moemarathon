@@ -9,7 +9,7 @@ const val NON_STOP = "Non-Stop"
 data class GameMapSet(
     val name: String,
     val maps: List<String>,
-    val noteSpawnTime: Float,
+    val noteSpawnTime: Float = 1f,
     val noHoldNotes: Boolean = true,
     val noAim: Boolean = false,
     val ranks: MutableMap<String, String> = mutableMapOf(),

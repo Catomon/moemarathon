@@ -7,8 +7,10 @@ data class OsuBeatmap(
     val sections: ArrayMap<String, ArrayMap<String, String>> = ArrayMap(),
 ) {
 
-    val audioFileName: String get() = sections["General"]["AudioFilename"] ?: throw IllegalStateException("audioFileName == null")
-    val backgroundFileName: String get() = sections["Events"]["0"]?.split(",")?.getOrNull(2)?.removeSurrounding("\"") ?: "bg.jpg"
+    val audioFileName: String
+        get() = sections["General"]["AudioFilename"] ?: throw IllegalStateException("audioFileName == null")
+    val backgroundFileName: String
+        get() = sections["Events"]["0"]?.split(",")?.getOrNull(2)?.removeSurrounding("\"") ?: "bg.jpg"
 
     val sliderMultiplier get() = sections["Difficulty"]["SliderMultiplier"].toFloat()
 
@@ -25,4 +27,6 @@ data class HitObject(
     val hitSound: Int = 0,
     val objectParams: List<String> = emptyList(),
     val hitSample: String = "",
+    val comboIndex: Int = 0,
+    val isNewCombo: Boolean = false,
 )

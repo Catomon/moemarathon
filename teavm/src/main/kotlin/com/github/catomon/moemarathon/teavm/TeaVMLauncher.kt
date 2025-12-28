@@ -4,7 +4,7 @@ package com.github.catomon.moemarathon.teavm
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Logger
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GameMain
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
@@ -23,10 +23,10 @@ fun main() {
         height = 0
     }
 
-    Const.IS_WEBAPP = true
+    Config.IS_WEBAPP = true
 
     val onGameCreate = {
-        if (!Const.IS_RELEASE)
+        if (!Config.IS_RELEASE)
             Gdx.app.logLevel = Logger.INFO
 
 //        platformSpecific = object : IPlatformSpecific {

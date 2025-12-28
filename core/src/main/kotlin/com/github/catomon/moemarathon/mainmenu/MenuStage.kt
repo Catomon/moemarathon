@@ -72,7 +72,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 menuScreen.changeStage(SkinsStage())
             })
             row()
-            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
+            if (!Config.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 addAction(OneAction {
                     if (userSave.unlockedAllMaps == 0) {
                         addActor(VisWindow("'Other Maps' unlocked!").also { window ->
@@ -125,8 +125,8 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         }
 
         createTable().apply {
-            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Const.APP_VER).apply {
+            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Config.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
             row()
@@ -148,7 +148,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 menuScreen.changeStage(MapSelectStage(UnlockedOnlyPlaySets))
             })
             row()
-//            if (!Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
+//            if (!Config.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
 //                addAction(OneAction {
 //                    if (userSave.unlockedAllMaps == 0) {
 //                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
@@ -183,7 +183,7 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             add(newBigButton("Achievements").addChangeListener {
                 menuScreen.changeStage(AchievementsStage())
             })
-//            if (!Const.IS_WEBAPP) {
+//            if (!Config.IS_WEBAPP) {
                 row()
                 add(newBigButton("Leaderboard").addChangeListener {
                     menuScreen.changeStage(LeaderboardStage())

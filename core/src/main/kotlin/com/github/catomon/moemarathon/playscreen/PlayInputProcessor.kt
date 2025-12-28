@@ -2,7 +2,7 @@ package com.github.catomon.moemarathon.playscreen
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
@@ -24,7 +24,7 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
             }
         }
 
-        if (!Const.IS_RELEASE) {
+        if (!Config.IS_RELEASE) {
             when (keycode) {
                 Input.Keys.W -> {
                     playScreen.hitZoneCircleSize += 0.05f

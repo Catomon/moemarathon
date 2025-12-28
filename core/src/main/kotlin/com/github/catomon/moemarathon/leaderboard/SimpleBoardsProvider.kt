@@ -3,7 +3,7 @@ package com.github.catomon.moemarathon.leaderboard
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Net
 import com.badlogic.gdx.utils.JsonReader
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.platformSpecific
 import com.github.catomon.moemarathon.utils.OnResult
 import com.github.catomon.moemarathon.utils.gson
@@ -13,7 +13,7 @@ class SimpleBoardsProvider : LeaderboardProvider {
     private val baseUrl = "https://api.simpleboards.dev/api"
 
     override fun requestLeaderboard(onResult: OnResult<Leaderboard?>) {
-        if (Const.IS_WEBAPP) {
+        if (Config.IS_WEBAPP) {
             platformSpecific?.fetchLeaderboard(onResult) ?: run {
                 fetchLeaderboard(onResult)
             }

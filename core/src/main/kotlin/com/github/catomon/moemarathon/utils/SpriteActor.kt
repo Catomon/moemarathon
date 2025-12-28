@@ -31,4 +31,8 @@ open class SpriteActor(
     override fun rotationChanged() {
         sprite.rotation = rotation
     }
+
+    override fun scaleChanged() {
+        sprite.setScale(scaleX, scaleY)
+    }
 }

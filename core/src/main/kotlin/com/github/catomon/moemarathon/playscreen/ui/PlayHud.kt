@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.MenuStage
@@ -66,7 +66,7 @@ class PlayHud(private val playScreen: PlayScreen) :
     }
 
     init {
-        if (Const.IS_MOBILE)
+        if (Config.IS_MOBILE)
             addActor(mobileButtonsLayout)
 
         addActor(VisTable().apply {

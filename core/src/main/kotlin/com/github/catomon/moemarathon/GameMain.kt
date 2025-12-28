@@ -39,7 +39,7 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
 
         assets = Assets()
 
-        if (Const.IS_DESKTOP)
+        if (Config.IS_DESKTOP)
             setMouseCursor()
 
         assets.loadUI()
@@ -49,7 +49,7 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
             if (System.getProperty("os.name").lowercase().contains("win")) {
                 if (!GamePref.fullscreen) {
-                    Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
+                    Gdx.graphics.setWindowedMode(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT)
                 } else {
                     Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
                 }
@@ -76,13 +76,13 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f)
         super.render()
 
-        if (!Const.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
+        if (!Config.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
             AudioManager.stopMapMusic()
             setScreen(menuScreen)
             menuScreen.changeStage(MenuStage())
         }
 
-        if (!Const.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
+        if (!Config.IS_RELEASE && Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
             GamePref.userSave = UserSave(
                 "DEBUG_PLAYER",
                 999999999,
@@ -102,12 +102,12 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
             )
         ) {
             if (Gdx.graphics.isFullscreen)
-                Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
+                Gdx.graphics.setWindowedMode(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT)
             else
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
         }
 
-        if (!Const.IS_MOBILE) {
+        if (!Config.IS_MOBILE) {
             val batch = when (val screen = screen) {
                 is MenuScreen -> screen.stage?.batch
                 is PlayScreen -> screen.batch

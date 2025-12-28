@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Queue
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.map.osu.OsuBeatmap
 import com.github.catomon.moemarathon.map.osu.OsuParser
 import com.github.catomon.moemarathon.map.osu.hitObjectToNotePosition
@@ -23,7 +23,7 @@ object MapsManager {
             }
 
             Application.ApplicationType.Desktop -> {
-                if (Const.IS_RELEASE)
+                if (Config.IS_RELEASE)
                     collectOsuFilesFromFolder(Gdx.files.local("maps/"))
                 else
                     collectOsuFilesFromFolder(Gdx.files.internal("maps/"))

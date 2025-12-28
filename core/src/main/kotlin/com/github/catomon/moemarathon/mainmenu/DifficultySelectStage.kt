@@ -1,7 +1,7 @@
 package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.graphics.Color
-import com.github.catomon.moemarathon.Const
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
@@ -26,15 +26,15 @@ class DifficultySelectStage() :
     )
 
     private var holdNotesOn = false
-    private var noAimOn = false //if (Const.IS_MOBILE) true else false
+    private var noAimOn = false //if (Config.IS_MOBILE) true else false
     private var pointerGameplay = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
     init {
         createTable().apply {
-            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Const.APP_VER).apply {
+            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Config.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
             center().top()
@@ -106,7 +106,7 @@ class DifficultySelectStage() :
             fun updateScoreLabel() {
                 var scoreValue = 0
                 if (holdNotesOn) scoreValue += 10
-                if (noAimOn) scoreValue -= if (Const.IS_MOBILE) 0 else 15
+                if (noAimOn) scoreValue -= if (Config.IS_MOBILE) 0 else 15
                 scoreLabel.setText(if (scoreValue == 0) "" else (if (scoreValue > 0) "+" else "") + "$scoreValue% score")
                 scoreLabel.color = if (scoreValue > 0) Color.GREEN else Color.RED
             }
@@ -159,7 +159,7 @@ class DifficultySelectStage() :
 
     private fun chooseDiff(diff: GameMapSet) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
-            PlayScreen.Config.gameplay = if (pointerGameplay) PlayScreen.Gameplay.POINTER else PlayScreen.Config.defaultGameplay
+            PlayScreen.GameplayConfig.gameplay = if (pointerGameplay) PlayScreen.Gameplay.POINTER else PlayScreen.GameplayConfig.defaultGameplay
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),

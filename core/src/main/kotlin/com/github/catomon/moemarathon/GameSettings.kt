@@ -2,7 +2,7 @@ package com.github.catomon.moemarathon
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
-import com.github.catomon.moemarathon.Const.IS_MOBILE
+import com.github.catomon.moemarathon.Config.IS_MOBILE
 import com.github.catomon.moemarathon.utils.*
 import java.lang.Exception
 import java.util.*
@@ -36,7 +36,7 @@ object GamePref {
         }
 
     val clientId: String =
-        if (!Const.IS_RELEASE)
+        if (!Config.IS_RELEASE)
             UUID.randomUUID().toString()
         else
             if (prefs.contains("client_id"))

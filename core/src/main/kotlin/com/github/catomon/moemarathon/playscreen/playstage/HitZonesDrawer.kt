@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.playscreen.getHitZoneKeyById
@@ -13,7 +12,6 @@ import com.github.catomon.moemarathon.utils.*
 import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 
 class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
@@ -25,9 +23,9 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         val circleRadius = playScreen.hitZoneCircleRadius
-        val angleBetweenParts = 360f / PlayScreen.Config.hitZonesAmount
+        val angleBetweenParts = 360f / PlayScreen.GameplayConfig.hitZonesAmount
 
-        for (i in 0 until PlayScreen.Config.hitZonesAmount) {
+        for (i in 0 until PlayScreen.GameplayConfig.hitZonesAmount) {
             val angle = i * angleBetweenParts
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
@@ -53,10 +51,10 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
             hitZoneTexture.draw(batch)
 
-            if (PlayScreen.Config.gameplay == PlayScreen.Gameplay.POINTER) {
+            if (PlayScreen.GameplayConfig.gameplay == PlayScreen.Gameplay.POINTER) {
                 keyName.setText("*")
             } else {
-                when (PlayScreen.Config.hitZonesAmount) {
+                when (PlayScreen.GameplayConfig.hitZonesAmount) {
                     6 -> {
                         keyName.setText(
                             getHitZoneKeyById(i)
@@ -84,21 +82,10 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
     /* animates a hit zone */
     fun animateHitZone(hitZoneId: Int) {
-//        if (PlayScreen.Config.hitZonesAmount <= 9) {
+//        if (PlayScreen.GameplayConfig.hitZonesAmount <= 9) {
             hitZonesStates[hitZoneId - 1] = 1f
 //        }
 
-        val camera = playScreen.camera
-        playScreen.playStage.addActor(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
-            val size = Random.nextFloat()
-            setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
-            setPosition(camera.cornerX() + Random.nextFloat() * camera.viewportWidth, camera.cornerY() - height / 2)
-            addAction(
-                Actions.sequence(
-                    Actions.parallel(Actions.moveBy(0f, 256f, 1f), Actions.fadeOut(1f)),
-                    Actions.removeActor()
-                )
-            )
-        })
+        playScreen.playStarEffect()
     }
 }

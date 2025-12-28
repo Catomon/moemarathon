@@ -20,8 +20,8 @@ class SettingsStage() :
 
     init {
         createTable().apply {
-            add(newLabel(Const.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Const.APP_VER).apply {
+            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
+            add(newLabel(Config.APP_VER).apply {
                 setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
             }).bottom().padLeft(6f).padBottom(6f)
             center().top()
@@ -31,7 +31,7 @@ class SettingsStage() :
             add(newTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
                 button.addChangeListener {
                     if (Gdx.graphics.isFullscreen) {
-                        Gdx.graphics.setWindowedMode(Const.WINDOW_WIDTH, Const.WINDOW_HEIGHT)
+                        Gdx.graphics.setWindowedMode(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT)
                         button.setText("(F11) Fullscreen")
                         fullscreen = false
                     } else {
@@ -64,7 +64,7 @@ class SettingsStage() :
                 }
             }).width(250f)
             row()
-            if (Const.IS_DESKTOP && !Const.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
+            if (Config.IS_DESKTOP && !Config.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 add(newTextButton("Open other maps folder").addChangeListener {
                     try {
                         platformSpecific?.desktopOpenMapsFolder()
