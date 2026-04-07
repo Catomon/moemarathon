@@ -193,17 +193,22 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             add(
                 VisTable().also {
                     val textField = VisTextField(userSave.name, "small")
-                    it.add(textField).width(300f)
-                    it.add(
-                        newTextButton("Save").apply {
-                            label.setFontScale(0.5f)
-                            addChangeListener {
-                                if (textField.isEmpty) return@addChangeListener
-                                GamePref.userSave = GamePref.userSave.copy(name = textField.text.take(24).replace("*", "_").replace(" ", "_"))
-                                GamePref.save()
-                            }
+                    val textButton =       newTextButton("Save").apply {
+                        label.setFontScale(0.5f)
+                        addChangeListener { btn ->
+                            if (textField.isEmpty) return@addChangeListener
+                            GamePref.userSave = GamePref.userSave.copy(name = textField.text.take(24).replace("*", "_").replace(" ", "_"))
+                            GamePref.save()
+                            btn.isDisabled = true
+                            btn.setText("Ok!")
                         }
-                    )
+                    }
+                    textField.addChangeListener {
+                        textButton.isDisabled = false
+                        textButton.setText("Save")
+                    }
+                    it.add(textField).width(300f)
+                    it.add(textButton)
                 }
             ).fillX().align(Align.center)
         }

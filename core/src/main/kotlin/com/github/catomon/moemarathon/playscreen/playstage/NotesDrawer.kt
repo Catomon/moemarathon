@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.github.catomon.moemarathon.Skins
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.PlayScreen
@@ -18,6 +19,7 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteSpawnTime get() = playScreen.noteSpawnTime
     private val noteRadius get() = playScreen.noteRadius
 
+    private val skin = playScreen.skin
     private val noteName = playScreen.skin.note
     private val noteOuterTex =
         if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_outer")
@@ -57,13 +59,22 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteInnerTexTsuka =
         if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_inner_tsuka")
 
-    private val rotationColors = listOf(
-        Sprite(noteOuterTexKona) to Sprite(noteInnerTexKona),
-        Sprite(noteOuterTex) to Sprite(noteInnerTex),
-        Sprite(noteOuterTexYuki) to Sprite(noteInnerTexYuki),
-        Sprite(noteOuterTexTsuka) to Sprite(noteInnerTexTsuka),
-    )
-
+    private val rotationColors =
+        if (skin == Skins.lucky) {
+            listOf(
+                Sprite(noteOuterTexKona) to Sprite(noteInnerTexKona),
+                Sprite(noteOuterTex) to Sprite(noteInnerTex),
+                Sprite(noteOuterTexYuki) to Sprite(noteInnerTexYuki),
+                Sprite(noteOuterTexTsuka) to Sprite(noteInnerTexTsuka),
+            )
+        } else {
+            listOf(
+                Sprite(noteOuterTex) to Sprite(enemy0),
+                Sprite(noteOuterTex) to Sprite(enemy1),
+                Sprite(noteOuterTex) to Sprite(enemy2),
+            )
+        }
+    
     private val applyColor = false
     private val drawEnemies = true
 

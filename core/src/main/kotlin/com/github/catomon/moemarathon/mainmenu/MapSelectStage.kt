@@ -79,7 +79,9 @@ class MapSelectStage(
                     (if (mapFileNames.isEmpty()) {
                         if (playSets == UnlockedOnlyPlaySets) {
                             val userSaveMapRanks = GamePref.userSave.mapRanks
+                            val normalMaps = DefaultMapSets.NormalMarathon.maps
                             MapsManager.collectMapFiles().map { GameMap(it) }
+                                // (userSaveMapRanks.contains(it.file.name()) || normalMaps.contains(it.file.name()))
                                 .filter { userSaveMapRanks.contains(it.file.name()) && (marathonMaps.contains(it.file.name()) || it.file.parent().parent()
                                     .name() == "marathon") }
                         } else {

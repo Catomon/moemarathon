@@ -100,7 +100,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             playSets.ranks[mapName] = rank
             playSets.mapScores[mapName] = stats.score
 
-            val minRank = "C"
+            val minRank = Config.MIN_RANK
             if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank)) {
                 createTable(newTextButton("Restart>").addChangeListener {
                     this@StatsStage.fadeInAndThen(1f) {

@@ -31,10 +31,7 @@ import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisWindow
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 import kotlin.random.Random
 
 class PlayScreen(
@@ -308,9 +305,19 @@ class PlayScreen(
         val timeLeft = (timing - time) / noteSpawnTime
         val cameraX = camera.position.x
         val cameraY = camera.position.y
-        val degree = 360f * initialPosition
+        var angle = 360f * initialPosition
+        if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
+        if (angle != 0f && angle != 180f) {
+            when {
+                angle < 90f -> angle -= 21f
+                angle > 270f -> angle += 21f
+                angle > 180f -> angle -= 21f
+                angle > 90f -> angle += 21f
+            }
+        }
+
         val distance = hitZoneCircleRadius + (hitZoneCircleRadius * 2 * timeLeft)
-        val radian = Math.toRadians(degree.toDouble()).toFloat()
+        val radian = Math.toRadians(angle.toDouble()).toFloat()
         val noteX = cameraX + distance * cos(radian)
         val noteY = cameraY + distance * sin(radian)
 
@@ -368,7 +375,8 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int) {
-        val note = noteMap.chunks.lastOrNull()?.notes?.lastOrNull() ?: return
+        val notes = noteMap.chunks.lastOrNull()?.notes
+        val note = notes?.lastOrNull() ?: return
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
         val clickerPos = calcClickerPos(Vector2())
@@ -401,13 +409,13 @@ class PlayScreen(
             if (isHoldingNote) {
                 isHoldingNote = false
 
-                onNoteEvent(NoteListener.MISS, note)
+                onNoteEvent(NoteListener.MISS, notes.removeLast())
             } else {
                 if (note.timing - time > noteSpawnTime / 4f) {
                     onNoteEvent(NoteListener.TOO_EARLY, note)
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
-                        onNoteEvent(NoteListener.MISS, note)
+                        onNoteEvent(NoteListener.MISS, notes.removeLast())
                     } else {
                         onNoteEvent(NoteListener.TOO_FAR, note)
                     }
@@ -521,16 +529,42 @@ class PlayScreen(
 
     fun playStarEffect() {
         val camera = this.camera
-        this.playStage.addActorBeforeNotes(SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
-            val size = Random.nextFloat()
-            setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
-            setPosition(camera.cornerX() + Random.nextFloat() * camera.viewportWidth, camera.cornerY() - height / 2)
-            addAction(
-                Actions.sequence(
-                    Actions.parallel(Actions.moveBy(0f, 256f, 1f), Actions.fadeOut(1f), Actions.scaleTo(0f, 0f, 1f)),
-                    Actions.removeActor()
+        this.playStage.addActorBeforeNotes(
+            SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
+                val size = Random.nextFloat()
+                setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
+
+                val biased = biasedEdge01()
+                val x = camera.cornerX() + biased * camera.viewportWidth
+
+                val distFromCenter = abs(biased - 0.5f)
+
+                val edgeFactor = (distFromCenter * 2f).pow(2f)
+
+                val baseMoveY = 256f
+                val extraMoveY = 256f * edgeFactor
+                val totalMoveY = baseMoveY + extraMoveY
+
+                setPosition(x, camera.cornerY() - height / 2)
+
+                addAction(
+                    Actions.sequence(
+                        Actions.parallel(
+                            Actions.moveBy(0f, totalMoveY, 1f),
+                            Actions.fadeOut(1f),
+                            Actions.scaleTo(0f, 0f, 1f)
+                        ),
+                        Actions.removeActor()
+                    )
                 )
-            )
-        })
+            }
+        )
+    }
+
+    private fun biasedEdge01(power: Float = 1.5f): Float {
+        val u = Random.nextFloat()
+        val d = u - 0.5f
+        val s = sign(d) * (1f - (1f - 2f * abs(d)).pow(power))
+        return 0.5f + 0.5f * s
     }
 }

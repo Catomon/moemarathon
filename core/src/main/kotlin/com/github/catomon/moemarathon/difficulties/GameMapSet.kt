@@ -64,7 +64,6 @@ object DefaultMapSets {
         HARD,
         listOf(
             "Lucky Star Cast - Hamatte Sabotte Oh My Ga! (Short Ver.) (James) [Normal].osu",
-
             "Endou Aya - Moe Yousotte nan desu ka (Alice Margatroid) [Normal].osu",
             "Fukuhara Kaori - Ne Ni Ge de Risetto! (xierbaliti) [Normal].osu",
             "Lucky Star Cast - Nande Dattakke Idol (Short ver.) (Vicho-kun) [Normal].osu",

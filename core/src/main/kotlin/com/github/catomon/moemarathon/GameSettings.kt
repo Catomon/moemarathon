@@ -6,6 +6,8 @@ import com.github.catomon.moemarathon.Config.IS_MOBILE
 import com.github.catomon.moemarathon.utils.*
 import java.lang.Exception
 import java.util.*
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 fun GamePref.overridePrefs() {
     musicVolume = 0f
@@ -87,7 +89,7 @@ object GamePref {
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
-            } ?: newUserSave("Player")
+            } ?: newUserSave("Player" + Random.nextInt(9999))
         }
         set(value) {
             prefs.putString("userSave", encryptData(value.toGson(), generateSecretKey("moe")))

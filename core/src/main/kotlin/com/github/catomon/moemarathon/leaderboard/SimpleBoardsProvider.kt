@@ -24,7 +24,7 @@ class SimpleBoardsProvider : LeaderboardProvider {
 
     private fun fetchLeaderboard(onResult: OnResult<Leaderboard?>) {
         val httpRequest = Net.HttpRequest("GET").apply {
-            url = "$baseUrl/leaderboards/$boardId/entries"
+            url = "$baseUrl/leaderboards/$simpleBoardsBoardId/entries"
             setHeader("x-api-key", simpleBoardsApiKey)
         }
 
@@ -37,7 +37,7 @@ class SimpleBoardsProvider : LeaderboardProvider {
             setHeader("x-api-key", simpleBoardsApiKey)
             content = """
                 {
-                  "leaderboardId": "$boardId",
+                  "leaderboardId": "$simpleBoardsBoardId",
                   "playerId": "",
                   "playerDisplayName": "$playerName",
                   "score": "$score",

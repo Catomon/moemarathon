@@ -19,4 +19,6 @@ object Config {
     const val SCORE_GAIN_HOLD_NOTE = 900
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
+
+    const val MIN_RANK = "F"
 }

@@ -26,7 +26,18 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
         val angleBetweenParts = 360f / PlayScreen.GameplayConfig.hitZonesAmount
 
         for (i in 0 until PlayScreen.GameplayConfig.hitZonesAmount) {
-            val angle = i * angleBetweenParts
+            var angle = i * angleBetweenParts
+
+            if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
+            if (angle != 0f && angle != 180f) {
+                when {
+                    angle < 90f -> angle -= 21f
+                    angle > 270f -> angle += 21f
+                    angle > 180f -> angle -= 21f
+                    angle > 90f -> angle += 21f
+                }
+            }
+
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
 
