@@ -1,8 +1,6 @@
 package com.github.catomon.moemarathon.mainmenu
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.Align
-import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.leaderboard.Leaderboard
@@ -12,7 +10,6 @@ import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.utils.logErr
 import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.widgets.addChangeListener
-import com.github.catomon.moemarathon.widgets.newLabel
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
@@ -28,13 +25,7 @@ class LeaderboardStage() : BgStage() {
     }
 
     init {
-        createTable().apply {
-            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Config.APP_VER).apply {
-                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
-            }).bottom().padLeft(6f).padBottom(6f)
-            center().top()
-        }
+        addGameNameLabel()
 
         fun VisTable.addScore(modeName: String, playerName: String, score: Int, rank: String) {
             val fontScale = 0.50f

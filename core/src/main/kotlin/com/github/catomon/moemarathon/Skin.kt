@@ -92,7 +92,7 @@ object Skins {
     )
 
     val skins: List<Skin> = listOf(
-        lucky, saberBald, saberStrike, komugi, bekky
+        lucky, komugi // saberBald, saberStrike, bekky
     )
 
     fun getSkin(name: String): Skin? {

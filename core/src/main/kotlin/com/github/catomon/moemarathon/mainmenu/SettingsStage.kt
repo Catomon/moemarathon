@@ -1,11 +1,9 @@
 package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
-import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisSlider
 
@@ -19,13 +17,7 @@ class SettingsStage() :
     private var fullscreen = false
 
     init {
-        createTable().apply {
-            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Config.APP_VER).apply {
-                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
-            }).bottom().padLeft(6f).padBottom(6f)
-            center().top()
-        }
+        addGameNameLabel()
 
         createTable().apply {
             add(newTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->

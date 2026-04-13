@@ -1,6 +1,5 @@
 package com.github.catomon.moemarathon.mainmenu
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
@@ -25,14 +24,7 @@ class SkinsStage() :
     private val userSave = GamePref.userSave
 
     init {
-        createTable().apply {
-            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Config.APP_VER).apply {
-                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
-            }).bottom().padLeft(6f).padBottom(6f)
-            center().top()
-        }
-
+        addGameNameLabel()
 
         createTable().apply {
             name = "skins"

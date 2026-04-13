@@ -1,12 +1,12 @@
 package com.github.catomon.moemarathon.mainmenu
 
-import com.badlogic.gdx.graphics.Color
-import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
-import com.github.catomon.moemarathon.widgets.newLabel
-import com.kotcrab.vis.ui.widget.*
+import com.kotcrab.vis.ui.widget.LinkLabel
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisScrollPane
+import com.kotcrab.vis.ui.widget.VisTable
 
 class CreditsStage() :
     BgStage() {
@@ -14,13 +14,7 @@ class CreditsStage() :
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
     init {
-        createTable().apply {
-            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Config.APP_VER).apply {
-                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
-            }).bottom().padLeft(6f).padBottom(6f)
-            center().top()
-        }
+        addGameNameLabel()
 
         fun VisTable.addLinkLabel(text: String, link: String = "") {
             row()
@@ -70,11 +64,7 @@ class CreditsStage() :
             row()
             addLinkLabel("Osu SaberStrike skin", "https://sbrstrkkdwmdr.github.io/skins/main-skins.html")
             row()
-            addLinkLabel("logo, lucky skin, komugi skin, bekky skin by carroteater9000", "")
-            row()
             add("Me:").padTop(50f)
-            row()
-            addLinkLabel("ctmn.itch.io", "https://ctmn.itch.io/")
             row()
             addLinkLabel("github.com/Catomon", "https://github.com/Catomon/")
         }

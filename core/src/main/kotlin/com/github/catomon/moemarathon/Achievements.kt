@@ -38,21 +38,21 @@ object Achievements {
                 false
             }
         },
-        Achievement(
-            "a_any_map_bekky",
-            "Get A rank on 'Ichijo - Roulette Roulette' map (unlocks 'bekky' skin)",
-            Achievement.Type.MapComplete
-        ) {
-            if (it.statsStage == null) return@Achievement false
-            if (it.statsStage.playScreen.gameMap.file.name().startsWith("Ichijo - Roulette Roulette (ztrot)")
-                && (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
-            ) {
-                unlockSkin(Skins.bekky)
-                true
-            } else {
-                false
-            }
-        },
+//        Achievement(
+//            "a_any_map_bekky",
+//            "Get A rank on 'Ichijo - Roulette Roulette' map (unlocks 'bekky' skin)",
+//            Achievement.Type.MapComplete
+//        ) {
+//            if (it.statsStage == null) return@Achievement false
+//            if (it.statsStage.playScreen.gameMap.file.name().startsWith("Ichijo - Roulette Roulette (ztrot)")
+//                && (it.statsStage.mapResult) >= RankUtil.getRankInt("A")
+//            ) {
+//                unlockSkin(Skins.bekky)
+//                true
+//            } else {
+//                false
+//            }
+//        },
         Achievement(
             "complete_marathon",
             "Complete any Marathon (unlocks 'Other Maps')",

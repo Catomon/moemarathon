@@ -550,9 +550,9 @@ class PlayScreen(
                 addAction(
                     Actions.sequence(
                         Actions.parallel(
-                            Actions.moveBy(0f, totalMoveY, 1f),
+                            Actions.moveBy(0f, totalMoveY, 1.25f),
                             Actions.fadeOut(1f),
-                            Actions.scaleTo(0f, 0f, 1f)
+                            Actions.scaleTo(0f, 0f, 1.75f)
                         ),
                         Actions.removeActor()
                     )

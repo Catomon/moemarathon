@@ -1,6 +1,7 @@
 package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
@@ -32,13 +33,7 @@ class DifficultySelectStage() :
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
     init {
-        createTable().apply {
-            add(newLabel(Config.APP_NAME).apply { color = Color(0.89f, 0.455f, 0.667f, 1f) })
-            add(newLabel(Config.APP_VER).apply {
-                setFontScale(0.35f); color = Color(0.89f, 0.455f, 0.667f, 1f)
-            }).bottom().padLeft(6f).padBottom(6f)
-            center().top()
-        }
+        addGameNameLabel()
 
         val userSave = GamePref.userSave
         createTable().apply {
