@@ -35,6 +35,4 @@ class BackgroundActor(pSprite: Sprite? = null) : Actor() {
         sprite.setPositionByCenter(stage.worldCenterX, stage.worldCenterY)
         sprite.draw(batch)
     }
-
-
 }

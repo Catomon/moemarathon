@@ -107,4 +107,19 @@ object OsuParser {
 
         return osuBeatmap
     }
+
+    fun parseTimingPoints(timingPoints: List<String>): List<TimingPoint> {
+        return timingPoints.mapNotNull { line ->
+            try {
+                val parts = line.split(',')
+                if (parts.size < 7) return@mapNotNull null
+                val time = parts[0].toIntOrNull() ?: return@mapNotNull null
+                val beatLength = parts[1].toDoubleOrNull() ?: return@mapNotNull null
+                val uninherited = parts[6] == "1"
+                TimingPoint(time / 1000f, beatLength, uninherited)
+            } catch (e: Exception) {
+                null
+            }
+        }.sortedBy { it.time }
+    }
 }

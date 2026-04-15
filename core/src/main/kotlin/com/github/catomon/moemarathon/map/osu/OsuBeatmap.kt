@@ -18,15 +18,3 @@ data class OsuBeatmap(
 
     val hitObjects get() = sections["HitObjects"].map { it.value }
 }
-
-data class HitObject(
-    val x: Int,
-    val y: Int,
-    val time: Int,
-    val type: Int,
-    val hitSound: Int = 0,
-    val objectParams: List<String> = emptyList(),
-    val hitSample: String = "",
-    val comboIndex: Int = 0,
-    val isNewCombo: Boolean = false,
-)

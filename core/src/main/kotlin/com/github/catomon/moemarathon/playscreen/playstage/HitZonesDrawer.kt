@@ -15,6 +15,7 @@ import kotlin.math.sin
 
 class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
+    private val playStage get() = playScreen.playStage
     private val noteRadius get() = playScreen.noteRadius
     private val hitZoneTexture = Sprite(assets.mainAtlas.findRegion("hit_zone"))
     private val keyName = newLabel("?")
@@ -97,6 +98,6 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZonesStates[hitZoneId - 1] = 1f
 //        }
 
-        playScreen.playStarEffect()
+        playStage.playStarEffect()
     }
 }

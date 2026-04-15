@@ -1,6 +1,8 @@
 package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect
@@ -19,6 +21,11 @@ import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.ui.actions.AccelAction
 import com.github.catomon.moemarathon.utils.SpriteActor
 import com.github.catomon.moemarathon.utils.copyAndScale
+import com.github.catomon.moemarathon.utils.cornerX
+import com.github.catomon.moemarathon.utils.cornerY
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.random.Random
 
 
@@ -46,6 +53,8 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     val hitZonesDrawer = HitZonesDrawer(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
+    val beatLight = BackgroundActor(Sprite(Texture(FileHandle("textures/beatlight.png"))))
+
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
     private val noteHit = assets.mainAtlas.findRegion(playScreen.skin.pop)
 
@@ -59,6 +68,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
 
     init {
         addActor(background)
+        addActor(beatLight)
         addActor(centerActor)
         addActor(hitZonesDrawer)
         addActor(notesDrawer)
@@ -69,6 +79,8 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         camera.update()
 
         if (!root.isVisible) return
+
+        beatLight.color.a = 0.4f + playScreen.beat * .4f
 
         val batch = this.batch
         batch.projectionMatrix = camera.combined
@@ -145,6 +157,47 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         }
     }
 
+    fun playStarEffect() {
+        val camera = this.playScreen.camera
+        this.addActorBeforeNotes(
+            SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
+                val size = Random.nextFloat()
+                setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
+
+                val biased = biasedEdge01()
+                val x = camera.cornerX() + biased * camera.viewportWidth
+
+                val distFromCenter = abs(biased - 0.5f)
+
+                val edgeFactor = (distFromCenter * 2f).pow(2f)
+
+                val baseMoveY = 256f
+                val extraMoveY = 256f * edgeFactor
+                val totalMoveY = baseMoveY + extraMoveY
+
+                setPosition(x, camera.cornerY() - height / 2)
+
+                addAction(
+                    Actions.sequence(
+                        Actions.parallel(
+                            Actions.moveBy(0f, totalMoveY, 1.25f),
+                            Actions.fadeOut(1f),
+                            Actions.scaleTo(0f, 0f, 1.75f)
+                        ),
+                        Actions.removeActor()
+                    )
+                )
+            }
+        )
+    }
+
+    private fun biasedEdge01(power: Float = 1.5f): Float {
+        val u = Random.nextFloat()
+        val d = u - 0.5f
+        val s = sign(d) * (1f - (1f - 2f * abs(d)).pow(power))
+        return 0.5f + 0.5f * s
+    }
+
     fun addActorBeforeNotes(actor: Actor) {
         root.addActorBefore(notesDrawer, actor)
     }
@@ -153,5 +206,6 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
         super.dispose()
 
         bgTexture.dispose()
+        beatLight.sprite?.texture?.dispose()
     }
 }

@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.Queue
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_HOLD_NOTE
@@ -24,15 +25,17 @@ import com.github.catomon.moemarathon.difficulties.GameMapSet
 import com.github.catomon.moemarathon.mainmenu.StatsStage
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
+import com.github.catomon.moemarathon.map.osu.OsuParser
+import com.github.catomon.moemarathon.map.osu.TimingPoint
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
-import com.github.catomon.moemarathon.utils.*
+import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisWindow
 import kotlin.math.*
-import kotlin.random.Random
 
 class PlayScreen(
     val gameMap: GameMap,
@@ -64,6 +67,11 @@ class PlayScreen(
     val batch = SpriteBatch()
 
     val noteMap = MapsManager.createNoteMap(gameMap.osuBeatmap)
+    val timingPoints = Queue(1, TimingPoint::class.java).apply {
+        OsuParser.parseTimingPoints(gameMap.osuBeatmap.timingPoints).sortedBy { it.time }.forEach {
+            this.addFirst(it)
+        }
+    }
 
     var mapOffset = -1.5f
 
@@ -95,6 +103,12 @@ class PlayScreen(
 
     var isHoldingNote = false
     var holdNoteButton = -1
+
+    var beat = 0f
+        private set
+    var beatLength: Double = 1000.0;
+    var activeBeatStartTime = 0f
+        private set
 
     private val tempVec3 = Vector3()
     fun getPointer(): Vector3 {
@@ -228,6 +242,9 @@ class PlayScreen(
             action = null
         }
 
+        updateTimingPoint()
+        updateBeat()
+
         updateNotes()
 
         playStage.act()
@@ -236,9 +253,29 @@ class PlayScreen(
         val mod = stats.combo / 200f
         val starPerMs = 1f / min(30f, max(1f, mod * 30f))
         if (starEffectTime > starPerMs) {
-            playStarEffect()
+            playStage.playStarEffect()
             starEffectTime = 0f;
         }
+    }
+
+    private fun updateTimingPoint() {
+        timingPoints.lastOrNull()?.let { tp ->
+            if (tp.uninherited && time >= tp.time) {
+                beatLength = tp.beatLength
+                activeBeatStartTime = tp.time
+            }
+            if (time > tp.time) {
+                timingPoints.removeLast()
+                return@let
+            }
+        }
+    }
+
+    private fun updateBeat() {
+        val elapsedMs = ((time - activeBeatStartTime) * 1000.0).coerceAtLeast(0.0)
+        val phase = (elapsedMs / beatLength) % 1.0
+        val pulse = (1.0 - phase)
+        beat = (0f + 1f * pulse * pulse).toFloat()
     }
 
     private fun updateNotes() {
@@ -306,15 +343,15 @@ class PlayScreen(
         val cameraX = camera.position.x
         val cameraY = camera.position.y
         var angle = 360f * initialPosition
-        if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
-        if (angle != 0f && angle != 180f) {
-            when {
-                angle < 90f -> angle -= 21f
-                angle > 270f -> angle += 21f
-                angle > 180f -> angle -= 21f
-                angle > 90f -> angle += 21f
+        if (GameplayConfig.hitZonesAmount <= 6)
+            if (angle != 0f && angle != 180f) {
+                when {
+                    angle < 90f -> angle -= 21f
+                    angle > 270f -> angle += 21f
+                    angle > 180f -> angle -= 21f
+                    angle > 90f -> angle += 21f
+                }
             }
-        }
 
         val distance = hitZoneCircleRadius + (hitZoneCircleRadius * 2 * timeLeft)
         val radian = Math.toRadians(angle.toDouble()).toFloat()
@@ -525,46 +562,5 @@ class PlayScreen(
 
         playHud.viewport.update(width, height, true)
         playStage.viewport.update(width, height, true)
-    }
-
-    fun playStarEffect() {
-        val camera = this.camera
-        this.playStage.addActorBeforeNotes(
-            SpriteActor(Sprite(assets.mainAtlas.findRegion("star_big"))).apply {
-                val size = Random.nextFloat()
-                setSize(size * (sprite.width / 3) + 64, size * (sprite.height / 3) + 64)
-
-                val biased = biasedEdge01()
-                val x = camera.cornerX() + biased * camera.viewportWidth
-
-                val distFromCenter = abs(biased - 0.5f)
-
-                val edgeFactor = (distFromCenter * 2f).pow(2f)
-
-                val baseMoveY = 256f
-                val extraMoveY = 256f * edgeFactor
-                val totalMoveY = baseMoveY + extraMoveY
-
-                setPosition(x, camera.cornerY() - height / 2)
-
-                addAction(
-                    Actions.sequence(
-                        Actions.parallel(
-                            Actions.moveBy(0f, totalMoveY, 1.25f),
-                            Actions.fadeOut(1f),
-                            Actions.scaleTo(0f, 0f, 1.75f)
-                        ),
-                        Actions.removeActor()
-                    )
-                )
-            }
-        )
-    }
-
-    private fun biasedEdge01(power: Float = 1.5f): Float {
-        val u = Random.nextFloat()
-        val d = u - 0.5f
-        val s = sign(d) * (1f - (1f - 2f * abs(d)).pow(power))
-        return 0.5f + 0.5f * s
     }
 }
