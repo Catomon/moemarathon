@@ -71,13 +71,13 @@ object GamePref {
         }
 
     var soundVolume: Float
-        get() = prefs.getFloat("sound_volume", 0.25f)
+        get() = prefs.getFloat("sound_volume", 0.5f)
         set(value) {
             prefs.putFloat("sound_volume", value)
         }
 
     var musicVolume: Float
-        get() = prefs.getFloat("music_volume", 0.25f)
+        get() = prefs.getFloat("music_volume", 0.20f)
         set(value) {
             prefs.putFloat("music_volume", value)
         }

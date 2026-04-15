@@ -53,7 +53,7 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     val hitZonesDrawer = HitZonesDrawer(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
 
-    val beatLight = BackgroundActor(Sprite(Texture(FileHandle("textures/beatlight.png"))))
+    val beatLight = BackgroundActor(Sprite(Texture(Gdx.files.internal("textures/beatlight.png"))))
 
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
     private val noteHit = assets.mainAtlas.findRegion(playScreen.skin.pop)
