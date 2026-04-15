@@ -231,12 +231,14 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
                     playSetsResult = resultRankInt
 
-                    submitScore(
-                        playSets.name,
-                        GamePref.userSave.name,
-                        (playSets.mapScores.values.sum() * gameModeScoreModifier(playSets.name)).toInt(),
-                        RankUtil.getRankChar(playSetsResult)
-                    )
+                    val rankChar = RankUtil.getRankChar(playSetsResult)
+                    if (rankChar != "F")
+                        submitScore(
+                            playSets.name,
+                            GamePref.userSave.name,
+                            (playSets.mapScores.values.sum() * gameModeScoreModifier(playSets.name)).toInt(),
+                            rankChar
+                        )
                     checkAchievePlaySetsComplete(resultRankInt)
                     saveMarathonResult(resultRankInt)
                 })

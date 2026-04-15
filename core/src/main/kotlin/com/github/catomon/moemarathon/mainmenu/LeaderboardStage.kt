@@ -82,8 +82,8 @@ class LeaderboardStage() : BgStage() {
                 )
             }
             val scoresSorted = mutableListOf<Leaderboard.Entry>()
-            scoresGroupedByMode.forEach {
-                scoresSorted.addAll(it.value.sortedByDescending { it.score })
+            scoresGroupedByMode.forEach { modeEntries ->
+                scoresSorted.addAll(modeEntries.value.sortedByDescending { entry -> entry.score })
             }
 
             scoresSorted.forEach {

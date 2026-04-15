@@ -37,7 +37,15 @@ object AudioManager {
     var music: Music? = null
         private set
 
+    //Bit 0 set = normal sound (default if no bits).
+    //Bit 1 = whistle; bit 2 = finish; bit 3 = clap.
     lateinit var hitSound: Sound
+        private set
+    lateinit var hitSound1: Sound
+        private set
+    lateinit var hitSound2: Sound
+        private set
+    lateinit var hitSound3: Sound
         private set
 
     init {
@@ -175,6 +183,9 @@ object AudioManager {
 
     fun onMusicLoaded() {
         this.hitSound = assets.getSound("hit.ogg")
+        this.hitSound1 = assets.getSound("hit1.ogg")
+        this.hitSound2 = assets.getSound("hit2.ogg")
+        this.hitSound3 = assets.getSound("hit3.ogg")
     }
 
     fun disposeMusic() {

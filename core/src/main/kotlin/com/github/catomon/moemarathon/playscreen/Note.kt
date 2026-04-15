@@ -11,4 +11,6 @@ data class Note(
     var color: Int = 0,
     var isNextColor: Boolean = false,
     var colorIndex: Int = 0,
+    var hitSound: Int = 0,
+    var hitSample: String = "",
 )

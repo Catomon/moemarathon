@@ -62,7 +62,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
             hitZoneTexture.draw(batch)
 
-            if (PlayScreen.GameplayConfig.gameplay == PlayScreen.Gameplay.POINTER) {
+            if (PlayScreen.GameplayConfig.playMethod == PlayScreen.PlayMethod.POINTER) {
                 keyName.setText("*")
             } else {
                 when (PlayScreen.GameplayConfig.hitZonesAmount) {

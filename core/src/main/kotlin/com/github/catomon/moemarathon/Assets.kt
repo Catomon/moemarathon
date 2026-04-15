@@ -59,6 +59,9 @@ class Assets : AssetManager() {
             load("$soundsFolderName/$name", Sound::class.java)
         }
         loadSound("hit.ogg")
+        loadSound("hit1.ogg")
+        loadSound("hit2.ogg")
+        loadSound("hit3.ogg")
         loadSound("click.ogg")
 
         Gdx.app.debug(Assets::class.simpleName, "Loading sounds V")

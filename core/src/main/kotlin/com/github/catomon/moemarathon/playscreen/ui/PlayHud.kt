@@ -19,10 +19,7 @@ import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.ui.actions.OneAction
-import com.github.catomon.moemarathon.utils.SpriteActor
-import com.github.catomon.moemarathon.utils.addCover
-import com.github.catomon.moemarathon.utils.createTable
-import com.github.catomon.moemarathon.utils.removeCover
+import com.github.catomon.moemarathon.utils.*
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
@@ -125,7 +122,18 @@ class PlayHud(private val playScreen: PlayScreen) :
 
         when (id) {
             1, 2, 3, NoteListener.HIT_TRACE, NoteListener.NOTE_TRACE_START -> {
-                AudioManager.playSound(AudioManager.hitSound)
+                AudioManager.playSound(
+                    when (note.hitSound) {
+                        0 -> AudioManager.hitSound
+                        1 -> AudioManager.hitSound1
+                        2 -> AudioManager.hitSound2
+                        3 -> AudioManager.hitSound3
+                        else -> {
+                            logErr("Hit sound id out of range 0 - 3: ${note.hitSound}")
+                            AudioManager.hitSound
+                        }
+                    }
+                )
             }
         }
 

@@ -1,7 +1,6 @@
 package com.github.catomon.moemarathon.mainmenu
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
@@ -154,7 +153,7 @@ class DifficultySelectStage() :
 
     private fun chooseDiff(diff: GameMapSet) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
-            PlayScreen.GameplayConfig.gameplay = if (pointerGameplay) PlayScreen.Gameplay.POINTER else PlayScreen.GameplayConfig.defaultGameplay
+            PlayScreen.GameplayConfig.playMethod = if (pointerGameplay) PlayScreen.PlayMethod.POINTER else PlayScreen.GameplayConfig.defaultPlayMethod
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),

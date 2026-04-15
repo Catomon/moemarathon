@@ -40,8 +40,8 @@ class PlayScreen(
 ) : ScreenAdapter() {
 
     object GameplayConfig {
-        val defaultGameplay = Gameplay.BOTH //if (IS_MOBILE) Gameplay.POINTER else Gameplay.BOTH
-        var gameplay = defaultGameplay
+        val defaultPlayMethod = PlayMethod.BOTH //if (IS_MOBILE) PlayMethod.POINTER else PlayMethod.BOTH
+        var playMethod = defaultPlayMethod
 
         //amount of thing where notes should land idk
         var hitZonesAmount = 6
@@ -49,7 +49,7 @@ class PlayScreen(
 //        var layout = 0
     }
 
-    enum class Gameplay {
+    enum class PlayMethod {
         POINTER, KEYBOARD, BOTH
     }
 
@@ -380,7 +380,7 @@ class PlayScreen(
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
         val clickerPos = calcClickerPos(Vector2())
-        val clickerToNoteDst = if (GameplayConfig.gameplay == Gameplay.POINTER) Vector2.dst(
+        val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) Vector2.dst(
             clickerPos.x,
             clickerPos.y,
             notePos.x,
@@ -423,7 +423,7 @@ class PlayScreen(
             }
         }
 
-        if (GameplayConfig.gameplay == Gameplay.POINTER) {
+        if (GameplayConfig.playMethod == PlayMethod.POINTER) {
             val pointer = getPointer()
             val hitZoneId = getHitZones().minBy {
                 val zonePos = it.value
@@ -496,16 +496,16 @@ class PlayScreen(
             } || GameplayConfig.hitZonesAmount > 9
         }
 
-        return when (GameplayConfig.gameplay) {
-            Gameplay.POINTER -> {
+        return when (GameplayConfig.playMethod) {
+            PlayMethod.POINTER -> {
                 (clickerToNoteDst <= curPointerRad * 2) || noAim
             }
 
-            Gameplay.KEYBOARD -> {
+            PlayMethod.KEYBOARD -> {
                 isKeyHitZonePressed()
             }
 
-            Gameplay.BOTH -> {
+            PlayMethod.BOTH -> {
 //                if (button in 0..1 || button == Input.Keys.Z || button == Input.Keys.X) {
 //                    (clickerToNoteDst <= curPointerRad * 2) || noAim
 //                } else {
