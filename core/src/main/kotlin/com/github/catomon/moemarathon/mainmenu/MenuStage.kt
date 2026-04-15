@@ -13,17 +13,25 @@ import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.ui.actions.OneAction
 import com.github.catomon.moemarathon.utils.createTable
+import com.github.catomon.moemarathon.utils.logErr
 import com.github.catomon.moemarathon.widgets.addChangeListener
-import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.VisImage
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextField
 import com.kotcrab.vis.ui.widget.VisWindow
+import java.util.concurrent.CancellationException
 
 class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage() {
 
     private val userSave = GamePref.userSave
+
+    private val updateButton = newTextButton("Update").apply {
+        label.setFontScale(0.5f)
+        label.color = Color.GREEN
+        isVisible = false;
+        isDisabled = true;
+    }
 
     private val pauseBgMusicButton = newTextButton("Pause").apply {
         label.setFontScale(0.5f)
@@ -66,6 +74,10 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         )
 
         createTable().apply {
+            defaults().right()
+            add(updateButton)
+            row()
+
             add(newTextButton("Skins").apply {
                 label.setFontScale(0.5f)
             }.addChangeListener {
@@ -109,14 +121,14 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 addChangeListener {
                     menuScreen.changeStage(SettingsStage())
                 }
-            }).center()
+            })
             row()
             add(newTextButton("Credits").apply {
                 label.setFontScale(0.5f)
                 addChangeListener {
                     menuScreen.changeStage(CreditsStage())
                 }
-            }).center()
+            })
             row()
             add(newTextButton("Exit").addChangeListener {
                 Gdx.app.exit()
@@ -178,20 +190,22 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 menuScreen.changeStage(AchievementsStage())
             })
 //            if (!Config.IS_WEBAPP) {
-                row()
-                add(newBigButton("Leaderboard").addChangeListener {
-                    menuScreen.changeStage(LeaderboardStage())
-                })
+            row()
+            add(newBigButton("Leaderboard").addChangeListener {
+                menuScreen.changeStage(LeaderboardStage())
+            })
 //            }
             row()
             add(
                 VisTable().also {
                     val textField = VisTextField(userSave.name, "small")
-                    val textButton =       newTextButton("Save").apply {
+                    val textButton = newTextButton("Save").apply {
                         label.setFontScale(0.5f)
                         addChangeListener { btn ->
                             if (textField.isEmpty) return@addChangeListener
-                            GamePref.userSave = GamePref.userSave.copy(name = textField.text.take(24).replace("*", "_").replace(" ", "_"))
+                            GamePref.userSave = GamePref.userSave.copy(
+                                name = textField.text.take(24).replace("*", "_").replace(" ", "_")
+                            )
                             GamePref.save()
                             btn.isDisabled = true
                             btn.setText("Ok!")
@@ -251,6 +265,74 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
 
         GamePref.userSave = userSave
         GamePref.save()
+
+        readConfigFromGist("https://gist.githubusercontent.com/Catomon/c5300f608496cf5b33f83cd40c76a6ae/raw/") { result ->
+            result.onSuccess { map ->
+                if (game.screen != game.menuScreen || game.menuScreen.stage != this@MenuStage) return@onSuccess
+
+                val version = map["version"]
+                val updateUrl = map["updateUrl"]
+                if (version != Config.APP_VER) {
+                    updateButton.isVisible = true
+                    updateButton.isDisabled = false
+                    updateButton.listeners.joinToString { it.javaClass.name }
+                    if (updateUrl != null)
+                        updateButton.addChangeListener {
+                            Gdx.net.openURI(updateUrl)
+                        }
+                }
+            }.onFailure { err ->
+                if (game.screen != game.menuScreen || game.menuScreen.stage != this@MenuStage) return@onFailure
+                logErr("Failed: ${err.message}")
+            }
+        }
+    }
+
+    fun readConfigFromGist(
+        url: String,
+        handleResult: (Result<Map<String, String>>) -> Unit
+    ) {
+        val request = com.badlogic.gdx.Net.HttpRequest(com.badlogic.gdx.Net.HttpMethods.GET).apply {
+            this.url = url
+        }
+
+        Gdx.net.sendHttpRequest(request, object : com.badlogic.gdx.Net.HttpResponseListener {
+            override fun handleHttpResponse(httpResponse: com.badlogic.gdx.Net.HttpResponse) {
+                try {
+                    val map = httpResponse.resultAsString.lineSequence()
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() && !it.startsWith("#") }
+                        .mapNotNull { line ->
+                            val idx = line.indexOf('=')
+                            if (idx <= 0) return@mapNotNull null
+                            val key = line.substring(0, idx).trim()
+                            val value = line.substring(idx + 1).trim()
+                            if (key.isEmpty()) null else key to value
+                        }
+                        .toMap()
+
+                    Gdx.app.postRunnable {
+                        handleResult(Result.success(map))
+                    }
+                } catch (e: Exception) {
+                    Gdx.app.postRunnable {
+                        handleResult(Result.failure(e))
+                    }
+                }
+            }
+
+            override fun failed(t: Throwable) {
+                Gdx.app.postRunnable {
+                    handleResult(Result.failure(t))
+                }
+            }
+
+            override fun cancelled() {
+                Gdx.app.postRunnable {
+                    handleResult(Result.failure(CancellationException("Request cancelled")))
+                }
+            }
+        })
     }
 
     fun setRandomBg() {

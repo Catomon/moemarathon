@@ -130,7 +130,7 @@ class PlayHud(private val playScreen: PlayScreen) :
                         3 -> AudioManager.hitSound3
                         else -> {
                             logErr("Hit sound id out of range 0 - 3: ${note.hitSound}")
-                            AudioManager.hitSound
+                            AudioManager.hitSound1
                         }
                     }
                 )

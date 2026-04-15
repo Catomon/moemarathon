@@ -8,9 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
-import com.github.catomon.moemarathon.AudioManager
-import com.github.catomon.moemarathon.GamePref
-import com.github.catomon.moemarathon.assets
+import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets.DefaultPlaySets
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets.HardMarathon
@@ -19,13 +17,13 @@ import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets.UnlockedOnlyPlaySets
 import com.github.catomon.moemarathon.difficulties.GameMapSet
 import com.github.catomon.moemarathon.difficulties.RankUtil
-import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.utils.*
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
+import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter
 import com.kotcrab.vis.ui.widget.ListView
@@ -51,6 +49,8 @@ class MapSelectStage(
     private val textureBgCache = mutableMapOf<String, Texture>()
 
     private val loadingTable = createTable(newLabel("Collecting maps..."))
+
+    private val userSave = GamePref.userSave
 
     init {
         addActor(background)
@@ -82,8 +82,11 @@ class MapSelectStage(
                             val normalMaps = DefaultMapSets.NormalMarathon.maps
                             MapsManager.collectMapFiles().map { GameMap(it) }
                                 // (userSaveMapRanks.contains(it.file.name()) || normalMaps.contains(it.file.name()))
-                                .filter { userSaveMapRanks.contains(it.file.name()) && (marathonMaps.contains(it.file.name()) || it.file.parent().parent()
-                                    .name() == "marathon") }
+                                .filter {
+                                    userSaveMapRanks.contains(it.file.name()) && (marathonMaps.contains(it.file.name()) || it.file.parent()
+                                        .parent()
+                                        .name() == "marathon")
+                                }
                         } else {
                             MapsManager.collectMapFiles().map { GameMap(it) }
                                 .filter {
@@ -169,13 +172,26 @@ class MapSelectStage(
 
                 if (playSets == DefaultMapSets.DefaultPlaySets) {
                     createTable().apply {
-                        if (loadedItems.isEmpty() && playSets == UnlockedOnlyPlaySets) {
+                        if (loadedItems.isEmpty()) {
                             add("Here will be your maps\nfrom the 'other maps' folder")
                             center()
                         } else {
                             add(newLabel("Maps from the 'other maps' folder").also { it.setFontScale(0.6f) })
                             center().top()
                         }
+                    }
+
+                    createTable().apply {
+                        add(newTextButton("Open folder").apply {
+                            label.setFontScale(0.5f)
+                        }.addChangeListener {
+                            try {
+                                platformSpecific?.desktopOpenMapsFolder()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        })
+                        bottom().right()
                     }
                 } else {
                     createTable().apply {
