@@ -48,16 +48,16 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
         val accuracy = if (totalNotes > 0f) {
             val baseAcc = (stats.greats * 1.0f + stats.oks * 0.5f) / totalNotes
-            val missPenalty = stats.misses.toFloat() * 0.7f / totalNotes
+            val missPenalty = stats.misses.toFloat() * 0.85f / totalNotes
             maxOf(0f, baseAcc - missPenalty)
         } else 0f
         val rank = when {
             stats.misses == 0 && stats.oks == 0 -> "SS"
             stats.misses == 0 && accuracy >= 0.90f -> "S"
-            accuracy >= 0.85f -> "A"
-            accuracy >= 0.75f -> "B"
-            accuracy >= 0.65f -> "C"
-            accuracy >= 0.55f -> "D"
+            accuracy >= 0.80f -> "A"
+            accuracy >= 0.70f -> "B"
+            accuracy >= 0.60f -> "C"
+            accuracy >= 0.50f -> "D"
             else -> "F"
         }
 
