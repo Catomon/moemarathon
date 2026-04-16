@@ -35,21 +35,29 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     val isMarathon get() = playSets != DefaultMapSets.DefaultPlaySets && playSets != DefaultMapSets.UnlockedOnlyPlaySets
 
     init {
-        val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap).size
-        val pGreats = stats.greats.toFloat() / totalNotes.toFloat()
-        val pOks = stats.oks.toFloat() / totalNotes.toFloat()
-        val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
+        val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap, PlayScreen.GameplayConfig.hitZonesAmount).size
+//        val pGreats = stats.greats.toFloat() / totalNotes.toFloat()
+//        val pOks = stats.oks.toFloat() / totalNotes.toFloat()
+//        val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
+
         if (!playScreen.noHoldNotes) {
-            stats.score * 1.1f
+            stats.score = (stats.score * 1.1f).toInt()
         }
+
         stats.score += stats.combo * 100
+
+        val accuracy = if (totalNotes > 0f) {
+            val baseAcc = (stats.greats * 1.0f + stats.oks * 0.5f) / totalNotes
+            val missPenalty = stats.misses.toFloat() * 0.7f / totalNotes
+            maxOf(0f, baseAcc - missPenalty)
+        } else 0f
         val rank = when {
-            pGreats >= 1f && pMisses == 0f -> "SS"
-            pGreats >= 0.8f && pMisses == 0f -> "S"
-            pGreats >= 0.7f && pMisses <= 0.05f -> "A"
-            pGreats >= 0.6f && pMisses <= 0.10f -> "B"
-            pGreats >= 0.5f && pMisses <= 0.15f -> "C"
-            pGreats >= 0.4f && pMisses <= 0.20f -> "D"
+            stats.misses == 0 && stats.oks == 0 -> "SS"
+            stats.misses == 0 && accuracy >= 0.90f -> "S"
+            accuracy >= 0.85f -> "A"
+            accuracy >= 0.75f -> "B"
+            accuracy >= 0.65f -> "C"
+            accuracy >= 0.55f -> "D"
             else -> "F"
         }
 

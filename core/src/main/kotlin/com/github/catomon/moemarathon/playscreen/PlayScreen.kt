@@ -66,7 +66,7 @@ class PlayScreen(
     }
     val batch = SpriteBatch()
 
-    val noteMap = MapsManager.createNoteMap(gameMap.osuBeatmap)
+    val noteMap = MapsManager.createNoteMap(gameMap.osuBeatmap, GameplayConfig.hitZonesAmount)
     val timingPoints = Queue(1, TimingPoint::class.java).apply {
         OsuParser.parseTimingPoints(gameMap.osuBeatmap.timingPoints).sortedBy { it.time }.forEach {
             this.addFirst(it)

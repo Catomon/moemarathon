@@ -12,6 +12,7 @@ import com.github.catomon.moemarathon.map.osu.toNote
 import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteMap
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 object MapsManager {
     fun collectMapFiles(): List<FileHandle> {
@@ -62,17 +63,28 @@ object MapsManager {
         return maps
     }
 
-    fun createNoteMap(osuBeatmap: OsuBeatmap): NoteMap {
+    fun createNoteMap(osuBeatmap: OsuBeatmap, hitZones: Int): NoteMap {
         val hits = OsuParser.parseHitObjects(osuBeatmap.hitObjects)
         val noteMap = NoteMap(Queue(hits.size / 10 + 1))
         noteMap.chunks.addFirst(NoteMap.Chunk())
+        var prevNote: Note? = null
         hits.forEach { hit ->
             val chunk = noteMap.chunks.first()
 
-            if (hit.objectParams.size < 8)
-                chunk.notes.addFirst(hit.toNote())
-            else {
-                chunk.notes.addFirst(hit.toNote(tracingNext = true))
+            if (hit.objectParams.size < 8) {
+                val note = hit.toNote(hitZones)
+                //swap note position if hit time window between prev and current is less than 190ms
+                if (hitZones <= 9)
+                    prevNote?.let { prevNote ->
+                        val diff = note.initialPosition - prevNote.initialPosition.absoluteValue
+                        if ((diff == 0f || diff == 1f) && note.timing - prevNote.timing < 0.190f) {
+                            note.initialPosition = ((note.initialPosition - 0.5f).absoluteValue).coerceIn(0f, 1f)
+                        }
+                    }
+                prevNote = note
+                chunk.notes.addFirst(note)
+            } else {
+                chunk.notes.addFirst(hit.toNote(hitZones, tracingNext = true))
 
                 //Slider syntax:
                 // x,y,time,type,hitSound,curveType|curvePoints,slides,length,edgeSounds,edgeSets,hitSample
@@ -100,13 +112,15 @@ object MapsManager {
 
                 val sliderEndTime = length / (sliderMultiplier * 100f * sv) * beatLength
 
+                val sliderEndTimeMillis = (hit.time + sliderEndTime * slides).toInt()
                 val sliderEndNote =
                     Note(
-                        (hit.time + sliderEndTime * slides) / 1000f,
-                        hitObjectToNotePosition(sliderEndXY[0], sliderEndXY[1]),
+                        sliderEndTimeMillis / 1000f,
+                        hitObjectToNotePosition(hitZones, sliderEndXY[0], sliderEndXY[1]),
                         tracingPrev = true
                     )
                 chunk.notes.addFirst(sliderEndNote)
+                prevNote = sliderEndNote
             }
 
             if (chunk.notes.size >= 10)
