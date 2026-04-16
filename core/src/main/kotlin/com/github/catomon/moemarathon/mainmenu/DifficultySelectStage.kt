@@ -133,20 +133,22 @@ class DifficultySelectStage() :
 //                    updateScoreLabel()
 //                }
 //            })
-            row()
-            add(newTextButton("Hold Notes Off").apply {
-                label.setFontScale(0.75f)
-                addChangeListener {
-                    holdNotesOn = !holdNotesOn
-                    if (holdNotesOn) {
-                        it.setText("Hold Notes On (Harder)")
-                    } else {
-                        it.setText("Hold Notes Off")
-                    }
 
-                    updateScoreLabel()
-                }
-            })
+            // TODO fix hold notes
+//            row()
+//            add(newTextButton("Hold Notes Off").apply {
+//                label.setFontScale(0.75f)
+//                addChangeListener {
+//                    holdNotesOn = !holdNotesOn
+//                    if (holdNotesOn) {
+//                        it.setText("Hold Notes On (Harder)")
+//                    } else {
+//                        it.setText("Hold Notes Off")
+//                    }
+//
+//                    updateScoreLabel()
+//                }
+//            })
             center().bottom()
         }
     }
