@@ -85,7 +85,6 @@ object DefaultMapSets {
             "Shimizu Kaori - Mo, Mousou Machine (Krisom) [Andrea's Hard].osu",
             "Hirano Aya, Katou Emiri, Fukuhara Kaori, Endou Aya - Motteke! Sailor Fuku (TV Size) (Yugu) [Insane].osu",
         ),
-        1f,
-        hitZonesAmount = 12,
+        1f
     )
 }
