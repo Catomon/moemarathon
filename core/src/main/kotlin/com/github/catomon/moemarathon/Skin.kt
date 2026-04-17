@@ -20,13 +20,14 @@ object Skins {
 
     const val ANIMATED_CENTER = "animation"
     const val ANI_DIR_CENTER = "directional_animation"
+    const val BEAT_ANI_CENTER = "beat_animation"
 
     val lucky = Skin(
         name = "lucky",
         note = "lucky_note",
         noteEnemy = "",
         center = "lucky_note_inner",
-        centerType = "",
+        centerType = BEAT_ANI_CENTER,
         timingsCircle = "lucky_timings_circle",
         holdNote = "lucky_note",
         holdNotePointer = "lucky_note",

@@ -26,22 +26,22 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
         if (!Config.IS_RELEASE) {
             when (keycode) {
-                Input.Keys.W -> {
+                Input.Keys.Q -> {
                     playScreen.hitZoneCircleSize += 0.05f
                     playScreen.mapSize = playScreen.mapSize
                 }
 
-                Input.Keys.Q -> {
+                Input.Keys.E -> {
                     playScreen.noteSize += 0.01f
                     playScreen.mapSize = playScreen.mapSize
                 }
 
-                Input.Keys.S -> {
+                Input.Keys.W -> {
                     playScreen.hitZoneCircleSize -= 0.05f
                     playScreen.mapSize = playScreen.mapSize
                 }
 
-                Input.Keys.E -> {
+                Input.Keys.R -> {
                     playScreen.noteSize -= 0.01f
                     playScreen.mapSize = playScreen.mapSize
                 }
@@ -58,12 +58,12 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
                     playScreen.autoPlay = !playScreen.autoPlay
                 }
 
-                Input.Keys.P -> {
+                Input.Keys.T -> {
                     playScreen.stats.greats = 9999
                     playScreen.onDone()
                 }
 
-                Input.Keys.L -> {
+                Input.Keys.Y -> {
                     playScreen.onDone()
                 }
             }

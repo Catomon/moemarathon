@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx
 
 object Config {
     const val APP_NAME = "Moe Marathon"
-    const val APP_VER = "1.5"
+    const val APP_VER = "1.6"
     const val IS_RELEASE = true
     const val WINDOW_WIDTH = 1366
     const val WINDOW_HEIGHT = 768

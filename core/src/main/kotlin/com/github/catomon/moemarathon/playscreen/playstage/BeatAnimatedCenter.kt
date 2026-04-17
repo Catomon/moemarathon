@@ -8,13 +8,12 @@ import com.github.catomon.moemarathon.playscreen.Note
 import com.github.catomon.moemarathon.playscreen.NoteListener
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 
-class JustCircleCenter(private val playScreen: PlayScreen, timingsCircleName: String = "bekky_click_zone") : Actor(), NoteListener {
+class BeatAnimatedCenter(private val playScreen: PlayScreen, timingsCircleName: String = "bekky_click_zone") : Actor(), NoteListener {
 
     private val clickZoneSprite = Sprite(assets.mainAtlas.findRegion(timingsCircleName))
 
     init {
         playScreen.noteListeners.add(this)
-        clickZoneSprite.setAlpha(0.5f)
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
@@ -23,6 +22,8 @@ class JustCircleCenter(private val playScreen: PlayScreen, timingsCircleName: St
             val cameraY = camera.position.y
             clickZoneSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             clickZoneSprite.setPosition(cameraX - clickZoneSprite.width / 2, cameraY - clickZoneSprite.height / 2)
+            clickZoneSprite.setOriginCenter()
+            clickZoneSprite.setScale(1f + beat * 0.1f)
             clickZoneSprite.draw(batch)
         }
     }

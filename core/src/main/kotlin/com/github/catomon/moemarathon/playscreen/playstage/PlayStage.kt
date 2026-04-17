@@ -1,7 +1,6 @@
 package com.github.catomon.moemarathon.playscreen.playstage
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool
@@ -48,7 +47,8 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
     private val centerActor: Actor = when (playScreen.skin.centerType) {
         Skins.ANI_DIR_CENTER -> AniDirCenter(playScreen)
         Skins.ANIMATED_CENTER -> AnimatedCenter(playScreen, playScreen.skin.center, playScreen.skin.timingsCircle)
-        else -> JustCircleCenter(playScreen, playScreen.skin.timingsCircle)
+        Skins.BEAT_ANI_CENTER -> BeatAnimatedCenter(playScreen, playScreen.skin.timingsCircle)
+        else -> StaticCenter(playScreen, playScreen.skin.timingsCircle)
     }
     val hitZonesDrawer = HitZonesDrawer(playScreen)
     val notesDrawer = NotesDrawer(playScreen)
