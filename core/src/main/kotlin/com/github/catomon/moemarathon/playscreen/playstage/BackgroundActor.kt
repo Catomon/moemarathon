@@ -11,8 +11,14 @@ class BackgroundActor(pSprite: Sprite? = null) : Actor() {
 
     var sprite: Sprite? = pSprite
 
+    var scale: Scale = Scale.FIT
+
     init {
         color.a = 0.5f
+    }
+
+    enum class Scale {
+        FIT, FILL
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
@@ -20,15 +26,22 @@ class BackgroundActor(pSprite: Sprite? = null) : Actor() {
         if (sprite == null || sprite.texture == null) return
 
         sprite.setAlpha(color.a)
-        if (stage.width < stage.height) {
-            if (sprite.height != stage.height) {
-                val ratio = stage.height / sprite.texture.height
-                sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
+
+        when (scale) {
+            Scale.FIT -> {
+                if (sprite.width < stage.width) {
+                    val ratio = stage.width / sprite.texture.width
+                    sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
+                } else {
+                    if (sprite.height < stage.height) {
+                        val ratio = stage.height / sprite.texture.height
+                        sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
+                    }
+                }
             }
-        } else {
-            if (sprite.width != stage.width) {
-                val ratio = stage.width / sprite.texture.width
-                sprite.setSize(sprite.texture.width * ratio, sprite.texture.height * ratio)
+
+            Scale.FILL -> {
+                sprite.setSize(stage.width, stage.height)
             }
         }
 

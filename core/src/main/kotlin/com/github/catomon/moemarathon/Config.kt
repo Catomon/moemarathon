@@ -16,7 +16,7 @@ object Config {
         || Gdx.app.type == Application.ApplicationType.iOS
     var IS_WEBAPP = false
 
-    const val SCORE_GAIN_HOLD_NOTE = 900
+    const val SCORE_GAIN_HOLD_NOTE = 400
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
 
