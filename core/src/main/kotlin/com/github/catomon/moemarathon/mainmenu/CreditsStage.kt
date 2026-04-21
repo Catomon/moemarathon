@@ -3,6 +3,7 @@ package com.github.catomon.moemarathon.mainmenu
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.utils.createTable
 import com.github.catomon.moemarathon.widgets.addChangeListener
+import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.widget.LinkLabel
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
@@ -20,6 +21,7 @@ class CreditsStage() :
             row()
             if (link.isNotEmpty()) {
                 add(LinkLabel(text, link)).width(900f).actor.also { label ->
+                    label.style.background = VisUI.getSkin().getDrawable("backgroundTransparent")
                     label.setFontScale(0.50f)
                     label.wrap = true
                 }

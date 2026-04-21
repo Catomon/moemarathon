@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.playscreen.getHitZoneIdByButton
@@ -39,7 +40,7 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
         val y get() = circleRadius * sin(MathUtils.degRad * angle)
     }
 
-    private val keyName = newLabel("*")
+    private val keyName = newLabel("")
 
     private val buttons = listOf(
         HitButton(key = Input.Keys.F, angle = 156f),
@@ -78,9 +79,11 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
             buttonSprite.setPositionByCenter(buttonX, buttonY)
             buttonSprite.draw(batch)
 
-            keyName.setText(
-                getHitZoneKeyById(getHitZoneIdByButton(button.key) - 1)
-            )
+            if (!Config.IS_MOBILE) {
+                keyName.setText(
+                    getHitZoneKeyById(getHitZoneIdByButton(button.key) - 1)
+                )
+            }
 
             keyName.pack()
             keyName.setPosByCenter(buttonX, buttonY)
@@ -100,7 +103,6 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
                 override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                     for (hitButton in buttons) {
-                        println("${hitButton.x - camera.viewportWidth / 2}, ${hitButton.y - camera.viewportHeight / 2}")
                         if (isPointInCircle(
                                 x,
                                 y,

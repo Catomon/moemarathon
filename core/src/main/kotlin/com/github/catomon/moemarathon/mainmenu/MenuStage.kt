@@ -87,11 +87,12 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
             if (!Config.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 addAction(OneAction {
                     if (userSave.unlockedAllMaps == 0) {
-                        addActor(VisWindow("'Other Maps' unlocked!").also { window ->
+                        this@MenuStage.root.addActorAt(children.size, VisWindow("").also { window ->
                             window.centerWindow()
+                            window.add("'Other Maps' unlocked!")
+                            window.row()
                             window.add(
-                                "You can add other maps to\nthe maps folder\n" +
-                                    "and they will appear here."
+                                "You can now add and play custom maps"
                             )
                             window.row()
                             window.add(newTextButton("OK!").addChangeListener {
@@ -224,8 +225,10 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
         userSave.notify.removeIf {
             when {
                 it.startsWith("skin:") -> {
-                    addActor(VisWindow("${it.removePrefix("skin:")} skin unlocked!").also { window ->
+                    addActor(VisWindow("").also { window ->
                         window.centerWindow()
+                        window.add("${it.removePrefix("skin:")} skin unlocked!")
+                        window.row()
                         window.add("See it in the Skins menu.")
                         window.row()
                         window.add(newTextButton("OK!").addChangeListener {
@@ -238,8 +241,10 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
                 }
 
                 it == DefaultMapSets.NonStop.name -> {
-                    addActor(VisWindow("Non-Stop map unlocked!").also { window ->
+                    addActor(VisWindow("").also { window ->
                         window.centerWindow()
+                        window.add("Non-Stop map unlocked!")
+                        window.row()
                         window.add("Navigate to 'Start' to see.")
                         window.row()
                         window.add(newTextButton("OK!").addChangeListener {

@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.difficulties.*
-import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
-import com.github.catomon.moemarathon.difficulties.DefaultMapSets.InsaneMarathon
 import com.github.catomon.moemarathon.difficulties.DefaultMapSets.HardMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.InsaneMarathon
+import com.github.catomon.moemarathon.difficulties.DefaultMapSets.NormalMarathon
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -37,8 +37,8 @@ class DifficultySelectStage() :
         val userSave = GamePref.userSave
         createTable().apply {
 //            if (userSave.unlocks.contains(DefaultMapSets.nonStop.name)) {
-                add(newLabel("Marathon").apply { setFontScale(0.5f) }).colspan(3).padTop(20f)
-                row()
+            add(newLabel("Marathon").apply { setFontScale(0.5f) }).colspan(3).padTop(20f)
+            row()
 //            }
 
             val rankLabelWidth = 60f
@@ -69,7 +69,8 @@ class DifficultySelectStage() :
             if (userSave.unlocks.contains(DefaultMapSets.NonStop.name)) {
                 add(newLabel("Non-Stop").apply { setFontScale(0.5f) }).colspan(3).padTop(30f)
                 row()
-                val rankChar = userSave.mapRanks[DefaultMapSets.NonStop.maps.first()]?.id?.let { RankUtil.getRankChar(it) } ?: ""
+                val rankChar =
+                    userSave.mapRanks[DefaultMapSets.NonStop.maps.first()]?.id?.let { RankUtil.getRankChar(it) } ?: ""
                 add(newLabel(
                     rankChar
                 ).also {
@@ -105,20 +106,22 @@ class DifficultySelectStage() :
                 scoreLabel.color = if (scoreValue > 0) Color.GREEN else Color.RED
             }
             add(scoreLabel)
-            row()
-            fun inputDeviceButtonText() = if (pointerGameplay) {
-                "Keyboard[ ] Mouse[V]"
-            } else {
-                "Keyboard[V] Mouse[ ]"
-            }
-            add(newTextButton(inputDeviceButtonText()).apply {
-                label.setFontScale(0.75f)
-                addChangeListener {
-                    pointerGameplay = !pointerGameplay
-                    it.setText(inputDeviceButtonText())
-                    updateScoreLabel()
-                }
-            })
+//            if (!Config.IS_MOBILE) {
+//                row()
+//                fun inputDeviceButtonText() = if (pointerGameplay) {
+//                    "Keyboard[ ] Mouse[V]"
+//                } else {
+//                    "Keyboard[V] Mouse[ ]"
+//                }
+//                add(newTextButton(inputDeviceButtonText()).apply {
+//                    label.setFontScale(0.75f)
+//                    addChangeListener {
+//                        pointerGameplay = !pointerGameplay
+//                        it.setText(inputDeviceButtonText())
+//                        updateScoreLabel()
+//                    }
+//                })
+//            }
 //            row()
 //            add(newTextButton("No-Aim Off").apply {
 //                label.setFontScale(0.75f)
@@ -155,7 +158,8 @@ class DifficultySelectStage() :
 
     private fun chooseDiff(diff: GameMapSet) {
         this@DifficultySelectStage.fadeInAndThen(1f) {
-            PlayScreen.GameplayConfig.playMethod = if (pointerGameplay) PlayScreen.PlayMethod.POINTER else PlayScreen.GameplayConfig.defaultPlayMethod
+            PlayScreen.GameplayConfig.playMethod =
+                if (pointerGameplay) PlayScreen.PlayMethod.POINTER else PlayScreen.GameplayConfig.defaultPlayMethod
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),

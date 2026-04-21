@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.playscreen.getHitZoneKeyById
-import com.github.catomon.moemarathon.utils.*
+import com.github.catomon.moemarathon.utils.setPosByCenter
+import com.github.catomon.moemarathon.utils.setPositionByCenter
 import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.math.cos
 import kotlin.math.sin
@@ -18,7 +20,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val playStage get() = playScreen.playStage
     private val noteRadius get() = playScreen.noteRadius
     private val hitZoneTexture = Sprite(assets.mainAtlas.findRegion("hit_zone"))
-    private val keyName = newLabel("?")
+    private val keyName = newLabel("")
 
     private val hitZonesStates = mutableMapOf<Int, Float>()
 
@@ -30,14 +32,14 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             var angle = i * angleBetweenParts
 
             if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
-            if (angle != 0f && angle != 180f) {
-                when {
-                    angle < 90f -> angle -= 21f
-                    angle > 270f -> angle += 21f
-                    angle > 180f -> angle -= 21f
-                    angle > 90f -> angle += 21f
+                if (angle != 0f && angle != 180f) {
+                    when {
+                        angle < 90f -> angle -= 21f
+                        angle > 270f -> angle += 21f
+                        angle > 180f -> angle -= 21f
+                        angle > 90f -> angle += 21f
+                    }
                 }
-            }
 
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
@@ -68,9 +70,10 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             } else {
                 when (PlayScreen.GameplayConfig.hitZonesAmount) {
                     6 -> {
-                        keyName.setText(
-                            getHitZoneKeyById(i)
-                        )
+                        if (!Config.IS_MOBILE)
+                            keyName.setText(
+                                getHitZoneKeyById(i)
+                            )
                     }
 
                     8 -> {
@@ -95,7 +98,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
     /* animates a hit zone */
     fun animateHitZone(hitZoneId: Int) {
 //        if (PlayScreen.GameplayConfig.hitZonesAmount <= 9) {
-            hitZonesStates[hitZoneId - 1] = 1f
+        hitZonesStates[hitZoneId - 1] = 1f
 //        }
 
         playStage.playStarEffect()

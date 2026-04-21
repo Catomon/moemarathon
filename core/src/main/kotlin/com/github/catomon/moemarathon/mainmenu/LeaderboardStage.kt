@@ -1,5 +1,6 @@
 package com.github.catomon.moemarathon.mainmenu
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Align
 import com.github.catomon.moemarathon.difficulties.RankUtil
 import com.github.catomon.moemarathon.game
@@ -58,46 +59,48 @@ class LeaderboardStage() : BgStage() {
         contentTable.add("Getting scores...").colspan(4).align(Align.center)
 
         requestLeaderboard() { board ->
-            contentTable.clear()
-            if (board == null) {
-                logErr("Could not retrieve the leaderboard.")
-                contentTable.add("Oopsie, please try later.").colspan(4).align(Align.center)
-                return@requestLeaderboard
-            }
+            Gdx.app.postRunnable {
+                contentTable.clear()
+                if (board == null) {
+                    logErr("Could not retrieve the leaderboard.")
+                    contentTable.add("Oopsie, please try later.").colspan(4).align(Align.center)
+                    return@postRunnable
+                }
 
-            val scores = board.entries
-            if (scores.isEmpty()) {
-                logInf("Leaderboard is empty.")
-                contentTable.add("Leaderboard is empty.").colspan(4).align(Align.center)
-                return@requestLeaderboard
-            }
+                val scores = board.entries
+                if (scores.isEmpty()) {
+                    logInf("Leaderboard is empty.")
+                    contentTable.add("Leaderboard is empty.").colspan(4).align(Align.center)
+                    return@postRunnable
+                }
 
-            contentTable.add("Leaderboard:").colspan(4).align(Align.left)
+                contentTable.add("Leaderboard:").colspan(4).align(Align.left)
 
-            val scoresGroupedByMode = scores.groupBy {
-                it.modeName
-            }.entries.sortedByDescending {
-                gameModeOrderNumber(
-                    it.value.firstOrNull()?.modeName
-                )
-            }
-            val scoresSorted = mutableListOf<Leaderboard.Entry>()
-            scoresGroupedByMode.forEach { modeEntries ->
-                scoresSorted.addAll(modeEntries.value.sortedByDescending { entry -> entry.score })
-            }
+                val scoresGroupedByMode = scores.groupBy {
+                    it.modeName
+                }.entries.sortedByDescending {
+                    gameModeOrderNumber(
+                        it.value.firstOrNull()?.modeName
+                    )
+                }
+                val scoresSorted = mutableListOf<Leaderboard.Entry>()
+                scoresGroupedByMode.forEach { modeEntries ->
+                    scoresSorted.addAll(modeEntries.value.sortedByDescending { entry -> entry.score })
+                }
 
-            scoresSorted.forEach {
-                val modeName = it.modeName
-                val rank = it.rank
-                contentTable.addScore(
-                    modeName,
-                    it.playerName,
-                    it.score,
-                    rank
-                )
-            }
+                scoresSorted.forEach {
+                    val modeName = it.modeName
+                    val rank = it.rank
+                    contentTable.addScore(
+                        modeName,
+                        it.playerName,
+                        it.score,
+                        rank
+                    )
+                }
 
-            logInf("Leaderboard has ${scoresSorted.size} entries.")
+                logInf("Leaderboard has ${scoresSorted.size} entries.")
+            }
         }
 
         addActor(VisScrollPane(contentTable).apply {

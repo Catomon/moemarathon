@@ -35,7 +35,8 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     val isMarathon get() = playSets != DefaultMapSets.DefaultPlaySets && playSets != DefaultMapSets.UnlockedOnlyPlaySets
 
     init {
-        val totalNotes = MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap, PlayScreen.GameplayConfig.hitZonesAmount).size
+        val totalNotes =
+            MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap, PlayScreen.GameplayConfig.hitZonesAmount).size
 //        val pGreats = stats.greats.toFloat() / totalNotes.toFloat()
 //        val pOks = stats.oks.toFloat() / totalNotes.toFloat()
 //        val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
@@ -211,8 +212,11 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
         playSets.maps
         if (nextMap == null) {
-            val marathonResultWindow = VisWindow("Congrats!").also { window ->
+            var goodJob = false
+            val marathonResultWindow = VisWindow("").also { window ->
                 window.setCenterOnAdd(true)
+                window.add("Congrats!")
+                window.row()
                 window.add("You completed ${playSets.name} mode!")
                 window.row()
                 window.add(VisTable().also { table ->
@@ -249,6 +253,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                         )
                     checkAchievePlaySetsComplete(resultRankInt)
                     saveMarathonResult(resultRankInt)
+
+                    if (resultRankInt >= RankUtil.getRankInt("S"))
+                        goodJob = true
                 })
                 window.row()
                 window.add(newTextButton("OK!").addChangeListener {
@@ -260,6 +267,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             game.menuScreen.changeStage(MenuStage().also { menuStage ->
                 menuStage.addCover()
                 menuStage.addActor(marathonResultWindow)
+
+                if (goodJob)
+                    AudioManager.playSound(AudioManager.konata_good_job)
             })
         } else {
             this@StatsStage.fadeInAndThen(1f) {

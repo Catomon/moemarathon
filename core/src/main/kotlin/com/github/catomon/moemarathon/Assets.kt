@@ -63,6 +63,7 @@ class Assets : AssetManager() {
         loadSound("hit2.ogg")
         loadSound("hit3.ogg")
         loadSound("click.ogg")
+        loadSound("konata_good_job.ogg")
 
         Gdx.app.debug(Assets::class.simpleName, "Loading sounds V")
 

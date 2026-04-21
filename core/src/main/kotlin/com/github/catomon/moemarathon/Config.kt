@@ -20,5 +20,5 @@ object Config {
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
 
-    const val MIN_RANK = "F"
+    const val MIN_RANK = "D"
 }

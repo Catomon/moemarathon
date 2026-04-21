@@ -47,6 +47,8 @@ object AudioManager {
         private set
     lateinit var hitSound3: Sound
         private set
+    lateinit var konata_good_job: Sound
+        private set
 
     init {
         var playback: Thread? = null
@@ -186,6 +188,7 @@ object AudioManager {
         this.hitSound1 = assets.getSound("hit1.ogg")
         this.hitSound2 = assets.getSound("hit2.ogg")
         this.hitSound3 = assets.getSound("hit3.ogg")
+        this.konata_good_job = assets.getSound("konata_good_job.ogg")
     }
 
     fun disposeMusic() {
