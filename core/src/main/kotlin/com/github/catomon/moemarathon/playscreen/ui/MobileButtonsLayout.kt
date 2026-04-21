@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
@@ -20,36 +21,37 @@ import com.github.catomon.moemarathon.utils.setPositionByCenter
 import com.github.catomon.moemarathon.widgets.newLabel
 import kotlin.math.cos
 import kotlin.math.pow
-import kotlin.math.sin
 
 class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
     private lateinit var camera: Camera
+    private lateinit var viewport: Viewport
 
-    private var circleSize = 0.70f
-    private val circleRadius get() = camera.viewportWidth / 2 * circleSize
+    private val buttonsFromBottom = 320f
+
+    private val circleRadius get() = camera.viewportWidth / 2 - 120f
 
     private val buttonSprite = Sprite(assets.mainAtlas.findRegion("hit_button")).apply {
         this.setAlpha(0.5f)
     }
     private val buttonSize = 200f
 
-    inner class HitButton(val key: Int, var angle: Float) {
+    inner class HitButton(val key: Int, var angle: Float, var xOff: Float = 0f, var yOffRel: Float = 0f) {
         var size: Float = 1f
 
-        val x get() = circleRadius * cos(MathUtils.degRad * angle)
-        val y get() = circleRadius * sin(MathUtils.degRad * angle)
+        val x get() = circleRadius * cos(MathUtils.degRad * angle) + xOff
+        val y get() = buttonsFromBottom + yOffRel
     }
 
     private val keyName = newLabel("")
 
     private val buttons = listOf(
-        HitButton(key = Input.Keys.F, angle = 156f),
-        HitButton(key = Input.Keys.D, angle = 183f),
-        HitButton(key = Input.Keys.S, angle = 210f),
+        HitButton(key = Input.Keys.F, angle = 183f, xOff = 0f, yOffRel = 215f),
+        HitButton(key = Input.Keys.D, angle = 183f, xOff = 0f, yOffRel = 0f),
+        HitButton(key = Input.Keys.S, angle = 183f, xOff = 75f, yOffRel = -200f),
 
-        HitButton(key = Input.Keys.J, angle = 24f),
-        HitButton(key = Input.Keys.K, angle = -3f),
-        HitButton(key = Input.Keys.L, angle = -30f),
+        HitButton(key = Input.Keys.J, angle = -3f, xOff = 0f, yOffRel = 215f),
+        HitButton(key = Input.Keys.K, angle = -3f, xOff = 0f, yOffRel = 0f),
+        HitButton(key = Input.Keys.L, angle = -3f, xOff = -75f, yOffRel = -200f),
     )
 
     fun isPointInCircle(pointX: Float, pointY: Float, centerX: Float, centerY: Float, radius: Float): Boolean {
@@ -74,8 +76,10 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
         buttons.forEach { button ->
             buttonSprite.setSize(buttonSize * button.size, buttonSize * button.size)
+
             val buttonX = camera.position.x + button.x
-            val buttonY = camera.position.y + button.y
+            val buttonY = button.y
+
             buttonSprite.setPositionByCenter(buttonX, buttonY)
             buttonSprite.draw(batch)
 
@@ -96,6 +100,9 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
         if (stage is PlayHud) {
             camera = stage.camera
+            viewport = stage.viewport // make sure this is set in your PlayHud
+
+            // critical: viewport must be updated on resize (PlayHud.resize)
             stage.addListener(object : InputListener() {
                 override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                     super.touchUp(event, x, y, pointer, button)
@@ -103,21 +110,20 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
                 override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                     for (hitButton in buttons) {
+                        val btnWorldY = hitButton.y
                         if (isPointInCircle(
                                 x,
                                 y,
                                 hitButton.x + camera.viewportWidth / 2,
-                                hitButton.y + camera.viewportHeight / 2,
+                                btnWorldY,
                                 90f
                             )
                         ) {
                             hitButton.size = 1.25f
-
                             playScreen.processButtonDown(hitButton.key)
                             return true
                         }
                     }
-
                     return false
                 }
             })
