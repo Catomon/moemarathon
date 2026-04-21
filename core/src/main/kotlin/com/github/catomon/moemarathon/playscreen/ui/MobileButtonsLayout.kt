@@ -100,9 +100,8 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
         if (stage is PlayHud) {
             camera = stage.camera
-            viewport = stage.viewport // make sure this is set in your PlayHud
+            viewport = stage.viewport
 
-            // critical: viewport must be updated on resize (PlayHud.resize)
             stage.addListener(object : InputListener() {
                 override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                     super.touchUp(event, x, y, pointer, button)
