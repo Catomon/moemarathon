@@ -23,4 +23,6 @@ object Config {
     const val MIN_RANK = "F"
 
     const val NO_HOLD_NOTES_PENALTY = -20
+
+    const val HIDE_CURSOR_AFTER = 3f
 }

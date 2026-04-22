@@ -7,18 +7,22 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.MathUtils.atan2
 
 val defaultCursor by lazy { createCursor("cursor.png") }
+val emptyCursor by lazy { createCursor("empty.png") }
+var currentCursor: Cursor? = null
+    private set
 
 fun setMouseCursor(cursor: Cursor = defaultCursor) {
     Gdx.graphics.setCursor(cursor)
+    currentCursor = cursor
 }
 
-fun createCursor(cursorFileName: String = "cursor.png"): Cursor {
-    val pixmap = Pixmap(Gdx.files.internal(cursorFileName))
-    val xHotspot = 16
-    val yHotspot = 16
-    val cursor: Cursor = Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot)
-    pixmap.dispose()
-    return cursor
+fun createCursor(cursorFileName: String): Cursor {
+    return run {
+        val pixmap = Pixmap(Gdx.files.internal(cursorFileName))
+        val xHotspot = 16
+        val yHotspot = 16
+        Gdx.graphics.newCursor(pixmap, xHotspot, yHotspot).also { pixmap.dispose() }
+    }
 }
 
 fun calculateDegrees(x1: Float, y1: Float, x2: Float, y2: Float): Float {

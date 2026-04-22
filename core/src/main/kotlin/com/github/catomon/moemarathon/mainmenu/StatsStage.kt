@@ -210,10 +210,25 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
         if (nextMap == null) {
             var goodJob = false
             val marathonResultWindow = VisWindow("").also { window ->
+                var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
+                    .toFloatArray().average().toFloat()
+                if (avg < RankUtil.getRankInt("S") + 0.5f)
+                    avg += 0.5f
+                val resultRankInt = avg.toInt()
+                val resultRank = RankUtil.getRankChar(avg.toInt())
+                playSetsResult = resultRankInt
+                val rankChar = RankUtil.getRankChar(playSetsResult)
+
                 window.setCenterOnAdd(true)
-                window.add("Congrats!")
+                if (rankChar != "F")
+                    window.add("Congrats!")
+                else
+                    window.add("That's.. something")
                 window.row()
-                window.add("You completed ${playSets.name} mode!")
+                if (rankChar != "F")
+                    window.add("You completed ${playSets.name} mode!")
+                else
+                    window.add("You completed ${playSets.name} mode")
                 window.row()
                 window.add(VisTable().also { table ->
                     playSets.ranks.forEach { itRank ->
@@ -227,19 +242,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 window.row()
                 window.add(VisTable().also { table ->
                     table.add("Result: ")
-                    var avg = playSets.ranks.values.map { RankUtil.getRankInt(it) }.map { it.toFloat() }
-                        .toFloatArray().average().toFloat()
-                    if (avg < RankUtil.getRankInt("S") + 0.5f)
-                        avg += 0.5f
-                    val resultRankInt = avg.toInt()
-                    val resultRank = RankUtil.getRankChar(avg.toInt())
                     table.add(newLabel(resultRank).also {
                         it.color = RankUtil.getRankColor(resultRank); it.setFontScale(1.50f)
                     })
-
-                    playSetsResult = resultRankInt
-
-                    val rankChar = RankUtil.getRankChar(playSetsResult)
                     if (rankChar != "F")
                         submitScore(
                             playSets.name,
@@ -254,7 +259,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                         goodJob = true
                 })
                 window.row()
-                window.add(newTextButton("OK!").addChangeListener {
+                window.add(newTextButton( if (rankChar != "F") "OK!" else "ok").addChangeListener {
                     window.stage.removeCover()
                     window.remove()
                 })

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Queue
 import com.github.catomon.moemarathon.*
+import com.github.catomon.moemarathon.Config.HIDE_CURSOR_AFTER
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_HOLD_NOTE
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_OK
@@ -29,7 +30,9 @@ import com.github.catomon.moemarathon.map.osu.OsuParser
 import com.github.catomon.moemarathon.map.osu.TimingPoint
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
+import com.github.catomon.moemarathon.utils.emptyCursor
 import com.github.catomon.moemarathon.utils.logInf
+import com.github.catomon.moemarathon.utils.setMouseCursor
 import kotlin.math.*
 
 class PlayScreen(
@@ -91,8 +94,8 @@ class PlayScreen(
 
     var noteSpawnTime = playSets.noteSpawnTime //1 hard //3.5f
         private set
-    val noteTimingWindow = 0.200f // actual time window is twice this value
-    val noteTimingGreat = 0.075f // actual time window is twice this value
+    val noteTimingWindow = 0.100f // actual time window is twice this value
+    val noteTimingGreat = 0.06f // actual time window is twice this value
     val missRadius get() = hitZoneCircleRadius - hitZoneCircleRadius * 2 * ((noteTimingWindow / noteSpawnTime))
     val earlyRadius get() = hitZoneCircleRadius + hitZoneCircleRadius * 2 * (noteTimingWindow / noteSpawnTime)
 
@@ -222,7 +225,17 @@ class PlayScreen(
 
     private var starEffectTime = 0f;
 
+    var cursorHideTime = HIDE_CURSOR_AFTER
+
     private fun update(delta: Float) {
+        if (cursorHideTime > 0f) {
+            cursorHideTime -= delta
+            if (cursorHideTime <= 0f) {
+                setMouseCursor(emptyCursor)
+                cursorHideTime = 0f
+            }
+        }
+
         playHud.act()
 
         if (paused) return

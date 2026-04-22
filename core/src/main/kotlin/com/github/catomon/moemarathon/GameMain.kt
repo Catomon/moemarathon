@@ -8,6 +8,8 @@ import com.github.catomon.moemarathon.difficulties.Rank
 import com.github.catomon.moemarathon.mainmenu.MenuScreen
 import com.github.catomon.moemarathon.mainmenu.MenuStage
 import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.currentCursor
+import com.github.catomon.moemarathon.utils.emptyCursor
 import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.setMouseCursor
 
@@ -116,7 +118,7 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
                 is PlayScreen -> screen.batch
                 else -> null
             }
-            if (batch != null) {
+            if (batch != null && currentCursor != emptyCursor) {
                 cursorParticle.setPosition(Gdx.input.x.toFloat(), Gdx.graphics.height - Gdx.input.y.toFloat())
                 cursorParticle.update(Gdx.graphics.deltaTime)
                 batch.begin()

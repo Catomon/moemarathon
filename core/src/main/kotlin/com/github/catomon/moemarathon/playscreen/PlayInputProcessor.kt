@@ -3,6 +3,9 @@ package com.github.catomon.moemarathon.playscreen
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.github.catomon.moemarathon.Config
+import com.github.catomon.moemarathon.Config.HIDE_CURSOR_AFTER
+import com.github.catomon.moemarathon.utils.defaultCursor
+import com.github.catomon.moemarathon.utils.setMouseCursor
 
 class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
 
@@ -101,10 +104,14 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+        playScreen.cursorHideTime = HIDE_CURSOR_AFTER
+        setMouseCursor(defaultCursor)
         return super.touchDragged(screenX, screenY, pointer)
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
+        playScreen.cursorHideTime = HIDE_CURSOR_AFTER
+        setMouseCursor(defaultCursor)
         return super.mouseMoved(screenX, screenY)
     }
 }
