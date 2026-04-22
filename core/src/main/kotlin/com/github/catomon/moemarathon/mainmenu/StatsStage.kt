@@ -35,11 +35,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
     val isMarathon get() = playSets != DefaultMapSets.DefaultPlaySets && playSets != DefaultMapSets.UnlockedOnlyPlaySets
 
     init {
-        val totalNotes =
-            MapsManager.createNoteMap(playScreen.gameMap.osuBeatmap, PlayScreen.GameplayConfig.hitZonesAmount).size
-//        val pGreats = stats.greats.toFloat() / totalNotes.toFloat()
-//        val pOks = stats.oks.toFloat() / totalNotes.toFloat()
-//        val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
+        val totalNotes = stats.misses + stats.greats + stats.oks
 
         if (playScreen.noHoldNotes) {
             stats.score = (stats.score * (1f - Config.NO_HOLD_NOTES_PENALTY / 100)).toInt()
