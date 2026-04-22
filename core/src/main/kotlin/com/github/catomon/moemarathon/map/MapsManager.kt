@@ -116,7 +116,7 @@ object MapsManager {
                 val sliderEndNote =
                     Note(
                         sliderEndTimeMillis / 1000f,
-                        hitObjectToNotePosition(hitZones, sliderEndXY[0], sliderEndXY[1]),
+                        hitObjectToNotePosition(hitZones, hit.x, hit.y), //sliderEndXY[0], sliderEndXY[1]
                         tracingPrev = true
                     )
                 chunk.notes.addFirst(sliderEndNote)

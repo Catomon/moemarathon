@@ -26,7 +26,6 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteInnerTex =
         if (noteName.isEmpty()) assets.mainAtlas.findRegion("transparent") else assets.mainAtlas.findRegion(noteName + "_inner")
     private val noteTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNote + "_trace")
-    private val pointerTraceTex = assets.mainAtlas.findRegion(playScreen.skin.holdNotePointer + "_pointer_trace")
 
     private val enemy0 = assets.mainAtlas.findRegion("note_enemy0")
     private val enemy1 = assets.mainAtlas.findRegion("note_enemy1")
@@ -37,7 +36,6 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val noteInnerSprite = Sprite(enemy0)
     private val noteOuterSprite = Sprite(noteOuterTex)
     private val noteTraceSprite = Sprite(noteTraceTex)
-    private val pointerTraceSprite = Sprite(pointerTraceTex)
 
     private val outerColor = Color(0.631f, 0.541f, 0.584f, 1f)
     private val innerColor = Color(0.89f, 0.455f, 0.667f, 1f)
@@ -74,14 +72,13 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                 Sprite(noteOuterTex) to Sprite(enemy2),
             )
         }
-    
+
     private val applyColor = false
     private val drawEnemies = true
 
     init {
         if (applyColor) {
             noteInnerSprite.color = innerColor
-            pointerTraceSprite.color = traceColor
             noteOuterSprite.color = outerColor
             noteTraceSprite.color = traceColor
         }
@@ -100,8 +97,6 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 //        noteOuterSprite.setOriginCenter()
         noteTraceSprite.setSize(spriteWidth, spriteHeight)
         noteTraceSprite.setOriginCenter()
-        pointerTraceSprite.setSize(spriteWidth, spriteHeight)
-        pointerTraceSprite.setOriginCenter()
 
         for (sprite in rotationColors) {
             sprite.first.setSize(spriteWidth, spriteHeight)
@@ -135,9 +130,9 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
                         }
 
                         note.tracingPrev -> {
-                            val prevNotePos =
-                                notes.getOrNull(notes.indexOf(note) + 1)?.calcPosition(Vector2()) ?: firstNotePos
-                            drawNote(batch, note, traceToNote = prevNotePos, visual = note.visual)
+//                            val prevNotePos =
+//                                notes.getOrNull(notes.indexOf(note) + 1)?.calcPosition(Vector2()) ?: firstNotePos
+                            drawNote(batch, note, traceToNote = Vector2(playScreen.camera.position.x,  playScreen.camera.position.y), visual = note.visual)
                         }
 
                         else -> {
@@ -162,18 +157,15 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 
                     when {
                         firstNote.tracingPrev -> {
-                            val prevNotePos = Vector2(pointer.x, pointer.y)
-                            drawNote(batch, firstNote, prevNotePos, visual = firstNote.visual)
+//                            val prevNotePos = Vector2(pointer.x, pointer.y)
+//                            drawNote(batch, firstNote, prevNotePos, visual = firstNote.visual)
+                            drawNote(batch, firstNote, Vector2(playScreen.camera.position.x,  playScreen.camera.position.y), visual = firstNote.visual)
                         }
 
                         else -> {
                             drawNote(batch, firstNote)
                         }
                     }
-
-                    pointerTraceSprite.setPositionByCenter(pointer.x, pointer.y)
-                    pointerTraceSprite.rotation = degrees(pointer.x, pointer.y, firstNotePos.x, firstNotePos.y)
-                    pointerTraceSprite.draw(batch)
                 } else {
                     drawNote(batch, firstNote, visual = firstNote.visual)
                 }

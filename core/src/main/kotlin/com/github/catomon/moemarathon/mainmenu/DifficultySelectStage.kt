@@ -25,7 +25,7 @@ class DifficultySelectStage() :
         NormalMarathon, HardMarathon, InsaneMarathon
     )
 
-    private var holdNotesOn = false
+    private var noHoldNotes = false
     private var noAimOn = false //if (Config.IS_MOBILE) true else false
     private var pointerGameplay = false
 
@@ -100,7 +100,7 @@ class DifficultySelectStage() :
             scoreLabel.setFontScale(0.5f)
             fun updateScoreLabel() {
                 var scoreValue = 0
-                if (holdNotesOn) scoreValue += 10
+                if (noHoldNotes) scoreValue += Config.NO_HOLD_NOTES_PENALTY
                 if (noAimOn) scoreValue -= if (Config.IS_MOBILE) 0 else 15
                 scoreLabel.setText(if (scoreValue == 0) "" else (if (scoreValue > 0) "+" else "") + "$scoreValue% score")
                 scoreLabel.color = if (scoreValue > 0) Color.GREEN else Color.RED
@@ -137,21 +137,20 @@ class DifficultySelectStage() :
 //                }
 //            })
 
-            // TODO fix hold notes
-//            row()
-//            add(newTextButton("Hold Notes Off").apply {
-//                label.setFontScale(0.75f)
-//                addChangeListener {
-//                    holdNotesOn = !holdNotesOn
-//                    if (holdNotesOn) {
-//                        it.setText("Hold Notes On (Harder)")
-//                    } else {
-//                        it.setText("Hold Notes Off")
-//                    }
-//
-//                    updateScoreLabel()
-//                }
-//            })
+            row()
+            add(newTextButton("Hold Notes On").apply {
+                label.setFontScale(0.75f)
+                addChangeListener {
+                    noHoldNotes = !noHoldNotes
+                    if (!noHoldNotes) {
+                        it.setText("Hold Notes On")
+                    } else {
+                        it.setText("Hold Notes Off")
+                    }
+
+                    updateScoreLabel()
+                }
+            })
             center().bottom()
         }
     }
@@ -163,7 +162,7 @@ class DifficultySelectStage() :
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),
-                    diff.copy(noHoldNotes = !holdNotesOn, noAim = noAimOn)
+                    diff.copy(noHoldNotes = noHoldNotes, noAim = noAimOn)
                 )
         }
     }

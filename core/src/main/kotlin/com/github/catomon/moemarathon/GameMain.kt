@@ -8,6 +8,7 @@ import com.github.catomon.moemarathon.difficulties.Rank
 import com.github.catomon.moemarathon.mainmenu.MenuScreen
 import com.github.catomon.moemarathon.mainmenu.MenuStage
 import com.github.catomon.moemarathon.playscreen.PlayScreen
+import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.setMouseCursor
 
 lateinit var assets: Assets
@@ -62,6 +63,8 @@ class GameMain(private val onCreate: (() -> Unit)? = null) : Game() {
     }
 
     override fun setScreen(screen: Screen?) {
+        logInf("Changing screen to ${screen?.javaClass?.simpleName}")
+
         super.setScreen(screen)
 
         if (screen is MenuScreen) {

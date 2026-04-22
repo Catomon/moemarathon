@@ -21,4 +21,6 @@ object Config {
     const val SCORE_GAIN_OK = 200
 
     const val MIN_RANK = "D"
+
+    const val NO_HOLD_NOTES_PENALTY = -20
 }

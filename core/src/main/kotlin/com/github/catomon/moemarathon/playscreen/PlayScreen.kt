@@ -30,6 +30,7 @@ import com.github.catomon.moemarathon.map.osu.TimingPoint
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import com.github.catomon.moemarathon.utils.addCover
+import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.removeCover
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newTextButton
@@ -163,13 +164,14 @@ class PlayScreen(
 
     private var isReady = false
     fun ready() {
-        if (isReady) return
+        if (isReady) throw IllegalStateException("Already ready!")
 
         ///
 
         AudioManager.loadMapMusic(gameMap)
 
         if (noHoldNotes) {
+            logInf("Hold notes are off")
             noteMap.chunks.forEach { chunk ->
                 chunk.notes.forEach { note ->
                     note.tracingNext = false; note.tracingPrev = false
@@ -291,8 +293,8 @@ class PlayScreen(
 
                     onNoteEvent(NoteListener.MISS, notes.removeLast())
 
-//                    if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
-//                        onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
+                    if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
+                        onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
                 }
 
                 if (autoPlay) {
@@ -453,6 +455,9 @@ class PlayScreen(
                 } else {
                     if (clickerToNoteDst <= curPointerRad * 2) {
                         onNoteEvent(NoteListener.MISS, notes.removeLast())
+
+                        if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
+                            onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
                     } else {
                         onNoteEvent(NoteListener.TOO_FAR, note)
                     }

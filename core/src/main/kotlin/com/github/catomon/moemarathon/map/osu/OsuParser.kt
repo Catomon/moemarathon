@@ -29,7 +29,7 @@ object OsuParser {
                         time = params[2].toInt(),
                         type = type,
                         hitSound = params.getOrNull(4)?.toInt() ?: 0,
-                        objectParams = params.drop(5),
+                        objectParams = params,
                         hitSample = params.getOrNull(params.size - 1) ?: "",
                         comboIndex = comboIndex,
                         isNewCombo = isNewCombo
@@ -51,6 +51,7 @@ object OsuParser {
                         time = params[2].toInt(),
                         type = type,
                         hitSound = params[4].toInt(),
+                        objectParams = params,
                         comboIndex = comboIndex,
                         isNewCombo = isNewCombo
                     )

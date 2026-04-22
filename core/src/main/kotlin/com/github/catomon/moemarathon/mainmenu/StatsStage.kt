@@ -41,8 +41,8 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 //        val pOks = stats.oks.toFloat() / totalNotes.toFloat()
 //        val pMisses = stats.misses.toFloat() / totalNotes.toFloat()
 
-        if (!playScreen.noHoldNotes) {
-            stats.score = (stats.score * 1.1f).toInt()
+        if (playScreen.noHoldNotes) {
+            stats.score = (stats.score * (1f - Config.NO_HOLD_NOTES_PENALTY / 100)).toInt()
         }
 
         stats.score += stats.combo * 100
@@ -80,9 +80,9 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 add(VisLabel("Miss: " + stats.misses).also { it.color = Color.RED })
                 row()
                 add(VisLabel("Combo: " + stats.maxCombo))
-                if (!playScreen.noHoldNotes) {
+                if (playScreen.noHoldNotes) {
                     row()
-                    add(newLabel("Hold Notes: +10% score"))
+                    add(newLabel("Hold Notes Off: ${Config.NO_HOLD_NOTES_PENALTY}% score").also { it.setFontScale(0.75f) })
                 }
             }).width(480f)
         }

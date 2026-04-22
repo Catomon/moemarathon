@@ -10,7 +10,7 @@ data class GameMapSet(
     val name: String,
     val maps: List<String>,
     val noteSpawnTime: Float = 1f,
-    val noHoldNotes: Boolean = true,
+    val noHoldNotes: Boolean = false,
     val noAim: Boolean = false,
     val ranks: MutableMap<String, String> = mutableMapOf(),
     val hitZonesAmount: Int = 6,
