@@ -56,6 +56,18 @@ class SettingsStage() :
                 }
             }).width(250f)
             row()
+            add(newTextButton(if (GamePref.hideKeyIndicators) "Show Keys" else "Hide Keys").also { button ->
+                button.addChangeListener {
+                    if (GamePref.hideKeyIndicators) {
+                        GamePref.hideKeyIndicators = false
+                        button.setText("Hide Keys")
+                    } else {
+                        button.setText("Show Keys")
+                        GamePref.hideKeyIndicators = true
+                    }
+                }
+            })
+            row()
             if (Config.IS_DESKTOP && !Config.IS_RELEASE || userSave.normalRank != 0 || userSave.hardRank != 0 || userSave.insaneRank != 0) {
                 add(newTextButton("Open other maps folder").addChangeListener {
                     try {

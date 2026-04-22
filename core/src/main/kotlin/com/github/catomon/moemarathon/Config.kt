@@ -16,11 +16,11 @@ object Config {
         || Gdx.app.type == Application.ApplicationType.iOS
     var IS_WEBAPP = false
 
-    const val SCORE_GAIN_HOLD_NOTE = 400
+    const val SCORE_GAIN_HOLD_NOTE = 900
     const val SCORE_GAIN_GREAT = 300
     const val SCORE_GAIN_OK = 200
 
-    const val MIN_RANK = "D"
+    const val MIN_RANK = "F"
 
     const val NO_HOLD_NOTES_PENALTY = -20
 }

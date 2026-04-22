@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.github.catomon.moemarathon.Config
+import com.github.catomon.moemarathon.GamePref
 import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.playscreen.PlayScreen
 import com.github.catomon.moemarathon.playscreen.getHitZoneKeyById
@@ -23,6 +24,12 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
     private val keyName = newLabel("")
 
     private val hitZonesStates = mutableMapOf<Int, Float>()
+
+    private val drawKeyIndicators = !GamePref.hideKeyIndicators
+
+    init {
+        keyName.setFontScale(0.75f)
+    }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
         val circleRadius = playScreen.hitZoneCircleRadius
@@ -65,7 +72,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
             hitZoneTexture.draw(batch)
 
-            if (PlayScreen.GameplayConfig.playMethod == PlayScreen.PlayMethod.POINTER) {
+            if (PlayScreen.GameplayConfig.playMethod == PlayScreen.PlayMethod.POINTER || !drawKeyIndicators) {
                 keyName.setText("")
             } else {
                 when (PlayScreen.GameplayConfig.hitZonesAmount) {

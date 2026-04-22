@@ -33,6 +33,7 @@ class PlayHud(private val playScreen: PlayScreen) :
 
     private val skin = playScreen.skin
     private val hitGreat = assets.mainAtlas.findRegion(skin.hit + "hit_great")
+    private val hitGreatHoldNote = assets.mainAtlas.findRegion(skin.hit + "hit_great_hold_note")
     private val hitOk = assets.mainAtlas.findRegion(skin.hit + "hit_ok")
     private val hitMiss = assets.mainAtlas.findRegion(skin.hit + "hit_miss")
     private val hitTooEarly = assets.mainAtlas.findRegion(skin.hit + "too_early")
@@ -121,7 +122,7 @@ class PlayHud(private val playScreen: PlayScreen) :
         comboLabel.onNoteEvent(id, note)
 
         when (id) {
-            1, 2, 3, NoteListener.HIT_TRACE, NoteListener.NOTE_TRACE_START -> {
+            1, 2, 3, NoteListener.HIT_HOLD_NOTE, NoteListener.HOLD_NOTE_START -> {
                 AudioManager.playSound(
                     when (note.hitSound) {
                         0 -> AudioManager.hitSound
@@ -140,32 +141,33 @@ class PlayHud(private val playScreen: PlayScreen) :
         val noteToStagePos = notePos
         val noteIsGreat = with(playScreen) { note.isGreat() }
 
-        addActor(
-            SpriteActor(
-                Sprite(
-                    when (id) {
-                        0 -> hitMiss
-                        1 -> {
-                            if (noteIsGreat) hitGreat
-                            else hitOk
-                        }
+        if (id != NoteListener.HOLD_NOTE_START)
+            addActor(
+                SpriteActor(
+                    Sprite(
+                        when (id) {
+                            0 -> hitMiss
+                            1 -> {
+                                if (noteIsGreat) hitGreat
+                                else hitOk
+                            }
 
-                        7 -> hitGreat
-                        4 -> hitTooEarly
-                        5 -> hitTooFar
-                        else -> hitQuestion
-                    }
-                )
-            ).apply {
-                setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
-                setPosition(noteToStagePos.x, noteToStagePos.y)
-                addAction(
-                    Actions.sequence(
-                        Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)),
-                        Actions.removeActor()
+                            7 -> hitGreatHoldNote
+                            4 -> hitTooEarly
+                            5 -> hitTooFar
+                            else -> hitQuestion
+                        }
                     )
-                )
-            }
-        )
+                ).apply {
+                    setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
+                    setPosition(noteToStagePos.x, noteToStagePos.y)
+                    addAction(
+                        Actions.sequence(
+                            Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)),
+                            Actions.removeActor()
+                        )
+                    )
+                }
+            )
     }
 }

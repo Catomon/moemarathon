@@ -9,8 +9,8 @@ interface NoteListener {
         //const val LATE = 3
         const val TOO_EARLY = 4
         const val TOO_FAR = 5
-        const val NOTE_TRACE_START = 6
-        const val HIT_TRACE = 7
+        const val HOLD_NOTE_START = 6
+        const val HIT_HOLD_NOTE = 7
     }
 
     fun onNoteEvent(id: Int, note: Note)

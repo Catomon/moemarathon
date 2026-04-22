@@ -29,13 +29,7 @@ import com.github.catomon.moemarathon.map.osu.OsuParser
 import com.github.catomon.moemarathon.map.osu.TimingPoint
 import com.github.catomon.moemarathon.playscreen.playstage.PlayStage
 import com.github.catomon.moemarathon.playscreen.ui.PlayHud
-import com.github.catomon.moemarathon.utils.addCover
 import com.github.catomon.moemarathon.utils.logInf
-import com.github.catomon.moemarathon.utils.removeCover
-import com.github.catomon.moemarathon.widgets.addChangeListener
-import com.github.catomon.moemarathon.widgets.newTextButton
-import com.kotcrab.vis.ui.widget.VisImage
-import com.kotcrab.vis.ui.widget.VisWindow
 import kotlin.math.*
 
 class PlayScreen(
@@ -190,25 +184,26 @@ class PlayScreen(
 
         GamePref.userSave.let { userSave ->
             var needSave = false
-            userSave.notify.removeIf {
-                if (it == "tutorial") {
-                    paused = true
-                    playHud.addCover()
-                    playHud.addActor(VisWindow("Press corresponding button when a note reaches the hit zone:").also { window ->
-                        window.centerWindow()
-                        window.add(VisImage(assets.mainAtlas.findRegion("tutor"))).size(400f, 400f)
-                        window.row()
-                        window.add(newTextButton("OK!").addChangeListener {
-                            window.remove()
-                            playHud.removeCover()
-                            paused = false
-                        })
-                        window.pack()
-                    })
-                    needSave = true
-                    true
-                } else false
-            }
+            // TODO fix tutorial (it works but visually outdated)
+//            userSave.notify.removeIf {
+//                if (it == "tutorial") {
+//                    paused = true
+//                    playHud.addCover()
+//                    playHud.addActor(VisWindow("Press corresponding button when a note reaches the hit zone:").also { window ->
+//                        window.centerWindow()
+//                        window.add(VisImage(assets.mainAtlas.findRegion("tutor"))).size(400f, 400f)
+//                        window.row()
+//                        window.add(newTextButton("OK!").addChangeListener {
+//                            window.remove()
+//                            playHud.removeCover()
+//                            paused = false
+//                        })
+//                        window.pack()
+//                    })
+//                    needSave = true
+//                    true
+//                } else false
+//            }
 
             if (needSave) {
                 GamePref.userSave = userSave
@@ -401,7 +396,7 @@ class PlayScreen(
                 else stats.oks++
             }
 
-            7 -> {
+            NoteListener.HIT_HOLD_NOTE -> {
                 stats.combo++
                 stats.score += SCORE_GAIN_HOLD_NOTE
                 stats.greats++
@@ -436,13 +431,13 @@ class PlayScreen(
                 holdNoteButton = button
                 holdNote = note
 
-                onNoteEvent(NoteListener.HIT, note)
+                onNoteEvent(NoteListener.HOLD_NOTE_START, note)
             } else {
                 if (isHoldingNote) {
                     isHoldingNote = false
                     holdNoteButton = -1
                     holdNote = null
-                    onNoteEvent(NoteListener.HIT_TRACE, note)
+                    onNoteEvent(NoteListener.HIT_HOLD_NOTE, note)
                 } else {
                     onNoteEvent(NoteListener.HIT, note)
                 }

@@ -82,6 +82,12 @@ object GamePref {
             prefs.putFloat("music_volume", value)
         }
 
+    var hideKeyIndicators: Boolean
+        get() = prefs.getBoolean("hideKeyIndicators", false)
+        set(value) {
+            prefs.putBoolean("hideKeyIndicators", value)
+        }
+
     var userSave: UserSave
         get() {
             return try {
