@@ -104,6 +104,7 @@ class PlayScreen(
 
     var isHoldingNote = false
     var holdNoteButton = -1
+    var holdNote: Note? = null
 
     var beat = 0f
         private set
@@ -433,12 +434,14 @@ class PlayScreen(
             if (note.tracingNext) {
                 isHoldingNote = true
                 holdNoteButton = button
+                holdNote = note
 
                 onNoteEvent(NoteListener.HIT, note)
             } else {
                 if (isHoldingNote) {
                     isHoldingNote = false
                     holdNoteButton = -1
+                    holdNote = null
                     onNoteEvent(NoteListener.HIT_TRACE, note)
                 } else {
                     onNoteEvent(NoteListener.HIT, note)
@@ -490,6 +493,34 @@ class PlayScreen(
         val hitZones = mutableMapOf<Int, Vector2>()
         for (i in 0 until GameplayConfig.hitZonesAmount) {
             val angle = i * angleBetweenParts
+            val x = circleRadius * cos(MathUtils.degRad * angle)
+            val y = circleRadius * sin(MathUtils.degRad * angle)
+            val cameraX = camera.position.x
+            val cameraY = camera.position.y
+            hitZones[i + 1] = Vector2(cameraX + x, cameraY + y)
+        }
+
+        return hitZones
+    }
+
+    fun getHitZonesForRender(): MutableMap<Int, Vector2> {
+        val circleRadius = hitZoneCircleRadius
+        val angleBetweenParts = 360f / GameplayConfig.hitZonesAmount
+
+        val hitZones = mutableMapOf<Int, Vector2>()
+        for (i in 0 until GameplayConfig.hitZonesAmount) {
+            var angle = i * angleBetweenParts
+
+            if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
+                if (angle != 0f && angle != 180f) {
+                    when {
+                        angle < 90f -> angle -= 21f
+                        angle > 270f -> angle += 21f
+                        angle > 180f -> angle -= 21f
+                        angle > 90f -> angle += 21f
+                    }
+                }
+
             val x = circleRadius * cos(MathUtils.degRad * angle)
             val y = circleRadius * sin(MathUtils.degRad * angle)
             val cameraX = camera.position.x

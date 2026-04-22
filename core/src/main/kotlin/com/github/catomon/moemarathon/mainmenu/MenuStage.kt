@@ -224,21 +224,22 @@ class MenuStage(private val menuScreen: MenuScreen = game.menuScreen) : BgStage(
 
         userSave.notify.removeIf {
             when {
-                it.startsWith("skin:") -> {
-                    addActor(VisWindow("").also { window ->
-                        window.centerWindow()
-                        window.add("${it.removePrefix("skin:")} skin unlocked!")
-                        window.row()
-                        window.add("See it in the Skins menu.")
-                        window.row()
-                        window.add(newTextButton("OK!").addChangeListener {
-                            window.remove()
-                        })
-                        window.pack()
-                    })
-
-                    return@removeIf true
-                }
+                //TODO uncommend when have more skins
+//                it.startsWith("skin:") -> {
+//                    addActor(VisWindow("").also { window ->
+//                        window.centerWindow()
+//                        window.add("${it.removePrefix("skin:")} skin unlocked!")
+//                        window.row()
+//                        window.add("See it in the Skins menu.")
+//                        window.row()
+//                        window.add(newTextButton("OK!").addChangeListener {
+//                            window.remove()
+//                        })
+//                        window.pack()
+//                    })
+//
+//                    return@removeIf true
+//                }
 
                 it == DefaultMapSets.NonStop.name -> {
                     addActor(VisWindow("").also { window ->

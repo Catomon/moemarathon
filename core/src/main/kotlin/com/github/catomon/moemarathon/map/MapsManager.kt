@@ -84,7 +84,8 @@ object MapsManager {
                 prevNote = note
                 chunk.notes.addFirst(note)
             } else {
-                chunk.notes.addFirst(hit.toNote(hitZones, tracingNext = true))
+                val holdNoteStart = hit.toNote(hitZones, tracingNext = true)
+                chunk.notes.addFirst(holdNoteStart)
 
                 //Slider syntax:
                 // x,y,time,type,hitSound,curveType|curvePoints,slides,length,edgeSounds,edgeSets,hitSample
@@ -117,7 +118,8 @@ object MapsManager {
                     Note(
                         sliderEndTimeMillis / 1000f,
                         hitObjectToNotePosition(hitZones, hit.x, hit.y), //sliderEndXY[0], sliderEndXY[1]
-                        tracingPrev = true
+                        tracingPrev = true,
+                        colorIndex = holdNoteStart.colorIndex // same color as hold note star
                     )
                 chunk.notes.addFirst(sliderEndNote)
                 prevNote = sliderEndNote

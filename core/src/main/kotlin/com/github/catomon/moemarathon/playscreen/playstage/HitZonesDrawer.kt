@@ -66,7 +66,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             hitZoneTexture.draw(batch)
 
             if (PlayScreen.GameplayConfig.playMethod == PlayScreen.PlayMethod.POINTER) {
-                keyName.setText("*")
+                keyName.setText("")
             } else {
                 when (PlayScreen.GameplayConfig.hitZonesAmount) {
                     6 -> {
@@ -84,7 +84,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
                     }
 
                     12 -> {
-                        keyName.setText("*")
+                        keyName.setText("")
                     }
                 }
             }
