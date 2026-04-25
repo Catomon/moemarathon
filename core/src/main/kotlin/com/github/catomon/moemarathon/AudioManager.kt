@@ -49,6 +49,8 @@ object AudioManager {
         private set
     lateinit var konata_good_job: Sound
         private set
+    lateinit var lost: Sound
+        private set
 
     init {
         var playback: Thread? = null
@@ -108,7 +110,7 @@ object AudioManager {
                     }
                 }
 
-                Thread.sleep(250)
+                Thread.sleep(100)
             }
         }
 
@@ -189,6 +191,7 @@ object AudioManager {
         this.hitSound2 = assets.getSound("hit2.ogg")
         this.hitSound3 = assets.getSound("hit3.ogg")
         this.konata_good_job = assets.getSound("konata_good_job.ogg")
+        this.lost = assets.getSound("lost.ogg")
     }
 
     fun disposeMusic() {

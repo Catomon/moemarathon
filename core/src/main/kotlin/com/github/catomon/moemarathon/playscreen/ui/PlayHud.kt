@@ -30,6 +30,13 @@ class PlayHud(private val playScreen: PlayScreen) :
 
     private val scoreLabel = ScoreLabel(playScreen.stats)
     private val comboLabel = ComboLabel(playScreen.stats)
+    private val healthBar = HealthBar(
+        onGameOver = {
+            playScreen.onDone(isLost = true)
+        },
+        healthHit =  playScreen.playSets.healthHit,
+        healthMiss = playScreen.playSets.healthMiss
+    )
 
     private val skin = playScreen.skin
     private val hitGreat = assets.mainAtlas.findRegion(skin.hit + "hit_great")
@@ -68,6 +75,11 @@ class PlayHud(private val playScreen: PlayScreen) :
             addActor(mobileButtonsLayout)
 
         addActor(VisTable().apply {
+            left().top()
+            setFillParent(true)
+            add(healthBar).left().bottom().padLeft(16f)
+        })
+        addActor(VisTable().apply {
             right().top()
             setFillParent(true)
             add(scoreLabel).right().top().padRight(16f)
@@ -78,6 +90,7 @@ class PlayHud(private val playScreen: PlayScreen) :
             add(comboLabel).left().bottom().padLeft(16f)
         })
 
+        playScreen.noteListeners.add(healthBar)
         playScreen.noteListeners.add(comboLabel)
         playScreen.noteListeners.add(scoreLabel)
 
@@ -90,7 +103,7 @@ class PlayHud(private val playScreen: PlayScreen) :
         }).apply {
             addAction(Actions.alpha(0f, 1f))
             val table = this
-            left().top()
+            center().top()
             setSize(180f, 180f)
             addListener(object : InputListener() {
                 override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {

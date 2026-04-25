@@ -227,8 +227,19 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 //            noteInnerSprite.setRegion(color.second)
         }
 
-        noteInnerSprite.setPositionByCenter(notePos.x, notePos.y)
-        noteOuterSprite.setPositionByCenter(notePos.x, notePos.y)
+        if (playScreen.isLost) {
+            noteInnerSprite.setPositionByCenter(
+                notePos.x,
+                notePos.y - ((notePos.y + 48) - ((notePos.y +48) * smoothstep((1f - playScreen.lostSec / 2f).coerceIn(0f, 1f))))
+            )
+            noteOuterSprite.setPositionByCenter(
+                notePos.x,
+                notePos.y - ((notePos.y + 48) - ((notePos.y + 48) * smoothstep((1f - playScreen.lostSec / 2f).coerceIn(0f, 1f))))
+            )
+        } else {
+            noteInnerSprite.setPositionByCenter(notePos.x, notePos.y)
+            noteOuterSprite.setPositionByCenter(notePos.x, notePos.y)
+        }
 
 //        if (applyColor) {
 //            noteOuterSprite.color = outerColor
@@ -245,7 +256,14 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
 
         if (traceToNote != null && visual < 0) {
             noteInnerSprite.draw(batch)
-            noteTraceSprite.setPositionByCenter(notePos.x, notePos.y)
+            if (playScreen.isLost) {
+                noteTraceSprite.setPositionByCenter(
+                    notePos.x,
+                    notePos.y - ((notePos.y + 48) - ((notePos.y + 48) * smoothstep((1f - playScreen.lostSec / 2f).coerceIn(0f, 1f))))
+                )
+            } else {
+                noteTraceSprite.setPositionByCenter(notePos.x, notePos.y)
+            }
             noteTraceSprite.rotation = degrees(notePos.x, notePos.y, traceToNote.x, traceToNote.y)
             noteTraceSprite.setAlpha(a)
             noteTraceSprite.draw(batch)
@@ -254,6 +272,11 @@ class NotesDrawer(private val playScreen: PlayScreen) : Actor() {
             noteOuterSprite.draw(batch)
             noteInnerSprite.draw(batch)
         }
+    }
+
+    private fun smoothstep(dist: Float): Float {
+        val t = dist.coerceIn(0f, 1f)
+        return t * t * (3f - 2f * t)
     }
 
     private fun Note.calcPosition(vector2: Vector2): Vector2 = playScreen.calcNotePosition(this, vector2)

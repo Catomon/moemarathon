@@ -23,7 +23,7 @@ import com.github.catomon.moemarathon.widgets.newTextButton
 import com.kotcrab.vis.ui.widget.*
 import kotlin.math.max
 
-class StatsStage(val playScreen: PlayScreen) : BgStage() {
+class StatsStage(val playScreen: PlayScreen, val isLost: Boolean = false) : BgStage() {
 
     val stats = playScreen.stats
     val playSets = playScreen.playSets
@@ -49,6 +49,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             maxOf(0f, baseAcc - missPenalty)
         } else 0f
         val rank = when {
+            isLost -> "F"
             stats.misses == 0 && stats.oks == 0 -> "SS"
             stats.misses == 0 && accuracy >= 0.90f -> "S"
             accuracy >= 0.80f -> "A"
@@ -60,7 +61,8 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
 
         mapResult = RankUtil.getRankInt(rank)
 
-        saveScore(rank)
+        if (!isLost)
+            saveScore(rank)
 
         createTable().apply {
             add(VisLabel(playScreen.gameMap.file.nameWithoutExtension()).also { it.setFontScale(0.5f) }).colspan(2)
@@ -106,7 +108,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
             playSets.mapScores[mapName] = stats.score
 
             val minRank = Config.MIN_RANK
-            if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank)) {
+            if (RankUtil.getRankInt(rank) < RankUtil.getRankInt(minRank) || isLost) {
                 createTable(newTextButton("Restart>").addChangeListener {
                     this@StatsStage.fadeInAndThen(1f) {
                         game.screen = PlayScreen(playScreen.gameMap, playSets)
@@ -115,11 +117,18 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                     bottom().right()
                 }
 
-                createTable().apply {
-                    add(newLabel("Get ").also { it.setFontScale(0.75f) })
-                    add(newLabel(minRank).also { it.color = Color.BLUE; it.setFontScale(0.75f) })
-                    add(newLabel(" or higher to pass! Try again!").also { it.setFontScale(0.75f) })
-                    center().bottom().padBottom(16f)
+                if (isLost) {
+                    createTable().apply {
+                        add(newLabel("You lost :( try again?").also { it.setFontScale(0.75f) })
+                        center().bottom().padBottom(16f)
+                    }
+                } else {
+                    createTable().apply {
+                        add(newLabel("Get ").also { it.setFontScale(0.75f) })
+                        add(newLabel(minRank).also { it.color = Color.BLUE; it.setFontScale(0.75f) })
+                        add(newLabel(" or higher to pass, try again!").also { it.setFontScale(0.75f) })
+                        center().bottom().padBottom(16f)
+                    }
                 }
             } else {
                 var timeBeforeContinue = 0f
@@ -220,15 +229,43 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                 val rankChar = RankUtil.getRankChar(playSetsResult)
 
                 window.setCenterOnAdd(true)
-                if (rankChar != "F")
-                    window.add("Congrats!")
-                else
-                    window.add("That's.. something")
-                window.row()
-                if (rankChar != "F")
-                    window.add("You completed ${playSets.name} mode!")
-                else
-                    window.add("You completed ${playSets.name} mode")
+                when (rankChar) {
+                    "SS" -> {
+                        window.add("Godlike!")
+                        window.row()
+                        window.add("Flawless ${playSets.name}!")
+                    }
+
+                    "S" -> {
+                        window.add("Perfect score!")
+                        window.row()
+                        window.add("Mastered ${playSets.name}!")
+                    }
+
+                    "A" -> {
+                        window.add("Amazing!")
+                        window.row()
+                        window.add("Conquered ${playSets.name}!")
+                    }
+
+                    "B", "C" -> {
+                        window.add("Nice job!")
+                        window.row()
+                        window.add("Cleared ${playSets.name}!")
+                    }
+
+                    "D", "E" -> {
+                        window.add("Not bad.")
+                        window.row()
+                        window.add("Survived ${playSets.name}!")
+                    }
+
+                    else -> {  // F
+                        window.add("Did you even try?")
+                        window.row()
+                        window.add("Somehow finished ${playSets.name}...")
+                    }
+                }
                 window.row()
                 window.add(VisTable().also { table ->
                     playSets.ranks.forEach { itRank ->
@@ -259,7 +296,7 @@ class StatsStage(val playScreen: PlayScreen) : BgStage() {
                         goodJob = true
                 })
                 window.row()
-                window.add(newTextButton( if (rankChar != "F") "OK!" else "ok").addChangeListener {
+                window.add(newTextButton(if (rankChar != "F") "OK!" else "ok").addChangeListener {
                     window.stage.removeCover()
                     window.remove()
                 })

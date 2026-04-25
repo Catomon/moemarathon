@@ -12,6 +12,8 @@ data class GameMapSet(
     val noteSpawnTime: Float = 1f,
     val noHoldNotes: Boolean = false,
     val noAim: Boolean = false,
+    val healthHit: Float = 15f,
+    val healthMiss: Float  = 10f,
     val ranks: MutableMap<String, String> = mutableMapOf(),
     val hitZonesAmount: Int = 6,
     val mapScores: MutableMap<String, Int> = mutableMapOf(),

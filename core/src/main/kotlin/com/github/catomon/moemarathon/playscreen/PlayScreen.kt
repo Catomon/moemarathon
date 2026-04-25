@@ -146,6 +146,11 @@ class PlayScreen(
     var skin: Skin = Skins.getSkin(GamePref.userSave.skin) ?: Skins.lucky
     var noHoldNotes = playSets.noHoldNotes
     var isDone = false
+        private set
+    var isLost = false
+        private set
+    var lostSec = 0f
+    private set
     var debug = false
 
     val playStage = PlayStage(this)
@@ -228,6 +233,10 @@ class PlayScreen(
     var cursorHideTime = HIDE_CURSOR_AFTER
 
     private fun update(delta: Float) {
+        if (isLost) {
+            lostSec += delta
+        }
+
         if (cursorHideTime > 0f) {
             cursorHideTime -= delta
             if (cursorHideTime <= 0f) {
@@ -252,6 +261,10 @@ class PlayScreen(
             action?.invoke()
             action = null
         }
+
+//        if (isLost) {
+//            AudioManager.mapMusic?.volume = 0f
+//        }
 
         updateTimingPoint()
         updateBeat()
@@ -283,6 +296,10 @@ class PlayScreen(
     }
 
     private fun updateBeat() {
+        if (time < 0f) {
+            beat = 0f
+            return
+        }
         val elapsedMs = ((time - activeBeatStartTime) * 1000.0).coerceAtLeast(0.0)
         val phase = (elapsedMs / beatLength) % 1.0
         val pulse = (1.0 - phase)
@@ -322,12 +339,13 @@ class PlayScreen(
         }
     }
 
-    fun onDone() {
+    fun onDone(isLost: Boolean = false) {
         if (isDone) return
+        this.isLost = isLost
         playStage.addAction(Actions.sequence(Actions.delay(if (Config.IS_RELEASE) 2f else 0f), Actions.run {
             game.screen = game.menuScreen
             game.menuScreen.stage?.background?.sprite = Sprite(playStage.background.sprite)
-            game.menuScreen.changeStage(StatsStage(this))
+            game.menuScreen.changeStage(StatsStage(this, isLost = isLost))
         }))
         isDone = true
     }
@@ -343,7 +361,7 @@ class PlayScreen(
 
     fun calcNoteTimeLeft(note: Note): Float = note.calcTimeLeft()
 
-    fun Note.calcTimeLeft(): Float = timing - time - noteTimingWindow
+    fun Note.calcTimeLeft(): Float = timing - time + noteTimingWindow
 
     fun calcNotePosition(note: Note, vector2: Vector2 = Vector2()): Vector2 = note.calcPosition(vector2)
 
@@ -392,32 +410,34 @@ class PlayScreen(
     }
 
     private fun onNoteEvent(id: Int, note: Note) {
-        when (id) {
-            NoteListener.MISS -> {
-                stats.combo = 0
-                stats.misses++
-            }
+       if (!isDone) {
+           when (id) {
+               NoteListener.MISS -> {
+                   stats.combo = 0
+                   stats.misses++
+               }
 
-            1, 2, 3 -> {
-                stats.combo++
-                stats.score +=
-                    if (note.tracingPrev) SCORE_GAIN_HOLD_NOTE
-                    else if (note.isGreat()) SCORE_GAIN_GREAT
-                    else SCORE_GAIN_OK
-                if (note.tracingPrev) stats.greats++
-                else if (note.isGreat()) stats.greats++
-                else stats.oks++
-            }
+               1, 2, 3 -> {
+                   stats.combo++
+                   stats.score +=
+                       if (note.tracingPrev) SCORE_GAIN_HOLD_NOTE
+                       else if (note.isGreat()) SCORE_GAIN_GREAT
+                       else SCORE_GAIN_OK
+                   if (note.tracingPrev) stats.greats++
+                   else if (note.isGreat()) stats.greats++
+                   else stats.oks++
+               }
 
-            NoteListener.HIT_HOLD_NOTE -> {
-                stats.combo++
-                stats.score += SCORE_GAIN_HOLD_NOTE
-                stats.greats++
-            }
-        }
+               NoteListener.HIT_HOLD_NOTE -> {
+                   stats.combo++
+                   stats.score += SCORE_GAIN_HOLD_NOTE
+                   stats.greats++
+               }
+           }
 
-        if (stats.maxCombo < stats.combo)
-            stats.maxCombo = stats.combo
+           if (stats.maxCombo < stats.combo)
+               stats.maxCombo = stats.combo
+       }
 
         noteListeners.forEach { it.onNoteEvent(id, note) }
     }
