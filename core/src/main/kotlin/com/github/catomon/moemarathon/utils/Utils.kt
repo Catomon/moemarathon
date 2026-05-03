@@ -5,18 +5,22 @@ import com.badlogic.gdx.graphics.Cursor
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.MathUtils.atan2
+import com.github.catomon.moemarathon.Config
 
 val defaultCursor by lazy { createCursor("cursor.png") }
 val emptyCursor by lazy { createCursor("empty.png") }
 var currentCursor: Cursor? = null
     private set
 
-fun setMouseCursor(cursor: Cursor = defaultCursor) {
+fun setMouseCursor(cursor: Cursor? = defaultCursor) {
+    if (Config.IS_MOBILE) return
+    if (cursor == null) return
     Gdx.graphics.setCursor(cursor)
     currentCursor = cursor
 }
 
-fun createCursor(cursorFileName: String): Cursor {
+fun createCursor(cursorFileName: String): Cursor? {
+    if (Config.IS_MOBILE) return null
     return run {
         val pixmap = Pixmap(Gdx.files.internal(cursorFileName))
         val xHotspot = 16

@@ -33,6 +33,9 @@ fun main() {
         setTitle("$APP_NAME $APP_VER")
         setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
+        useVsync(false)
+        setIdleFPS(60)
+        setForegroundFPS(200)
 
         setPreferencesConfig("Documents/$APP_NAME", Files.FileType.External)
     })

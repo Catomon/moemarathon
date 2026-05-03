@@ -18,11 +18,12 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
                 } else {
                     playScreen.playHud.hideMenu()
                 }
+                return true
             }
 
             else -> {
                 if (!playScreen.paused) {
-                    playScreen.processButtonDown(keycode)
+                   return playScreen.processButtonDown(keycode)
                 }
             }
         }
@@ -32,86 +33,101 @@ class PlayInputProcessor(private val playScreen: PlayScreen) : InputAdapter() {
                 Input.Keys.Q -> {
                     playScreen.hitZoneCircleSize += 0.05f
                     playScreen.mapSize = playScreen.mapSize
+                    return true
                 }
 
                 Input.Keys.E -> {
                     playScreen.noteSize += 0.01f
                     playScreen.mapSize = playScreen.mapSize
+                    return true
                 }
 
                 Input.Keys.W -> {
                     playScreen.hitZoneCircleSize -= 0.05f
                     playScreen.mapSize = playScreen.mapSize
+                    return true
                 }
 
                 Input.Keys.R -> {
                     playScreen.noteSize -= 0.01f
                     playScreen.mapSize = playScreen.mapSize
+                    return true
                 }
 
                 Input.Keys.F1 -> {
                     playScreen.debug = !playScreen.debug
+                    return true
                 }
 
                 Input.Keys.F2 -> {
                     playScreen.paused = !playScreen.paused
+                    return true
                 }
 
                 Input.Keys.F3 -> {
                     playScreen.autoPlay = !playScreen.autoPlay
+                    return true
                 }
 
                 Input.Keys.T -> {
                     playScreen.stats.greats = 9999
                     playScreen.onDone()
+                    return true
                 }
 
                 Input.Keys.Y -> {
                     playScreen.onDone()
+                    return true
                 }
             }
         }
 
-        return super.keyDown(keycode)
+        return false
     }
 
     override fun keyUp(keycode: Int): Boolean {
         if (!playScreen.paused) {
             if (playScreen.isHoldingNote && playScreen.holdNoteButton == keycode) {
                 playScreen.processButtonDown(keycode)
+                return true
             }
         }
 
-        return super.keyUp(keycode)
+        return false
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!playScreen.paused) {
-            playScreen.processButtonDown(button)
+            return playScreen.processButtonDown(button)
         }
 
-        return super.touchDown(screenX, screenY, pointer, button)
+        return false
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (!playScreen.paused) {
             if (playScreen.isHoldingNote && playScreen.holdNoteButton == button) {
                 playScreen.processButtonDown(button)
+                return true
             }
         }
 
-        return super.touchUp(screenX, screenY, pointer, button)
+        return false
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-        playScreen.cursorHideTime = HIDE_CURSOR_AFTER
-        setMouseCursor(defaultCursor)
+        if (!Config.IS_MOBILE) {
+            playScreen.cursorHideTime = HIDE_CURSOR_AFTER
+            setMouseCursor(defaultCursor)
+        }
         return super.touchDragged(screenX, screenY, pointer)
     }
 
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        playScreen.cursorHideTime = HIDE_CURSOR_AFTER
-        setMouseCursor(defaultCursor)
+        if (!Config.IS_MOBILE) {
+            playScreen.cursorHideTime = HIDE_CURSOR_AFTER
+            setMouseCursor(defaultCursor)
+        }
         return super.mouseMoved(screenX, screenY)
     }
 }

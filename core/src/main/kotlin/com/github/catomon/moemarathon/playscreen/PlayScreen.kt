@@ -15,14 +15,19 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Queue
-import com.github.catomon.moemarathon.*
+import com.github.catomon.moemarathon.AudioManager
+import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.Config.HIDE_CURSOR_AFTER
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_GREAT
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_HOLD_NOTE
 import com.github.catomon.moemarathon.Config.SCORE_GAIN_OK
 import com.github.catomon.moemarathon.GameMain.Companion.screenHeight
 import com.github.catomon.moemarathon.GameMain.Companion.screenWidth
+import com.github.catomon.moemarathon.GamePref
+import com.github.catomon.moemarathon.Skin
+import com.github.catomon.moemarathon.Skins
 import com.github.catomon.moemarathon.difficulties.GameMapSet
+import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.StatsStage
 import com.github.catomon.moemarathon.map.GameMap
 import com.github.catomon.moemarathon.map.MapsManager
@@ -33,7 +38,10 @@ import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import com.github.catomon.moemarathon.utils.emptyCursor
 import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.setMouseCursor
-import kotlin.math.*
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 
 class PlayScreen(
     val gameMap: GameMap,
@@ -105,7 +113,7 @@ class PlayScreen(
 
     var beat = 0f
         private set
-    var beatLength: Double = 1000.0;
+    var beatLength: Double = 500.0;
     var activeBeatStartTime = 0f
         private set
 
@@ -150,7 +158,7 @@ class PlayScreen(
     var isLost = false
         private set
     var lostSec = 0f
-    private set
+        private set
     var debug = false
 
     val playStage = PlayStage(this)
@@ -237,13 +245,14 @@ class PlayScreen(
             lostSec += delta
         }
 
-        if (cursorHideTime > 0f) {
-            cursorHideTime -= delta
-            if (cursorHideTime <= 0f) {
-                setMouseCursor(emptyCursor)
-                cursorHideTime = 0f
+        if (!Config.IS_MOBILE)
+            if (cursorHideTime > 0f) {
+                cursorHideTime -= delta
+                if (cursorHideTime <= 0f) {
+                    setMouseCursor(emptyCursor)
+                    cursorHideTime = 0f
+                }
             }
-        }
 
         playHud.act()
 
@@ -410,41 +419,41 @@ class PlayScreen(
     }
 
     private fun onNoteEvent(id: Int, note: Note) {
-       if (!isDone) {
-           when (id) {
-               NoteListener.MISS -> {
-                   stats.combo = 0
-                   stats.misses++
-               }
+        if (!isDone) {
+            when (id) {
+                NoteListener.MISS -> {
+                    stats.combo = 0
+                    stats.misses++
+                }
 
-               1, 2, 3 -> {
-                   stats.combo++
-                   stats.score +=
-                       if (note.tracingPrev) SCORE_GAIN_HOLD_NOTE
-                       else if (note.isGreat()) SCORE_GAIN_GREAT
-                       else SCORE_GAIN_OK
-                   if (note.tracingPrev) stats.greats++
-                   else if (note.isGreat()) stats.greats++
-                   else stats.oks++
-               }
+                1, 2, 3 -> {
+                    stats.combo++
+                    stats.score +=
+                        if (note.tracingPrev) SCORE_GAIN_HOLD_NOTE
+                        else if (note.isGreat()) SCORE_GAIN_GREAT
+                        else SCORE_GAIN_OK
+                    if (note.tracingPrev) stats.greats++
+                    else if (note.isGreat()) stats.greats++
+                    else stats.oks++
+                }
 
-               NoteListener.HIT_HOLD_NOTE -> {
-                   stats.combo++
-                   stats.score += SCORE_GAIN_HOLD_NOTE
-                   stats.greats++
-               }
-           }
+                NoteListener.HIT_HOLD_NOTE -> {
+                    stats.combo++
+                    stats.score += SCORE_GAIN_HOLD_NOTE
+                    stats.greats++
+                }
+            }
 
-           if (stats.maxCombo < stats.combo)
-               stats.maxCombo = stats.combo
-       }
+            if (stats.maxCombo < stats.combo)
+                stats.maxCombo = stats.combo
+        }
 
         noteListeners.forEach { it.onNoteEvent(id, note) }
     }
 
-    fun processButtonDown(button: Int) {
+    fun processButtonDown(button: Int): Boolean {
         val notes = noteMap.chunks.lastOrNull()?.notes
-        val note = notes?.lastOrNull() ?: return
+        val note = notes?.lastOrNull() ?: return false
         val notePos = note.calcPosition(Vector2())
         val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
         val clickerPos = calcClickerPos(Vector2())
@@ -510,6 +519,8 @@ class PlayScreen(
                 playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
             }
         }
+
+        return isHitZoneActivated
     }
 
     fun getHitZoneIdByNote(note: Note): Int = ((GameplayConfig.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
