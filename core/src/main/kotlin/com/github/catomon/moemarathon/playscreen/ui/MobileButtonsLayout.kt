@@ -44,6 +44,8 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
     private val keyName = newLabel("")
 
+    private val activePointers = mutableMapOf<Int, Int>()
+
     private val buttons = listOf(
         HitButton(key = Input.Keys.F, angle = 183f, xOff = 0f, yOffRel = 215f),
         HitButton(key = Input.Keys.D, angle = 183f, xOff = 0f, yOffRel = 0f),
@@ -105,6 +107,12 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
             stage.addListener(object : InputListener() {
                 override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                     super.touchUp(event, x, y, pointer, button)
+
+                    val key = activePointers.remove(pointer) ?: return
+
+                    if (!playScreen.paused && playScreen.isHoldingNote && playScreen.holdNoteButton == key) {
+                        playScreen.processButtonDown(key)
+                    }
                 }
 
                 override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -119,6 +127,7 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
                             )
                         ) {
                             hitButton.size = 1.25f
+                            activePointers[pointer] = hitButton.key
                             playScreen.processButtonDown(hitButton.key)
                             return true
                         }
