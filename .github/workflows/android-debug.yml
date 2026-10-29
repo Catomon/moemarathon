@@ -29,6 +29,21 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
 
+      - name: Provide leaderboard keys
+        run: |
+          mkdir -p core/src/main/kotlin/com/github/catomon/moemarathon/leaderboard
+          cat > core/src/main/kotlin/com/github/catomon/moemarathon/leaderboard/Key.kt <<EOF
+          package com.github.catomon.moemarathon.leaderboard
+
+          const val dreamloKey = "${DREAMLO_KEY:-ci-test}"
+          const val simpleBoardsApiKey = "${SIMPLE_BOARDS_API_KEY:-ci-test}"
+          const val simpleBoardsBoardId = "${SIMPLE_BOARDS_BOARD_ID:-ci-test}"
+          EOF
+        env:
+          DREAMLO_KEY: ${{ secrets.DREAMLO_KEY }}
+          SIMPLE_BOARDS_API_KEY: ${{ secrets.SIMPLE_BOARDS_API_KEY }}
+          SIMPLE_BOARDS_BOARD_ID: ${{ secrets.SIMPLE_BOARDS_BOARD_ID }}
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
