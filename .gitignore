@@ -161,9 +161,5 @@ Thumbs.db
 ## You could also add that configuration to the text in nativeimage.gradle .
 ## You should delete or comment out the next line if you have configuration in a different resource-config.json .
 **/resource-config.json
-/assets/textures.png
-/assets/textures.atlas
 *.sai2
-/assets/skin/tinted/tinted.atlas
-/assets/skin/tinted/tinted.png
 /core/src/main/kotlin/com/github/catomon/moemarathon/leaderboard/Key.kt
