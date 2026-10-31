@@ -61,11 +61,6 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
     }
 
     private fun buttonCenter(button: HitButton): Pair<Float, Float> {
-        if (playScreen.isTraditionalLayout) {
-            val zoneId = getHitZoneIdByButton(button.key)
-            val pos = playScreen.getHitZonePosition(zoneId)
-            return pos.x to pos.y
-        }
         return (camera.position.x + button.x) to button.y
     }
 
