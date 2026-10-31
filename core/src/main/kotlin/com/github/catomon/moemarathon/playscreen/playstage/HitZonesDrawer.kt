@@ -3,7 +3,6 @@ package com.github.catomon.moemarathon.playscreen.playstage
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.GamePref
@@ -13,8 +12,6 @@ import com.github.catomon.moemarathon.playscreen.getHitZoneKeyById
 import com.github.catomon.moemarathon.utils.setPosByCenter
 import com.github.catomon.moemarathon.utils.setPositionByCenter
 import com.github.catomon.moemarathon.widgets.newLabel
-import kotlin.math.cos
-import kotlin.math.sin
 
 class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
 
@@ -32,44 +29,25 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
     }
 
     override fun draw(batch: Batch, parentAlpha: Float) {
-        val circleRadius = playScreen.hitZoneCircleRadius
-        val angleBetweenParts = 360f / PlayScreen.GameplayConfig.hitZonesAmount
+        val zones = playScreen.getHitZonesForRender()
+        val baseSize = noteRadius * 4f
 
-        for (i in 0 until PlayScreen.GameplayConfig.hitZonesAmount) {
-            var angle = i * angleBetweenParts
-
-            if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
-                if (angle != 0f && angle != 180f) {
-                    when {
-                        angle < 90f -> angle -= 21f
-                        angle > 270f -> angle += 21f
-                        angle > 180f -> angle -= 21f
-                        angle > 90f -> angle += 21f
-                    }
-                }
-
-            val x = circleRadius * cos(MathUtils.degRad * angle)
-            val y = circleRadius * sin(MathUtils.degRad * angle)
-
-            val spriteWidth = noteRadius * 4
-            val spriteHeight = noteRadius * 4
-            val cameraX = playScreen.camera.position.x
-            val cameraY = playScreen.camera.position.y
-
-            val hitZoneStateVal = hitZonesStates[i]
+        for ((id, pos) in zones) {
+            val stateIndex = id - 1
+            val hitZoneStateVal = hitZonesStates[stateIndex]
             if (hitZoneStateVal != null && hitZoneStateVal > 0f) {
-                hitZonesStates[i] = hitZoneStateVal - Gdx.graphics.deltaTime * 4
+                hitZonesStates[stateIndex] = hitZoneStateVal - Gdx.graphics.deltaTime * 4
                 hitZoneTexture.setSize(
-                    spriteWidth + hitZoneStateVal * (spriteWidth * 0.20f),
-                    spriteHeight + hitZoneStateVal * (spriteHeight * 0.20f)
+                    baseSize + hitZoneStateVal * (baseSize * 0.20f),
+                    baseSize + hitZoneStateVal * (baseSize * 0.20f)
                 )
-                if (hitZonesStates[i]!! < 0f) hitZonesStates[i] = 0f
+                if (hitZonesStates[stateIndex]!! < 0f) hitZonesStates[stateIndex] = 0f
             } else {
-                hitZoneTexture.setSize(spriteWidth, spriteHeight)
+                hitZoneTexture.setSize(baseSize, baseSize)
             }
 
             hitZoneTexture.setOriginCenter()
-            hitZoneTexture.setPositionByCenter(cameraX + x, cameraY + y)
+            hitZoneTexture.setPositionByCenter(pos.x, pos.y)
             hitZoneTexture.draw(batch)
 
             if (PlayScreen.GameplayConfig.playMethod == PlayScreen.PlayMethod.POINTER || !drawKeyIndicators) {
@@ -79,14 +57,14 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
                     6 -> {
                         if (!Config.IS_MOBILE)
                             keyName.setText(
-                                getHitZoneKeyById(i)
+                                getHitZoneKeyById(id - 1)
                             )
                     }
 
                     8 -> {
                         //todo
                         keyName.setText(
-                            getHitZoneKeyById(i)
+                            getHitZoneKeyById(id - 1)
                         )
                     }
 
@@ -97,7 +75,7 @@ class HitZonesDrawer(private val playScreen: PlayScreen) : Actor() {
             }
 
             keyName.pack()
-            keyName.setPosByCenter(cameraX + x, cameraY + y)
+            keyName.setPosByCenter(pos.x, pos.y)
             keyName.draw(batch, 1f)
         }
     }

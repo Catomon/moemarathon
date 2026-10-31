@@ -28,6 +28,7 @@ class DifficultySelectStage() :
     private var noHoldNotes = false
     private var noAimOn = false //if (Config.IS_MOBILE) true else false
     private var pointerGameplay = false
+    private var traditionalLayout = false
 
     private val menuScreen: MenuScreen = game.screen as MenuScreen
 
@@ -151,6 +152,14 @@ class DifficultySelectStage() :
                     updateScoreLabel()
                 }
             })
+            row()
+            add(newTextButton("Layout: Circle").apply {
+                label.setFontScale(0.75f)
+                addChangeListener {
+                    traditionalLayout = !traditionalLayout
+                    it.setText(if (traditionalLayout) "Layout: Keys" else "Layout: Circle")
+                }
+            })
             center().bottom()
         }
     }
@@ -162,7 +171,7 @@ class DifficultySelectStage() :
             game.screen =
                 PlayScreen(
                     GameMap(MapsManager.collectMapFiles().first { it.name() == diff.maps.first() }),
-                    diff.copy(noHoldNotes = noHoldNotes, noAim = noAimOn)
+                    diff.copy(noHoldNotes = noHoldNotes, noAim = noAimOn, traditionalLayout = traditionalLayout)
                 )
         }
     }

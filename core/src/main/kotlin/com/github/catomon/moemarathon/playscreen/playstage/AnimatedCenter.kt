@@ -30,7 +30,7 @@ class AnimatedCenter(private val playScreen: PlayScreen, aniName: String = "bekk
     override fun draw(batch: Batch?, parentAlpha: Float) {
         playScreen.apply {
             val cameraX = camera.position.x
-            val cameraY = camera.position.y
+            val cameraY = centerY
             timingsCircleSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             timingsCircleSprite.setPosition(cameraX - timingsCircleSprite.width / 2, cameraY - timingsCircleSprite.height / 2)
 //            clickZoneSprite.setAlpha(0.5f)

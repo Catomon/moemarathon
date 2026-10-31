@@ -65,6 +65,8 @@ class CreditsStage() :
             add("Me:").padTop(50f)
             row()
             addLinkLabel("github.com/Catomon", "https://github.com/Catomon/")
+            row()
+            addLinkLabel("discord.gg/K9pxRcaKK5", "https://discord.gg/K9pxRcaKK5")
         }
 
         addActor(VisScrollPane(contentTable).apply {

@@ -20,9 +20,10 @@ class StaticCenter(private val playScreen: PlayScreen, timingsCircleName: String
     override fun draw(batch: Batch?, parentAlpha: Float) {
         playScreen.apply {
             val cameraX = camera.position.x
-            val cameraY = camera.position.y
+            val cameraY = centerY
             clickZoneSprite.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
             clickZoneSprite.setPosition(cameraX - clickZoneSprite.width / 2, cameraY - clickZoneSprite.height / 2)
+            clickZoneSprite.setAlpha(0.5f)
             clickZoneSprite.draw(batch)
         }
     }

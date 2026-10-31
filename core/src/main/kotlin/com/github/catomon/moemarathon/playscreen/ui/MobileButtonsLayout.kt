@@ -60,6 +60,15 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
         return (pointX - centerX).pow(2) + (pointY - centerY).pow(2) <= radius.pow(2)
     }
 
+    private fun buttonCenter(button: HitButton): Pair<Float, Float> {
+        if (playScreen.isTraditionalLayout) {
+            val zoneId = getHitZoneIdByButton(button.key)
+            val pos = playScreen.getHitZonePosition(zoneId)
+            return pos.x to pos.y
+        }
+        return (camera.position.x + button.x) to button.y
+    }
+
     override fun act(delta: Float) {
         super.act(delta)
 
@@ -79,8 +88,7 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
         buttons.forEach { button ->
             buttonSprite.setSize(buttonSize * button.size, buttonSize * button.size)
 
-            val buttonX = camera.position.x + button.x
-            val buttonY = button.y
+            val (buttonX, buttonY) = buttonCenter(button)
 
             buttonSprite.setPositionByCenter(buttonX, buttonY)
             buttonSprite.draw(batch)
@@ -117,11 +125,11 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
 
                 override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                     for (hitButton in buttons) {
-                        val btnWorldY = hitButton.y
+                        val (btnX, btnWorldY) = buttonCenter(hitButton)
                         if (isPointInCircle(
                                 x,
                                 y,
-                                hitButton.x + camera.viewportWidth / 2,
+                                btnX,
                                 btnWorldY,
                                 90f
                             )

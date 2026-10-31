@@ -20,7 +20,7 @@ class BeatAnimatedCenter(private val playScreen: PlayScreen, timingsCircleName: 
     override fun draw(batch: Batch?, parentAlpha: Float) {
         playScreen.apply {
             val cameraX = camera.position.x
-            val cameraY = camera.position.y
+            val cameraY = centerY
 //            centerBg.setSize(hitZoneCircleRadius * 2 + noteRadius * 2, hitZoneCircleRadius * 2 + noteRadius * 2)
 //            centerBg.setPosition(cameraX - centerBg.width / 2, cameraY - centerBg.height / 2)
 //            centerBg.setOriginCenter()
@@ -30,6 +30,7 @@ class BeatAnimatedCenter(private val playScreen: PlayScreen, timingsCircleName: 
             clickZoneSprite.setPosition(cameraX - clickZoneSprite.width / 2, cameraY - clickZoneSprite.height / 2)
             clickZoneSprite.setOriginCenter()
             clickZoneSprite.setScale(1f + beat * 0.1f)
+            clickZoneSprite.setAlpha(1f)
             clickZoneSprite.draw(batch)
         }
     }

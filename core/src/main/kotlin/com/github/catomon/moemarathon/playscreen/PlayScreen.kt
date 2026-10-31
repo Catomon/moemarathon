@@ -38,6 +38,7 @@ import com.github.catomon.moemarathon.playscreen.ui.PlayHud
 import com.github.catomon.moemarathon.utils.emptyCursor
 import com.github.catomon.moemarathon.utils.logInf
 import com.github.catomon.moemarathon.utils.setMouseCursor
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
@@ -52,6 +53,8 @@ class PlayScreen(
         val defaultPlayMethod = PlayMethod.BOTH //if (IS_MOBILE) PlayMethod.POINTER else PlayMethod.BOTH
         var playMethod = defaultPlayMethod
 
+        var layout = HitZoneLayout.CIRCLE
+
         //amount of thing where notes should land idk
         var hitZonesAmount = 6
 
@@ -61,6 +64,12 @@ class PlayScreen(
     enum class PlayMethod {
         POINTER, KEYBOARD, BOTH
     }
+
+    enum class HitZoneLayout {
+        CIRCLE, TRADITIONAL
+    }
+
+    val isTraditionalLayout get() = GameplayConfig.layout == HitZoneLayout.TRADITIONAL
 
     @Suppress("unused")
     private val initFirst = (0).also {
@@ -166,6 +175,8 @@ class PlayScreen(
 
     init {
         GameplayConfig.hitZonesAmount = playSets.hitZonesAmount
+        GameplayConfig.layout =
+            if (playSets.traditionalLayout) HitZoneLayout.TRADITIONAL else HitZoneLayout.CIRCLE
 
         Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
 
@@ -377,6 +388,13 @@ class PlayScreen(
     fun Note.isGreat(): Boolean = time - timing in -noteTimingGreat..noteTimingGreat
 
     fun Note.calcPosition(vector2: Vector2 = Vector2()): Vector2 {
+        if (isTraditionalLayout) {
+            val zonePos = getHitZonePosition(getHitZoneIdByNote(this))
+            val progress = (timing - time) / noteSpawnTime
+            val topY = camera.position.y + camera.viewportHeight * 0.5f
+            return vector2.set(zonePos.x, zonePos.y + (topY - zonePos.y) * progress)
+        }
+
         val timeLeft = (timing - time) / noteSpawnTime
         val cameraX = camera.position.x
         val cameraY = camera.position.y
@@ -408,6 +426,11 @@ class PlayScreen(
         val pointer = getPointer()
         val pointerX = pointer.x
         val pointerY = pointer.y
+
+        if (isTraditionalLayout) {
+            val zonePos = getHitZonesForRender().minBy { abs(it.value.x - pointerX) }.value
+            return vector2.set(zonePos.x, zonePos.y)
+        }
 
         val cameraX = camera.position.x
         val cameraY = camera.position.y
@@ -525,48 +548,55 @@ class PlayScreen(
 
     fun getHitZoneIdByNote(note: Note): Int = ((GameplayConfig.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
 
-    fun getHitZones(): MutableMap<Int, Vector2> {
-        val circleRadius = hitZoneCircleRadius
-        val angleBetweenParts = 360f / GameplayConfig.hitZonesAmount
+    private val traditionalColumnOrder = intArrayOf(5, 4, 3, 2, 1, 6)
 
-        val hitZones = mutableMapOf<Int, Vector2>()
-        for (i in 0 until GameplayConfig.hitZonesAmount) {
-            val angle = i * angleBetweenParts
-            val x = circleRadius * cos(MathUtils.degRad * angle)
-            val y = circleRadius * sin(MathUtils.degRad * angle)
-            val cameraX = camera.position.x
-            val cameraY = camera.position.y
-            hitZones[i + 1] = Vector2(cameraX + x, cameraY + y)
-        }
-
-        return hitZones
+    fun getHitZoneColumn(id: Int): Int {
+        val amount = GameplayConfig.hitZonesAmount
+        val order = if (amount == 6) traditionalColumnOrder else IntArray(amount) { it + 1 }
+        val index = order.indexOf(id)
+        return if (index >= 0) index else id - 1
     }
 
-    fun getHitZonesForRender(): MutableMap<Int, Vector2> {
-        val circleRadius = hitZoneCircleRadius
-        val angleBetweenParts = 360f / GameplayConfig.hitZonesAmount
+    val traditionalKeySpacing: Float
+        get() = min(noteRadius * 2.5f, camera.viewportWidth / (GameplayConfig.hitZonesAmount + 1f))
 
-        val hitZones = mutableMapOf<Int, Vector2>()
-        for (i in 0 until GameplayConfig.hitZonesAmount) {
-            var angle = i * angleBetweenParts
+    val traditionalRowY: Float
+        get() = camera.position.y - camera.viewportHeight * 0.30f
 
-            if (PlayScreen.GameplayConfig.hitZonesAmount <= 6)
-                if (angle != 0f && angle != 180f) {
-                    when {
-                        angle < 90f -> angle -= 21f
-                        angle > 270f -> angle += 21f
-                        angle > 180f -> angle -= 21f
-                        angle > 90f -> angle += 21f
-                    }
-                }
+    val centerY: Float
+        get() = camera.position.y + if (isTraditionalLayout) camera.viewportHeight * 0.18f else 0f
 
-            val x = circleRadius * cos(MathUtils.degRad * angle)
-            val y = circleRadius * sin(MathUtils.degRad * angle)
-            val cameraX = camera.position.x
-            val cameraY = camera.position.y
-            hitZones[i + 1] = Vector2(cameraX + x, cameraY + y)
+    fun getHitZonePosition(id: Int, vector2: Vector2 = Vector2()): Vector2 {
+        if (isTraditionalLayout) {
+            val amount = GameplayConfig.hitZonesAmount
+            val column = getHitZoneColumn(id)
+            val x = camera.position.x + (column - (amount - 1) / 2f) * traditionalKeySpacing
+            return vector2.set(x, traditionalRowY)
         }
 
+        var angle = 360f * (id - 1) / GameplayConfig.hitZonesAmount
+        if (GameplayConfig.hitZonesAmount <= 6)
+            if (angle != 0f && angle != 180f) {
+                when {
+                    angle < 90f -> angle -= 21f
+                    angle > 270f -> angle += 21f
+                    angle > 180f -> angle -= 21f
+                    angle > 90f -> angle += 21f
+                }
+            }
+
+        val x = hitZoneCircleRadius * cos(MathUtils.degRad * angle)
+        val y = hitZoneCircleRadius * sin(MathUtils.degRad * angle)
+        return vector2.set(camera.position.x + x, camera.position.y + y)
+    }
+
+    fun getHitZones(): MutableMap<Int, Vector2> = getHitZonesForRender()
+
+    fun getHitZonesForRender(): MutableMap<Int, Vector2> {
+        val hitZones = linkedMapOf<Int, Vector2>()
+        for (id in 1..GameplayConfig.hitZonesAmount) {
+            hitZones[id] = getHitZonePosition(id)
+        }
         return hitZones
     }
 
