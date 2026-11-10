@@ -88,6 +88,24 @@ object GamePref {
             prefs.putBoolean("hideKeyIndicators", value)
         }
 
+    var uiScale: Float
+        get() = prefs.getFloat("uiScale", if (IS_MOBILE) 2f else 1f)
+        set(value) {
+            prefs.putFloat("uiScale", value)
+        }
+
+    var playFieldScale: Float
+        get() = prefs.getFloat("playFieldScale", 1f)
+        set(value) {
+            prefs.putFloat("playFieldScale", value)
+        }
+
+    var mobileButtonsScale: Float
+        get() = prefs.getFloat("mobileButtonsScale", 1f)
+        set(value) {
+            prefs.putFloat("mobileButtonsScale", value)
+        }
+
     var userSave: UserSave
         get() {
             return try {

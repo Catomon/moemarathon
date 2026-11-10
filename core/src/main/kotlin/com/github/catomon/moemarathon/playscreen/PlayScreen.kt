@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Queue
+import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.Config
 import com.github.catomon.moemarathon.Config.HIDE_CURSOR_AFTER
@@ -179,6 +180,7 @@ class PlayScreen(
             if (playSets.traditionalLayout) HitZoneLayout.TRADITIONAL else HitZoneLayout.CIRCLE
 
         Gdx.input.inputProcessor = InputMultiplexer(playHud, PlayInputProcessor(this))
+        (playHud.viewport as ScreenViewport).setUnitsPerPixel(1f / GamePref.uiScale)
 
         noteListeners.add(playStage)
         noteListeners.add(playHud)
@@ -663,7 +665,7 @@ class PlayScreen(
         camera.position.set(width / 2f, height / 2f, 0f)
         camera.update()
 
-        mapSize = min(screenWidth - screenWidth * mapOffset, screenHeight - screenHeight * mapOffset)
+        mapSize = min(screenWidth - screenWidth * mapOffset, screenHeight - screenHeight * mapOffset) * GamePref.playFieldScale
 
         playHud.viewport.update(width, height, true)
         playStage.viewport.update(width, height, true)
