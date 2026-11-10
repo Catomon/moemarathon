@@ -44,7 +44,7 @@ object DefaultMapSets {
     val NonStop = GameMapSet(
         NON_STOP,
         listOf("Lucky Star no Minna - Kumikyoku 'Lucky Star Douga' (Andrea) [Marathon].osu"),
-        0.5f
+        0.75f
     )
 
     val NormalMarathon = GameMapSet(

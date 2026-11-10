@@ -15,7 +15,9 @@ import com.github.catomon.moemarathon.utils.setPositionByCenter
 import com.github.catomon.moemarathon.widgets.addChangeListener
 import com.github.catomon.moemarathon.widgets.newLabel
 import com.github.catomon.moemarathon.widgets.newTextButton
+import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisSlider
+import com.kotcrab.vis.ui.widget.VisTable
 import java.util.Locale
 
 class SettingsStage() :
@@ -34,7 +36,7 @@ class SettingsStage() :
     init {
         addGameNameLabel()
 
-        createTable().apply {
+        val content = VisTable().apply {
             add(newTextButton(if (Gdx.graphics.isFullscreen) "(F11) Windowed" else "(F11) Fullscreen").also { button ->
                 button.addChangeListener {
                     if (Gdx.graphics.isFullscreen) {
@@ -141,6 +143,15 @@ class SettingsStage() :
                 row()
             }
         }
+
+        content.padTop(90f).padBottom(80f)
+
+        addActor(VisScrollPane(content).apply {
+            setFillParent(true)
+            setScrollingDisabled(true, false)
+            setFadeScrollBars(false)
+            scrollFocus = this
+        })
 
         addActor(buttonsPreview)
 
