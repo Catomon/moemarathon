@@ -163,3 +163,5 @@ Thumbs.db
 **/resource-config.json
 *.sai2
 /core/src/main/kotlin/com/github/catomon/moemarathon/leaderboard/Key.kt
+
+.openchamber/
