@@ -27,10 +27,13 @@ object MobileButtons {
 
     fun size(unitsPerPixel: Float, scale: Float): Float = SIZE * scale * unitsPerPixel
 
-    fun x(button: MobileButton, viewportWidth: Float, unitsPerPixel: Float, scale: Float): Float {
+    fun x(button: MobileButton, viewportWidth: Float, unitsPerPixel: Float, scale: Float, position: Float): Float {
         val size = size(unitsPerPixel, scale)
         val margin = MARGIN * scale * unitsPerPixel
-        val center = if (button.left) margin + size / 2f else viewportWidth - margin - size / 2f
+        val shift = (position - 1f) * viewportWidth / 6f
+        val center =
+            if (button.left) margin + size / 2f + shift
+            else viewportWidth - margin - size / 2f - shift
         return center + button.xOff * scale * unitsPerPixel
     }
 

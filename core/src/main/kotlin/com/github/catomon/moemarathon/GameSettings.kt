@@ -106,6 +106,12 @@ object GamePref {
             prefs.putFloat("mobileButtonsScale", value)
         }
 
+    var mobileButtonsPosition: Float
+        get() = prefs.getFloat("mobileButtonsPosition", 1f)
+        set(value) {
+            prefs.putFloat("mobileButtonsPosition", value)
+        }
+
     var userSave: UserSave
         get() {
             return try {

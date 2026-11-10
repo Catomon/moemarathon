@@ -59,6 +59,13 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
 
     private val noteMiss = assets.mainAtlas.findRegion(playScreen.skin.miss)
     private val noteHit = assets.mainAtlas.findRegion(playScreen.skin.pop)
+    private val hitGreat = assets.mainAtlas.findRegion(playScreen.skin.hit + "hit_great")
+    private val hitGreatHoldNote = assets.mainAtlas.findRegion(playScreen.skin.hit + "hit_great_hold_note")
+    private val hitOk = assets.mainAtlas.findRegion(playScreen.skin.hit + "hit_ok")
+    private val hitMiss = assets.mainAtlas.findRegion(playScreen.skin.hit + "hit_miss")
+    private val hitTooEarly = assets.mainAtlas.findRegion(playScreen.skin.hit + "too_early")
+    private val hitTooFar = assets.mainAtlas.findRegion(playScreen.skin.hit + "too_far")
+    private val hitQuestion = assets.mainAtlas.findRegion("question")
 
     private val particlePool = ParticleEffectPool(ParticleEffect().apply {
         load(
@@ -156,6 +163,28 @@ class PlayStage(val playScreen: PlayScreen) : Stage(ScreenViewport(playScreen.ca
                     })
                 }
             }
+        }
+
+        if (id != NoteListener.HOLD_NOTE_START) {
+            val texture = when (id) {
+                NoteListener.MISS -> hitMiss
+                1 -> if (playScreen.run { note.isGreat() }) hitGreat else hitOk
+                NoteListener.HIT_HOLD_NOTE -> hitGreatHoldNote
+                NoteListener.TOO_EARLY -> hitTooEarly
+                NoteListener.TOO_FAR -> hitTooFar
+                else -> hitQuestion
+            }
+
+            addActor(SpriteActor(Sprite(texture)).apply {
+                setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
+                setPosition(notePos.x, notePos.y)
+                addAction(
+                    Actions.sequence(
+                        Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)),
+                        Actions.removeActor()
+                    )
+                )
+            })
         }
     }
 

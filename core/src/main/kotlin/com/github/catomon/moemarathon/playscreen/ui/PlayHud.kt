@@ -1,7 +1,6 @@
 package com.github.catomon.moemarathon.playscreen.ui
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -10,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.AudioManager
 import com.github.catomon.moemarathon.Config
-import com.github.catomon.moemarathon.assets
 import com.github.catomon.moemarathon.game
 import com.github.catomon.moemarathon.mainmenu.MenuStage
 import com.github.catomon.moemarathon.mainmenu.newContinueButton
@@ -38,14 +36,6 @@ class PlayHud(private val playScreen: PlayScreen) :
         healthMiss = playScreen.playSets.healthMiss
     )
 
-    private val skin = playScreen.skin
-    private val hitGreat = assets.mainAtlas.findRegion(skin.hit + "hit_great")
-    private val hitGreatHoldNote = assets.mainAtlas.findRegion(skin.hit + "hit_great_hold_note")
-    private val hitOk = assets.mainAtlas.findRegion(skin.hit + "hit_ok")
-    private val hitMiss = assets.mainAtlas.findRegion(skin.hit + "hit_miss")
-    private val hitTooEarly = assets.mainAtlas.findRegion(skin.hit + "too_early")
-    private val hitTooFar = assets.mainAtlas.findRegion(skin.hit + "too_far")
-    private val hitQuestion = assets.mainAtlas.findRegion("question")
     private val mobileButtonsLayout = MobileButtonsLayout(playScreen)
 
     private val menuTable = VisTable().apply {
@@ -130,8 +120,6 @@ class PlayHud(private val playScreen: PlayScreen) :
     }
 
     override fun onNoteEvent(id: Int, note: Note) {
-        val notePos = with(playScreen) { note.calcPosition() }
-
         comboLabel.onNoteEvent(id, note)
 
         when (id) {
@@ -150,37 +138,5 @@ class PlayHud(private val playScreen: PlayScreen) :
                 )
             }
         }
-
-        val noteToStagePos = notePos
-        val noteIsGreat = with(playScreen) { note.isGreat() }
-
-        if (id != NoteListener.HOLD_NOTE_START)
-            addActor(
-                SpriteActor(
-                    Sprite(
-                        when (id) {
-                            0 -> hitMiss
-                            1 -> {
-                                if (noteIsGreat) hitGreat
-                                else hitOk
-                            }
-
-                            7 -> hitGreatHoldNote
-                            4 -> hitTooEarly
-                            5 -> hitTooFar
-                            else -> hitQuestion
-                        }
-                    )
-                ).apply {
-                    setSize(playScreen.noteRadius * 2, playScreen.noteRadius * 2)
-                    setPosition(noteToStagePos.x, noteToStagePos.y)
-                    addAction(
-                        Actions.sequence(
-                            Actions.parallel(Actions.moveBy(0f, 16f, 1f), Actions.fadeOut(1f)),
-                            Actions.removeActor()
-                        )
-                    )
-                }
-            )
     }
 }

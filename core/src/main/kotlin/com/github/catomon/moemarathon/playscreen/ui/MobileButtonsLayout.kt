@@ -33,7 +33,7 @@ class MobileButtonsLayout(private val playScreen: PlayScreen) : Actor() {
         var size: Float = 1f
 
         val key get() = data.key
-        val x get() = MobileButtons.x(data, camera.viewportWidth, unitsPerPixel, GamePref.mobileButtonsScale)
+        val x get() = MobileButtons.x(data, camera.viewportWidth, unitsPerPixel, GamePref.mobileButtonsScale, GamePref.mobileButtonsPosition)
         val y get() = MobileButtons.y(data, unitsPerPixel, GamePref.mobileButtonsScale)
     }
 

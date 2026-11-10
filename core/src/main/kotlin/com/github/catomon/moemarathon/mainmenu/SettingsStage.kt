@@ -33,6 +33,19 @@ class SettingsStage() :
 
     private fun scaleText(value: Float) = String.format(Locale.US, "%.1fx", value)
 
+    private fun VisSlider.showButtonsPreview() {
+        addListener(object : InputListener() {
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                buttonsPreview.isVisible = true
+                return true
+            }
+
+            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+                buttonsPreview.isVisible = false
+            }
+        })
+    }
+
     init {
         addGameNameLabel()
 
@@ -119,16 +132,20 @@ class SettingsStage() :
                     GamePref.mobileButtonsScale = slider.value
                     buttonsLabel.setText("Button size: ${scaleText(slider.value)}")
                 }
-                slider.addListener(object : InputListener() {
-                    override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                        buttonsPreview.isVisible = true
-                        return true
-                    }
+                slider.showButtonsPreview()
+            }).width(250f)
+            row()
 
-                    override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                        buttonsPreview.isVisible = false
-                    }
-                })
+            val positionLabel = newLabel("Button position: ${scaleText(GamePref.mobileButtonsPosition)}")
+            add(positionLabel)
+            row()
+            add(VisSlider(1f, 2f, 0.1f, false).also { slider ->
+                slider.setValue(GamePref.mobileButtonsPosition)
+                slider.addChangeListener {
+                    GamePref.mobileButtonsPosition = slider.value
+                    positionLabel.setText("Button position: ${scaleText(slider.value)}")
+                }
+                slider.showButtonsPreview()
             }).width(250f)
             row()
 
@@ -179,13 +196,14 @@ class SettingsStage() :
             val stage = stage ?: return
             val unitsPerPixel = (stage.viewport as ScreenViewport).unitsPerPixel
             val scale = GamePref.mobileButtonsScale
+            val position = GamePref.mobileButtonsPosition
             val size = MobileButtons.size(unitsPerPixel, scale)
             val viewportWidth = stage.viewport.worldWidth
 
             for (button in MobileButtons.buttons) {
                 sprite.setSize(size, size)
                 sprite.setPositionByCenter(
-                    MobileButtons.x(button, viewportWidth, unitsPerPixel, scale),
+                    MobileButtons.x(button, viewportWidth, unitsPerPixel, scale, position),
                     MobileButtons.y(button, unitsPerPixel, scale)
                 )
                 sprite.draw(batch)
