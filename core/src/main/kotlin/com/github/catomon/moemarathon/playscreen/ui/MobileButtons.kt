@@ -7,6 +7,7 @@ data class MobileButton(
     val left: Boolean,
     val row: Int,
     val xOff: Float = 0f,
+    val yOff: Float = 0f,
 )
 
 object MobileButtons {
@@ -16,13 +17,13 @@ object MobileButtons {
     private const val GAP = 8f
 
     val buttons = listOf(
-        MobileButton(key = Input.Keys.F, left = true, row = 2),
+        MobileButton(key = Input.Keys.F, left = true, row = 2, xOff = -95f, yOff = -15f),
         MobileButton(key = Input.Keys.D, left = true, row = 1),
-        MobileButton(key = Input.Keys.S, left = true, row = 0, xOff = 75f),
+        MobileButton(key = Input.Keys.S, left = true, row = 0, xOff = 55f),
 
-        MobileButton(key = Input.Keys.J, left = false, row = 2),
+        MobileButton(key = Input.Keys.J, left = false, row = 2, xOff = 95f, yOff = -15f),
         MobileButton(key = Input.Keys.K, left = false, row = 1),
-        MobileButton(key = Input.Keys.L, left = false, row = 0, xOff = -75f),
+        MobileButton(key = Input.Keys.L, left = false, row = 0, xOff = -55f),
     )
 
     fun size(unitsPerPixel: Float, scale: Float): Float = SIZE * scale * unitsPerPixel
@@ -41,6 +42,6 @@ object MobileButtons {
         val size = size(unitsPerPixel, scale)
         val margin = MARGIN * scale * unitsPerPixel
         val gap = GAP * scale * unitsPerPixel
-        return margin + size / 2f + button.row * (size + gap)
+        return margin + size / 2f + button.row * (size + gap) + button.yOff * scale * unitsPerPixel
     }
 }
