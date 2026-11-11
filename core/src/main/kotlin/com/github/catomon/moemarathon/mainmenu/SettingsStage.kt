@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Slider
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.*
@@ -47,19 +48,6 @@ class SettingsStage() :
         })
     }
 
-    private fun VisSlider.lockScrollWhileDragging() {
-        addListener(object : InputListener() {
-            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                SettingsScrollPane.scrollLocked = true
-                return true
-            }
-
-            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                SettingsScrollPane.scrollLocked = false
-            }
-        })
-    }
-
     init {
         addGameNameLabel()
 
@@ -87,7 +75,6 @@ class SettingsStage() :
                     AudioManager.musicVolume = it.percent
                     musicVolume = it.percent
                 }
-                it.lockScrollWhileDragging()
             }).padBottom(20f).width(250f)
             row()
             add("Sound volume")
@@ -99,7 +86,6 @@ class SettingsStage() :
                     AudioManager.soundVolume = it.percent
                     soundVolume = it.percent
                 }
-                it.lockScrollWhileDragging()
             }).width(250f)
             row()
             add(newTextButton(if (GamePref.hideKeyIndicators) "Show Keys" else "Hide Keys").also { button ->
@@ -124,7 +110,6 @@ class SettingsStage() :
                     GamePref.uiScale = slider.value
                     uiScaleLabel.setText("UI scale: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
             }).width(250f).padBottom(10f)
             row()
 
@@ -137,7 +122,6 @@ class SettingsStage() :
                     GamePref.playFieldScale = slider.value
                     playFieldLabel.setText("Play field: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
             }).width(250f).padBottom(10f)
             row()
 
@@ -150,7 +134,6 @@ class SettingsStage() :
                     GamePref.mobileButtonsScale = slider.value
                     buttonsLabel.setText("Button size: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
                 slider.showButtonsPreview()
             }).width(250f)
             row()
@@ -164,7 +147,6 @@ class SettingsStage() :
                     GamePref.mobileButtonsPosition = slider.value
                     positionLabel.setText("Button position: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
                 slider.showButtonsPreview()
             }).width(250f)
             row()
@@ -191,13 +173,6 @@ class SettingsStage() :
         })
 
         addActor(buttonsPreview)
-
-        SettingsScrollPane.scrollLocked = false
-        addListener(object : InputListener() {
-            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                SettingsScrollPane.scrollLocked = false
-            }
-        })
 
         createTable(newBackButton().addChangeListener {
             GamePref.musicVolume = musicVolume
@@ -240,16 +215,33 @@ class SettingsStage() :
 
 private class SettingsScrollPane(actor: Actor) : VisScrollPane(actor) {
 
-    companion object {
-        var scrollLocked = false
-    }
+    private var startedOnSlider = false
 
     override fun getFlickScrollListener(): ActorGestureListener {
         return object : ActorGestureListener() {
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+                startedOnSlider = isInsideSlider(event?.target)
+                super.touchDown(event, x, y, pointer, button)
+            }
+
             override fun pan(event: InputEvent, x: Float, y: Float, deltaX: Float, deltaY: Float) {
-                if (scrollLocked) return
+                if (startedOnSlider) return
                 super.pan(event, x, y, deltaX, deltaY)
             }
+
+            override fun touchUp(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int) {
+                startedOnSlider = false
+                super.touchUp(event, x, y, pointer, button)
+            }
         }
+    }
+
+    private fun isInsideSlider(actor: Actor?): Boolean {
+        var current = actor
+        while (current != null) {
+            if (current is Slider) return true
+            current = current.parent
+        }
+        return false
     }
 }
