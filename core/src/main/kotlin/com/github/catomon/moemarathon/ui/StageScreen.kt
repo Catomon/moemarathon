@@ -17,6 +17,7 @@ open class  StageScreen<T : Stage>(
     open fun changeStage(newStage: T) {
 //        val stage = stage
         this.stage = newStage
+        newStage.viewport.update(Gdx.graphics.width, Gdx.graphics.height, true)
 
         return
 //        if (stage != null) {
