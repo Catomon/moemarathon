@@ -477,54 +477,48 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int): Boolean {
-        val notes = noteMap.chunks.lastOrNull()?.notes
-        val note = notes?.lastOrNull() ?: return false
-        val notePos = note.calcPosition(Vector2())
-        val isInTiming = note.timing > time - noteTimingWindow && note.timing < time + noteTimingWindow
-        val clickerPos = calcClickerPos(Vector2())
-        val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) Vector2.dst(
-            clickerPos.x,
-            clickerPos.y,
-            notePos.x,
-            notePos.y
-        ) else 0f
+        val hitNote = findHitNote(button)
         val curPointerRad = pointerSize * (mapSize / 2)
-        val isHitZoneActivated = isHitZoneActivated(clickerToNoteDst, curPointerRad, note, button)
-        if (isInTiming && isHitZoneActivated) {
-            noteMap.chunks.last().notes.removeLast()
+        val clickerPos = calcClickerPos(Vector2())
 
-            if (note.tracingNext) {
+        if (hitNote != null) {
+            removeNote(hitNote)
+
+            if (hitNote.tracingNext) {
                 isHoldingNote = true
                 holdNoteButton = button
-                holdNote = note
+                holdNote = hitNote
 
-                onNoteEvent(NoteListener.HOLD_NOTE_START, note)
+                onNoteEvent(NoteListener.HOLD_NOTE_START, hitNote)
             } else {
                 if (isHoldingNote) {
                     isHoldingNote = false
                     holdNoteButton = -1
                     holdNote = null
-                    onNoteEvent(NoteListener.HIT_HOLD_NOTE, note)
+                    onNoteEvent(NoteListener.HIT_HOLD_NOTE, hitNote)
                 } else {
-                    onNoteEvent(NoteListener.HIT, note)
+                    onNoteEvent(NoteListener.HIT, hitNote)
                 }
             }
         } else {
             if (isHoldingNote) {
                 isHoldingNote = false
+                holdNoteButton = -1
+                holdNote = null
 
-                onNoteEvent(NoteListener.MISS, notes.removeLast())
+                findHoldEndNote()?.let {
+                    removeNote(it)
+                    onNoteEvent(NoteListener.MISS, it)
+                }
             } else {
-                if (note.timing - time > noteSpawnTime / 4f) {
-                    onNoteEvent(NoteListener.TOO_EARLY, note)
-                } else {
-                    if (clickerToNoteDst <= curPointerRad * 2) {
-                        onNoteEvent(NoteListener.MISS, notes.removeLast())
-
-                        if (noteMap.chunks.lastOrNull()?.notes?.lastOrNull()?.tracingPrev == true)
-                            onNoteEvent(NoteListener.MISS, noteMap.chunks.lastOrNull()?.notes?.removeLast()!!)
-                    } else {
-                        onNoteEvent(NoteListener.TOO_FAR, note)
+                val nextNote = nextNote()
+                if (nextNote != null) {
+                    if (nextNote.timing - time > noteSpawnTime / 4f) {
+                        onNoteEvent(NoteListener.TOO_EARLY, nextNote)
+                    } else if (GameplayConfig.playMethod == PlayMethod.POINTER) {
+                        val notePos = nextNote.calcPosition(Vector2())
+                        if (Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y) > curPointerRad * 2)
+                            onNoteEvent(NoteListener.TOO_FAR, nextNote)
                     }
                 }
             }
@@ -541,11 +535,88 @@ class PlayScreen(
             if (GameplayConfig.hitZonesAmount <= 9) {
                 playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByButton(button))
             } else {
-                playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
+                val note = hitNote ?: nextNote()
+                if (note != null)
+                    playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
             }
         }
 
-        return isHitZoneActivated
+        return hitNote != null
+    }
+
+    private fun findHitNote(button: Int): Note? {
+        val clickerPos = calcClickerPos(Vector2())
+        val curPointerRad = pointerSize * (mapSize / 2)
+        var bestNote: Note? = null
+        var bestDelta = Float.MAX_VALUE
+
+        forEachActiveNote { note ->
+            if (note.timing <= time - noteTimingWindow || note.timing >= time + noteTimingWindow)
+                return@forEachActiveNote
+
+            val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) {
+                val notePos = note.calcPosition(Vector2())
+                Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
+            } else 0f
+
+            if (!isHitZoneActivated(clickerToNoteDst, curPointerRad, note, button))
+                return@forEachActiveNote
+
+            val delta = abs(note.timing - time)
+            if (delta < bestDelta) {
+                bestDelta = delta
+                bestNote = note
+            }
+        }
+
+        return bestNote
+    }
+
+    private inline fun forEachActiveNote(action: (Note) -> Unit) {
+        val chunks = noteMap.chunks
+        for (chunkIndex in chunks.size - 1 downTo 0) {
+            val notes = chunks.elementAt(chunkIndex).notes
+            for (noteIndex in notes.size - 1 downTo 0) {
+                val note = notes.elementAt(noteIndex)
+                if (note.timing > time + noteTimingWindow) return
+                if (note.timing >= time - noteTimingWindow) action(note)
+            }
+        }
+    }
+
+    private fun nextNote(): Note? {
+        val chunks = noteMap.chunks
+        for (chunkIndex in chunks.size - 1 downTo 0) {
+            val notes = chunks.elementAt(chunkIndex).notes
+            for (noteIndex in notes.size - 1 downTo 0) {
+                val note = notes.elementAt(noteIndex)
+                if (note.timing >= time - noteTimingWindow) return note
+            }
+        }
+        return null
+    }
+
+    private fun findHoldEndNote(): Note? {
+        val chunks = noteMap.chunks
+        for (chunkIndex in chunks.size - 1 downTo 0) {
+            val notes = chunks.elementAt(chunkIndex).notes
+            for (noteIndex in notes.size - 1 downTo 0) {
+                val note = notes.elementAt(noteIndex)
+                if (note.tracingPrev) return note
+            }
+        }
+        return null
+    }
+
+    private fun removeNote(note: Note) {
+        val chunks = noteMap.chunks
+        for (chunkIndex in chunks.size - 1 downTo 0) {
+            val notes = chunks.elementAt(chunkIndex).notes
+            if (notes.removeValue(note, true)) {
+                if (notes.isEmpty) chunks.removeIndex(chunkIndex)
+                return
+            }
+        }
     }
 
     fun getHitZoneIdByNote(note: Note): Int = ((GameplayConfig.hitZonesAmount + 1) * note.initialPosition).toInt() + 1
