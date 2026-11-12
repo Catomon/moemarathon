@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Slider
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.github.catomon.moemarathon.*
 import com.github.catomon.moemarathon.playscreen.ui.MobileButtons
@@ -19,6 +20,7 @@ import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisSlider
 import com.kotcrab.vis.ui.widget.VisTable
 import java.util.Locale
+import kotlin.math.abs
 
 class SettingsStage() :
     BgStage() {
@@ -30,7 +32,6 @@ class SettingsStage() :
     private var fullscreen = false
 
     private val buttonsPreview = ButtonsPreview()
-    private lateinit var scrollPane: VisScrollPane
 
     private fun scaleText(value: Float) = String.format(Locale.US, "%.1fx", value)
 
@@ -43,19 +44,6 @@ class SettingsStage() :
 
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                 buttonsPreview.isVisible = false
-            }
-        })
-    }
-
-    private fun VisSlider.lockScrollWhileDragging() {
-        addListener(object : InputListener() {
-            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                scrollPane.setFlickScroll(false)
-                return true
-            }
-
-            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                scrollPane.setFlickScroll(true)
             }
         })
     }
@@ -87,7 +75,6 @@ class SettingsStage() :
                     AudioManager.musicVolume = it.percent
                     musicVolume = it.percent
                 }
-                it.lockScrollWhileDragging()
             }).padBottom(20f).width(250f)
             row()
             add("Sound volume")
@@ -99,7 +86,6 @@ class SettingsStage() :
                     AudioManager.soundVolume = it.percent
                     soundVolume = it.percent
                 }
-                it.lockScrollWhileDragging()
             }).width(250f)
             row()
             add(newTextButton(if (GamePref.hideKeyIndicators) "Show Keys" else "Hide Keys").also { button ->
@@ -124,7 +110,6 @@ class SettingsStage() :
                     GamePref.uiScale = slider.value
                     uiScaleLabel.setText("UI scale: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
             }).width(250f).padBottom(10f)
             row()
 
@@ -137,7 +122,6 @@ class SettingsStage() :
                     GamePref.playFieldScale = slider.value
                     playFieldLabel.setText("Play field: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
             }).width(250f).padBottom(10f)
             row()
 
@@ -150,7 +134,6 @@ class SettingsStage() :
                     GamePref.mobileButtonsScale = slider.value
                     buttonsLabel.setText("Button size: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
                 slider.showButtonsPreview()
             }).width(250f)
             row()
@@ -164,7 +147,6 @@ class SettingsStage() :
                     GamePref.mobileButtonsPosition = slider.value
                     positionLabel.setText("Button position: ${scaleText(slider.value)}")
                 }
-                slider.lockScrollWhileDragging()
                 slider.showButtonsPreview()
             }).width(250f)
             row()
@@ -183,21 +165,15 @@ class SettingsStage() :
 
         content.padTop(90f).padBottom(80f)
 
-        scrollPane = VisScrollPane(content).apply {
+        val scrollPane = SettingsScrollPane(content).apply {
             setFillParent(true)
             setScrollingDisabled(true, false)
             setFadeScrollBars(false)
-            scrollFocus = this
         }
         addActor(scrollPane)
+        scrollFocus = scrollPane
 
         addActor(buttonsPreview)
-
-        addListener(object : InputListener() {
-            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                scrollPane.setFlickScroll(true)
-            }
-        })
 
         createTable(newBackButton().addChangeListener {
             GamePref.musicVolume = musicVolume
@@ -236,5 +212,71 @@ class SettingsStage() :
                 sprite.draw(batch)
             }
         }
+    }
+}
+
+private class SettingsScrollPane(actor: Actor) : VisScrollPane(actor) {
+
+    private var dragPointer = -1
+    private var pressY = 0f
+    private var lastY = 0f
+    private var dragging = false
+
+    init {
+        setFlickScroll(false)
+        setScrollBarTouch(false)
+
+        addListener(object : InputListener() {
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                if (dragPointer != -1) return false
+                if (isInsideSlider(event?.target)) return false
+                dragPointer = pointer
+                pressY = y
+                lastY = y
+                dragging = false
+                return true
+            }
+
+            override fun touchDragged(event: InputEvent?, x: Float, y: Float, pointer: Int) {
+                if (pointer != dragPointer) return
+                if (!dragging) {
+                    if (abs(y - pressY) < DRAG_START_DISTANCE) return
+                    dragging = true
+                    cancelChildTouches(event?.target)
+                }
+                setScrollY(getScrollY() + (y - lastY))
+                lastY = y
+            }
+
+            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+                if (pointer == dragPointer) reset()
+            }
+        })
+    }
+
+    private fun reset() {
+        dragPointer = -1
+        dragging = false
+    }
+
+    private fun cancelChildTouches(target: Actor?) {
+        var current = target
+        while (current != null && current !== this) {
+            stage?.cancelTouchFocus(current)
+            current = current.parent
+        }
+    }
+
+    private fun isInsideSlider(actor: Actor?): Boolean {
+        var current = actor
+        while (current != null) {
+            if (current is Slider) return true
+            current = current.parent
+        }
+        return false
+    }
+
+    companion object {
+        private const val DRAG_START_DISTANCE = 6f
     }
 }
