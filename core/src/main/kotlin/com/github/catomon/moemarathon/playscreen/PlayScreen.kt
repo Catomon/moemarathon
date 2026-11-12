@@ -477,9 +477,29 @@ class PlayScreen(
     }
 
     fun processButtonDown(button: Int): Boolean {
-        val hitNote = findHitNote(button)
         val curPointerRad = pointerSize * (mapSize / 2)
         val clickerPos = calcClickerPos(Vector2())
+
+        if (isHoldingNote && button == holdNoteButton) {
+            val endNote = findHoldEndNote()
+            val inTiming = endNote != null &&
+                endNote.timing > time - noteTimingWindow &&
+                endNote.timing < time + noteTimingWindow
+
+            if (endNote != null) {
+                removeNote(endNote)
+                onNoteEvent(if (inTiming) NoteListener.HIT_HOLD_NOTE else NoteListener.MISS, endNote)
+            }
+
+            isHoldingNote = false
+            holdNoteButton = -1
+            holdNote = null
+
+            animateHitZoneFor(button, endNote)
+            return inTiming
+        }
+
+        val hitNote = findHitNote(button)
 
         if (hitNote != null) {
             removeNote(hitNote)
@@ -491,53 +511,40 @@ class PlayScreen(
 
                 onNoteEvent(NoteListener.HOLD_NOTE_START, hitNote)
             } else {
-                if (isHoldingNote) {
-                    isHoldingNote = false
-                    holdNoteButton = -1
-                    holdNote = null
-                    onNoteEvent(NoteListener.HIT_HOLD_NOTE, hitNote)
-                } else {
-                    onNoteEvent(NoteListener.HIT, hitNote)
-                }
+                onNoteEvent(NoteListener.HIT, hitNote)
             }
         } else {
-            if (isHoldingNote) {
-                isHoldingNote = false
-                holdNoteButton = -1
-                holdNote = null
+            val nextNote = nextNote()
+            if (nextNote != null && !(isHoldingNote && nextNote.tracingPrev)) {
+                if (nextNote.timing - time > noteSpawnTime / 4f) {
+                    onNoteEvent(NoteListener.TOO_EARLY, nextNote)
+                } else {
+                    val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) {
+                        val notePos = nextNote.calcPosition(Vector2())
+                        Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
+                    } else 0f
 
-                findHoldEndNote()?.let {
-                    removeNote(it)
-                    onNoteEvent(NoteListener.MISS, it)
-                }
-            } else {
-                val nextNote = nextNote()
-                if (nextNote != null) {
-                    if (nextNote.timing - time > noteSpawnTime / 4f) {
-                        onNoteEvent(NoteListener.TOO_EARLY, nextNote)
-                    } else {
-                        val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) {
-                            val notePos = nextNote.calcPosition(Vector2())
-                            Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
-                        } else 0f
+                    if (clickerToNoteDst <= curPointerRad * 2) {
+                        removeNote(nextNote)
+                        onNoteEvent(NoteListener.MISS, nextNote)
 
-                        if (clickerToNoteDst <= curPointerRad * 2) {
-                            removeNote(nextNote)
-                            onNoteEvent(NoteListener.MISS, nextNote)
-
-                            val afterMissed = nextNote()
-                            if (afterMissed?.tracingPrev == true) {
-                                removeNote(afterMissed)
-                                onNoteEvent(NoteListener.MISS, afterMissed)
-                            }
-                        } else {
-                            onNoteEvent(NoteListener.TOO_FAR, nextNote)
+                        val afterMissed = nextNote()
+                        if (afterMissed?.tracingPrev == true) {
+                            removeNote(afterMissed)
+                            onNoteEvent(NoteListener.MISS, afterMissed)
                         }
+                    } else {
+                        onNoteEvent(NoteListener.TOO_FAR, nextNote)
                     }
                 }
             }
         }
 
+        animateHitZoneFor(button, hitNote)
+        return hitNote != null
+    }
+
+    private fun animateHitZoneFor(button: Int, note: Note?) {
         if (GameplayConfig.playMethod == PlayMethod.POINTER) {
             val pointer = getPointer()
             val hitZoneId = getHitZones().minBy {
@@ -549,22 +556,19 @@ class PlayScreen(
             if (GameplayConfig.hitZonesAmount <= 9) {
                 playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByButton(button))
             } else {
-                val note = hitNote ?: nextNote()
-                if (note != null)
-                    playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(note))
+                val zoneNote = note ?: nextNote()
+                if (zoneNote != null)
+                    playStage.hitZonesDrawer.animateHitZone(getHitZoneIdByNote(zoneNote))
             }
         }
-
-        return hitNote != null
     }
 
     private fun findHitNote(button: Int): Note? {
         val clickerPos = calcClickerPos(Vector2())
         val curPointerRad = pointerSize * (mapSize / 2)
-        var bestNote: Note? = null
-        var bestDelta = Float.MAX_VALUE
 
         forEachActiveNote { note ->
+            if (note.tracingPrev) return@forEachActiveNote
             if (note.timing <= time - noteTimingWindow || note.timing >= time + noteTimingWindow)
                 return@forEachActiveNote
 
@@ -573,17 +577,11 @@ class PlayScreen(
                 Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
             } else 0f
 
-            if (!isHitZoneActivated(clickerToNoteDst, curPointerRad, note, button))
-                return@forEachActiveNote
-
-            val delta = abs(note.timing - time)
-            if (delta < bestDelta) {
-                bestDelta = delta
-                bestNote = note
-            }
+            if (isHitZoneActivated(clickerToNoteDst, curPointerRad, note, button))
+                return note
         }
 
-        return bestNote
+        return null
     }
 
     private inline fun forEachActiveNote(action: (Note) -> Unit) {
