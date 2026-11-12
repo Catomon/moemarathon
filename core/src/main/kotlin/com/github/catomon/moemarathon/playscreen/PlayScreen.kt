@@ -515,10 +515,24 @@ class PlayScreen(
                 if (nextNote != null) {
                     if (nextNote.timing - time > noteSpawnTime / 4f) {
                         onNoteEvent(NoteListener.TOO_EARLY, nextNote)
-                    } else if (GameplayConfig.playMethod == PlayMethod.POINTER) {
-                        val notePos = nextNote.calcPosition(Vector2())
-                        if (Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y) > curPointerRad * 2)
+                    } else {
+                        val clickerToNoteDst = if (GameplayConfig.playMethod == PlayMethod.POINTER) {
+                            val notePos = nextNote.calcPosition(Vector2())
+                            Vector2.dst(clickerPos.x, clickerPos.y, notePos.x, notePos.y)
+                        } else 0f
+
+                        if (clickerToNoteDst <= curPointerRad * 2) {
+                            removeNote(nextNote)
+                            onNoteEvent(NoteListener.MISS, nextNote)
+
+                            val afterMissed = nextNote()
+                            if (afterMissed?.tracingPrev == true) {
+                                removeNote(afterMissed)
+                                onNoteEvent(NoteListener.MISS, afterMissed)
+                            }
+                        } else {
                             onNoteEvent(NoteListener.TOO_FAR, nextNote)
+                        }
                     }
                 }
             }
